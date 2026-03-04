@@ -9,13 +9,23 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
+### Khay Liang
+
+<img src="images/khayliang.png" width="200px">
+
+[[github](https://github.com/khayliang)]
+
+### Minh Duc
+
+<img src="images/vuminhducvmd.png" width="200px">
+
+[[github](https://github.com/vuminhducvmd)]
+
 ### Tang Zhi Xiang
 
 <img src="images/darkrelicz.png" width="200px">
 
 [[github](https://github.com/darkrelicz)]
-
-* Role: Project Advisor
 
 ### Jane Doe
 
@@ -46,12 +56,11 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: Dev Ops + Threading
 
-### James Doe
+### Judah Pang
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/beedahju.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](http://github.com/beedahju)]
 
 * Role: Developer
 * Responsibilities: UI
