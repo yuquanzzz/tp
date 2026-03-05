@@ -5,8 +5,6 @@ title: About Us
 
 We are a team based in the [School of Computing, National University of Singapore](https://www.comp.nus.edu.sg).
 
-You can reach us at the email `seer[at]comp.nus.edu.sg`
-
 ## Project team
 
 ### Khay Liang
@@ -15,17 +13,26 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 [[github](https://github.com/khayliang)]
 
+* Role: Developer
+* Responsibilities: ?
+
 ### Minh Duc
 
 <img src="images/vuminhducvmd.png" width="200px">
 
 [[github](https://github.com/vuminhducvmd)]
 
+* Role: Developer
+* Responsibilities: ?
+
 ### Tang Zhi Xiang
 
 <img src="images/darkrelicz.png" width="200px">
 
 [[github](https://github.com/darkrelicz)]
+
+* Role: Developer
+* Responsibilities: ?
 
 ### Tan Yu Quan
 
@@ -36,25 +43,6 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: ?
 
-### Johnny Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
-
-* Role: Developer
-* Responsibilities: Data
-
-### Jean Doe
-
-<img src="images/johndoe.png" width="200px">
-
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
-
-* Role: Developer
-* Responsibilities: Dev Ops + Threading
-
 ### Judah Pang
 
 <img src="images/beedahju.png" width="200px">
@@ -62,4 +50,4 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 [[github](http://github.com/beedahju)]
 
 * Role: Developer
-* Responsibilities: UI
+* Responsibilities: ?
