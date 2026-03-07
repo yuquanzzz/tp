@@ -355,73 +355,45 @@ Use case ends.
 
   **MSS**
 
-  1. Tutor keys in the command.
-  2. Tutorflow validates the parent name.
-  3. Tutorflow validates the student name.
-  4. Tutorflow validates the phone number.
-  5. Tutorflow validates the email address.
-  6. Tutorflow validates the address.
-  7. Tutorflow checks if the parent-student pair already exists.
-  8. Tutorflow checks that each parameter is specified only once.
-  9. Tutorflow stores the parent-student contact details.
-  10. Tutorflow displays the added parent and student contact with all the fields.
+  1. Tutor requests to add a parent together with a student contact.
+  2. Tutorflow requests for the parent and contact details.
+  3. Tutor provides parent name, student name, phone number, email and address.
+  4. Tutorflow validates the provided details.
+  5. Tutorflow checks for any duplicate entries.
+  6. Tutorflow stores the new parent and student contact information.
+  7. Tutor confirms that the parent and student contact has been added.
+
  
   Use case ends.
 
   **Extensions**
 
-  * 2a. Parent name is empty or invalid
+  * 4a. Parent name is empty or invalid
     
-     * 2a1. Tutorflow displays an error message.
-     * 2a2. Tutor re-enters with a valid parent name.
-
-   Use case resumes from step 2.
-
-  * 3a. Student name is empty or invalid
- 
-     * 3a1. Tutorflow displays an error message.
-     * 3a2. Tutor re-enters with a valid student name.
+     * 4a1. Tutorflow detects an error in the entered data.
+     * 4a2. Tutorflow requests the tutor to provide valid details.
 
    Use case resumes from step 3.
 
-  * 4a. Phone number is empty or invalid
+  * 4b. Extremely long or invalid input detected
  
-     * 4a1. Tutorflow displays an error message.
-     * 4a2. Tutor re-enters with a valid phone number.
-
-   Use case resumes from step 4.
-
-  * 5a. Email Address is empty or invalid
- 
-     * 5a1. Tutorflow displays an error message.
-     * 5a2. Tutor re-enters with a valid email address.
-
-   Use case resumes from step 5.
-
-  * 6a. Address is empty or invalid
- 
-     * 6a1. Tutorflow displays an error message.
-     * 6a2. Tutor re-enters with a valid address.
-
-   Use case resumes from step 6.
-
-  * 7a. Parent-Student pair already exists
- 
-     * 7a1. Tutorflow displays an error message.
-
-    Use case ends.
-
-  * 8a. Duplicate fields specified
-
-     * 8a1. Tutorflow displays an error message.
+     * 4b1. Tutorflow rejects the input and informs tutor that the input is invalid.
    
-    Use case ends.
+  Use case ends.
 
-  * *a. Tutor cancels the command
+  * 5a. Student name is empty or invalid
+ 
+     * 5a1. Tutorflow informs the tutor that the parent-student pair already exists.
+       
+   Use case ends.
 
-    * *a1. Tutorflow aborts the add operation.
-   
-    Use case ends.
+  * 5b. Duplicate field detected
+ 
+     * 5b1. Tutorflow detects duplicate fields in the entered data.
+     * 5b2. Tutorflow requests the tutor to provide the details again.
+
+   Use case resumes from step 3.
+
 
 ---
 
