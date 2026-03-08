@@ -37,7 +37,7 @@ public class EditCommandParser implements Parser<EditCommand> {
         if (trimmedArgs.isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE));
         }
-        
+    
         String[] parts = trimmedArgs.split("\\s+", 2);
         String subCommand = parts[0];
         String body = parts.length > 1 ? " " + parts[1] : "";
