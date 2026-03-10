@@ -55,7 +55,7 @@ public class AddressBookParserTest {
     }
 
     @Test
-    public void parsePersonCommand_edit() throws Exception {
+    public void parseCommand_editPerson() throws Exception {
         Person person = new PersonBuilder().build();
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(person).build();
         EditPersonCommand command = (EditPersonCommand) parser.parseCommand(EditCommand.COMMAND_WORD + " "
