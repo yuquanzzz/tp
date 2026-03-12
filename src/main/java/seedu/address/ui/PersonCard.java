@@ -57,9 +57,10 @@ public class PersonCard extends UiPart<Region> {
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
-        person.getParentName().ifPresentOrElse(
-                pn -> parentName.setText("Parent: " + pn.fullName),
-                () -> parentName.setVisible(false)
-        );
+        if (person.getParentName().isPresent()) {
+            parentName.setText("Parent: " + person.getParentName().get().fullName);
+        } else {
+            parentName.setVisible(false);
+        }
     }
 }

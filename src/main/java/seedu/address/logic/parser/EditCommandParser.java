@@ -1,11 +1,12 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import static java.util.Objects.requireNonNull;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditParentCommand;
 import seedu.address.logic.commands.EditPersonCommand;
