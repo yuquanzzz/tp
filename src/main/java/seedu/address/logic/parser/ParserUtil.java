@@ -130,16 +130,16 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String appointmentStart} into a {@code LocalDateTime}.
+     * Parses a {@code String ISO8601_DATETIME} into a {@code LocalDateTime}.
      * Leading and trailing whitespaces will be trimmed.
      *
-     * @throws ParseException if the given {@code appointmentStart} is invalid.
+     * @throws ParseException if the given {@code ISO8601_DATETIME} is invalid.
      */
-    public static LocalDateTime parseIsoDateTime(String appointmentStart) throws ParseException {
-        requireNonNull(appointmentStart);
-        String trimmedAppointmentStart = appointmentStart.trim();
+    public static LocalDateTime parseIsoDateTime(String isoDateTime) throws ParseException {
+        requireNonNull(isoDateTime);
+        String trimmedIsoDateTime = isoDateTime.trim();
         try {
-            return LocalDateTime.parse(trimmedAppointmentStart, ISO_LOCAL_DATE_TIME_FORMATTER);
+            return LocalDateTime.parse(trimmedIsoDateTime, ISO_LOCAL_DATE_TIME_FORMATTER);
         } catch (DateTimeParseException e) {
             throw new ParseException(MESSAGE_INVALID_DATE_TIME);
         }
