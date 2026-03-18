@@ -68,6 +68,7 @@ public class EditParentCommandTest {
                 Messages.format(editedPerson));
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
         expectedModel.setPerson(personToEdit, editedPerson);
 
         assertCommandSuccess(editParentCommand, model, expectedMessage, expectedModel);

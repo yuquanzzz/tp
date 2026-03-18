@@ -5,12 +5,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
-import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
@@ -21,10 +18,9 @@ import seedu.address.model.Model;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
-import seedu.address.model.person.ParentName;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.PersonBuilder;
 import seedu.address.model.person.Phone;
-import seedu.address.model.tag.Tag;
 
 /**
  * Edits the details of an existing person in the address book.
@@ -48,7 +44,6 @@ public class EditPersonCommand extends EditCommand {
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
 
-    private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
 
     /**
@@ -56,31 +51,25 @@ public class EditPersonCommand extends EditCommand {
      * @param editPersonDescriptor details to edit the person with
      */
     public EditPersonCommand(Index index, EditPersonDescriptor editPersonDescriptor) {
-        requireNonNull(index);
+        super(index);
         requireNonNull(editPersonDescriptor);
+        if (!editPersonDescriptor.isAnyFieldEdited()) {
+            throw new IllegalArgumentException(MESSAGE_NOT_EDITED);
+        }
 
-        this.index = index;
         this.editPersonDescriptor = new EditPersonDescriptor(editPersonDescriptor);
     }
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
-        requireNonNull(model);
-        List<Person> lastShownList = model.getFilteredPersonList();
-
-        if (index.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
-        }
-
-        Person personToEdit = lastShownList.get(index.getZeroBased());
+        Person personToEdit = getTargetPerson(model);
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
 
         if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }
 
-        model.setPerson(personToEdit, editedPerson);
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        replacePerson(model, personToEdit, editedPerson);
         return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
     }
 
@@ -91,15 +80,12 @@ public class EditPersonCommand extends EditCommand {
     private static Person createEditedPerson(Person personToEdit, EditPersonDescriptor editPersonDescriptor) {
         assert personToEdit != null;
 
-        Name updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
-        Phone updatedPhone = editPersonDescriptor.getPhone().orElse(personToEdit.getPhone());
-        Email updatedEmail = editPersonDescriptor.getEmail().orElse(personToEdit.getEmail());
-        Address updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
-        Set<Tag> currentTags = personToEdit.getTags();
-        Optional<ParentName> preservedParentName = personToEdit.getParentName();
-
-        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, currentTags, preservedParentName,
-                personToEdit.getAppointmentStart(), personToEdit.getPaymentDate());
+        PersonBuilder builder = new PersonBuilder(personToEdit);
+        editPersonDescriptor.getName().ifPresent(builder::withName);
+        editPersonDescriptor.getPhone().ifPresent(builder::withPhone);
+        editPersonDescriptor.getEmail().ifPresent(builder::withEmail);
+        editPersonDescriptor.getAddress().ifPresent(builder::withAddress);
+        return builder.build();
     }
 
     @Override
