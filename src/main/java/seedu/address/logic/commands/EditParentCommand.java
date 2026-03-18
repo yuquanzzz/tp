@@ -49,7 +49,7 @@ public class EditParentCommand extends EditCommand {
                 .withParentName(Optional.of(parentName))
                 .build();
 
-        replacePersonAndShowAll(model, personToEdit, editedPerson);
+        replacePerson(model, personToEdit, editedPerson);
         return new CommandResult(String.format(MESSAGE_EDIT_PARENT_SUCCESS, Messages.format(editedPerson)));
     }
 

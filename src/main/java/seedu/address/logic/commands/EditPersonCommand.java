@@ -69,7 +69,7 @@ public class EditPersonCommand extends EditCommand {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }
 
-        replacePersonAndShowAll(model, personToEdit, editedPerson);
+        replacePerson(model, personToEdit, editedPerson);
         return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
     }
 

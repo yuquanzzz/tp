@@ -1,7 +1,6 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.List;
 
@@ -40,13 +39,12 @@ public abstract class IndexedPersonCommand extends Command {
     }
 
     /**
-     * Replaces {@code personToEdit} with {@code editedPerson} and refreshes the filtered list.
+     * Replaces {@code personToEdit} with {@code editedPerson} while preserving the current filter.
      */
-    protected void replacePersonAndShowAll(Model model, Person personToEdit, Person editedPerson) {
+    protected void replacePerson(Model model, Person personToEdit, Person editedPerson) {
         requireNonNull(model);
         requireNonNull(personToEdit);
         requireNonNull(editedPerson);
         model.setPerson(personToEdit, editedPerson);
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
     }
 }
