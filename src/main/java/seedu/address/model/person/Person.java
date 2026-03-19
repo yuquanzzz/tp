@@ -45,7 +45,7 @@ public class Person {
      * Every field must be present and not null.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Optional<ParentName> parentName,
-            Optional<LocalDateTime> appointmentStart, Optional<LocalDateTime> paymentDate) {
+            Optional<LocalDateTime> appointmentStart, Optional<LocalDate> paymentDate) {
         this(name, phone, email, address, tags, parentName, Optional.empty(), Optional.empty(), appointmentStart,
                 paymentDate);
     }
@@ -55,7 +55,7 @@ public class Person {
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Optional<ParentName> parentName,
             Optional<ParentPhone> parentPhone, Optional<ParentEmail> parentEmail,
-            Optional<LocalDateTime> appointmentStart, Optional<LocalDateTime> paymentDate) {
+            Optional<LocalDateTime> appointmentStart, Optional<LocalDate> paymentDate) {
         requireAllNonNull(name, phone, email, address, tags, parentName, parentPhone, parentEmail, appointmentStart,
                 paymentDate);
         this.name = name;
