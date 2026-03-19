@@ -23,27 +23,6 @@ import seedu.address.model.subject.Subject;
  */
 public class EditSubjectCommandParser implements Parser<EditSubjectCommand> {
 
-    /**
-     * Parses a {@code String} into a {@code Level}.
-     *
-     * @throws ParseException if the given {@code String} is invalid.
-     */
-    public static Level parseLevel(String input) throws ParseException {
-        requireNonNull(input);
-
-        String normalized = input.trim().toLowerCase();
-
-        switch (normalized) {
-        case "basic":
-            return Level.BASIC;
-        case "strong":
-            return Level.STRONG;
-        default:
-            throw new ParseException(
-                    "Level must be either 'basic' or 'strong' (case-insensitive).");
-        }
-    }
-
     @Override
     public EditSubjectCommand parse(String args) throws ParseException {
         requireNonNull(args);
