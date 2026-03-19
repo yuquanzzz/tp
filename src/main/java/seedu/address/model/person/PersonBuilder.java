@@ -21,6 +21,23 @@ public class PersonBuilder {
     private Optional<ParentName> parentName;
     private Optional<LocalDateTime> appointmentStart;
     private Optional<LocalDate> paymentDate;
+    private Optional<LocalDateTime> lastAttendance;
+
+    /**
+     * Creates a builder initialized with required person fields.
+     * Optional fields default to empty.
+     */
+    public PersonBuilder(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.tags = new HashSet<>(tags);
+        this.parentName = Optional.empty();
+        this.appointmentStart = Optional.empty();
+        this.paymentDate = Optional.empty();
+        this.lastAttendance = Optional.empty();
+    }
 
     /**
      * Creates a builder initialized with the data of {@code personToCopy}.
@@ -34,6 +51,7 @@ public class PersonBuilder {
         this.parentName = personToCopy.getParentName();
         this.appointmentStart = personToCopy.getAppointmentStart();
         this.paymentDate = personToCopy.getPaymentDate();
+        this.lastAttendance = personToCopy.getLastAttendance();
     }
 
     /**
@@ -126,6 +144,17 @@ public class PersonBuilder {
     }
 
     /**
+     * Sets the last attendance time of the {@code Person} being built.
+     *
+     * @param lastAttendance the optional last attendance time
+     * @return this {@code PersonBuilder} instance for method chaining
+     */
+    public PersonBuilder withLastAttendance(Optional<LocalDateTime> lastAttendance) {
+        this.lastAttendance = lastAttendance;
+        return this;
+    }
+
+    /**
      * Builds a {@code Person} with the current builder state.
      */
     public Person build() {
@@ -137,7 +166,8 @@ public class PersonBuilder {
                 tags,
                 parentName,
                 appointmentStart,
-                paymentDate
+                paymentDate,
+                lastAttendance
         );
     }
 }

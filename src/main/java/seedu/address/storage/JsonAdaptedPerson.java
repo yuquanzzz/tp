@@ -21,6 +21,7 @@ import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.ParentName;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.PersonBuilder;
 import seedu.address.model.person.Phone;
 import seedu.address.model.tag.Tag;
 
@@ -32,18 +33,23 @@ class JsonAdaptedPerson {
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Person's %s field is missing!";
     private static final String APPOINTMENT_START_MESSAGE_CONSTRAINTS =
             "Appointment start date-time must be in ISO 8601 local format, e.g. 2026-01-13T08:00:00";
-    private static final DateTimeFormatter APPOINTMENT_START_FORMATTER =
-            DateTimeFormatter.ISO_LOCAL_DATE_TIME.withResolverStyle(ResolverStyle.STRICT);
+    private static final String LAST_ATTENDANCE_MESSAGE_CONSTRAINTS =
+            "Last attendance date-time must be in ISO 8601 local format, e.g. 2026-01-29T08:00:00";
     private static final String PAYMENT_DATE_MESSAGE_CONSTRAINTS =
-            "Payment date must be in ISO 8601 local format, e.g. 2026-01-13";
-    private static final DateTimeFormatter PAYMENT_DATE_FORMATTER =
-            DateTimeFormatter.ISO_LOCAL_DATE.withResolverStyle(ResolverStyle.STRICT);
+        "Payment date must be in ISO 8601 local format, e.g. 2026-01-13T08:00:00";
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE
+            .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DATETIME_FORMATTER =
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME.withResolverStyle(ResolverStyle.STRICT);
+
 
     private final String name;
     private final String phone;
     private final String email;
     private final String address;
     private final String appointmentStart;
+    private final String lastAttendance;
     private final String parentName; // optional, may be null
     private final String paymentDate;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
@@ -57,7 +63,8 @@ class JsonAdaptedPerson {
             @JsonProperty("parentName") String parentName,
             @JsonProperty("tags") List<JsonAdaptedTag> tags,
             @JsonProperty("appointmentStart") String appointmentStart,
-            @JsonProperty("paymentDate") String paymentDate) {
+            @JsonProperty("paymentDate") String paymentDate,
+            @JsonProperty("lastAttendance") String lastAttendance) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -65,6 +72,7 @@ class JsonAdaptedPerson {
         this.parentName = parentName;
         this.appointmentStart = appointmentStart;
         this.paymentDate = paymentDate;
+        this.lastAttendance = lastAttendance;
         if (tags != null) {
             this.tags.addAll(tags);
         }
@@ -81,6 +89,9 @@ class JsonAdaptedPerson {
         appointmentStart = source.getAppointmentStart()
                 .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .orElse(null);
+        lastAttendance = source.getLastAttendance()
+            .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            .orElse(null);
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -136,9 +147,18 @@ class JsonAdaptedPerson {
         LocalDateTime modelAppointmentStart = null;
         if (appointmentStart != null) {
             try {
-                modelAppointmentStart = LocalDateTime.parse(appointmentStart, APPOINTMENT_START_FORMATTER);
+                modelAppointmentStart = LocalDateTime.parse(appointmentStart, DATETIME_FORMATTER);
             } catch (DateTimeParseException e) {
                 throw new IllegalValueException(APPOINTMENT_START_MESSAGE_CONSTRAINTS);
+            }
+        }
+
+        LocalDateTime modelLastAttendance = null;
+        if (lastAttendance != null) {
+            try {
+                modelLastAttendance = LocalDateTime.parse(lastAttendance, DATETIME_FORMATTER);
+            } catch (DateTimeParseException e) {
+                throw new IllegalValueException(LAST_ATTENDANCE_MESSAGE_CONSTRAINTS);
             }
         }
 
@@ -155,16 +175,18 @@ class JsonAdaptedPerson {
         LocalDate modelPaymentDate = null;
         if (paymentDate != null) {
             try {
-                modelPaymentDate = LocalDate.parse(paymentDate, PAYMENT_DATE_FORMATTER);
+                modelPaymentDate = LocalDate.parse(paymentDate, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
                 throw new IllegalValueException(PAYMENT_DATE_MESSAGE_CONSTRAINTS);
             }
         }
 
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags,
-                Optional.ofNullable(modelParentName),
-                Optional.ofNullable(modelAppointmentStart),
-                Optional.ofNullable(modelPaymentDate));
+        return new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags)
+            .withParentName(Optional.ofNullable(modelParentName))
+            .withAppointmentStart(Optional.ofNullable(modelAppointmentStart))
+            .withPaymentDate(Optional.ofNullable(modelPaymentDate))
+            .withLastAttendance(Optional.ofNullable(modelLastAttendance))
+            .build();
     }
 
 }

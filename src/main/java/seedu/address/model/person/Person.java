@@ -28,22 +28,27 @@ public class Person {
     private final Address address;
     private final Set<Tag> tags = new HashSet<>();
     private final Optional<LocalDateTime> appointmentStart;
+    private final Optional<LocalDateTime> lastAttendance;
     private final Optional<ParentName> parentName;
     private final Optional<LocalDate> paymentDate;
 
     /**
-     * Every field must be present and not null. parentName defaults to empty.
+     * Every field must be present and not null.
+     * Fields other than personal details (name, phone, email, and address)
+     * are optional and can be empty.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        this(name, phone, email, address, tags, Optional.empty(), Optional.empty(), Optional.empty());
+        this(name, phone, email, address, tags, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
     }
 
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Optional<ParentName> parentName,
-            Optional<LocalDateTime> appointmentStart, Optional<LocalDate> paymentDate) {
-        requireAllNonNull(name, phone, email, address, tags, parentName, appointmentStart, paymentDate);
+    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags,
+        Optional<ParentName> parentName, Optional<LocalDateTime> appointmentStart,
+        Optional<LocalDate> paymentDate, Optional<LocalDateTime> lastAttendance) {
+        requireAllNonNull(name, phone, email, address, tags,
+            parentName, appointmentStart, paymentDate, lastAttendance);
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -52,6 +57,7 @@ public class Person {
         this.parentName = parentName;
         this.appointmentStart = appointmentStart;
         this.paymentDate = paymentDate;
+        this.lastAttendance = lastAttendance;
     }
 
     public Name getName() {
@@ -76,6 +82,10 @@ public class Person {
 
     public Optional<LocalDate> getPaymentDate() {
         return paymentDate;
+    }
+
+    public Optional<LocalDateTime> getLastAttendance() {
+        return lastAttendance;
     }
 
     /**
@@ -129,7 +139,8 @@ public class Person {
                 && tags.equals(otherPerson.tags)
                 && parentName.equals(otherPerson.parentName)
                 && appointmentStart.equals(otherPerson.appointmentStart)
-                && paymentDate.equals(otherPerson.paymentDate);
+                && paymentDate.equals(otherPerson.paymentDate)
+                && lastAttendance.equals(otherPerson.lastAttendance);
 
     }
 
@@ -137,7 +148,7 @@ public class Person {
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, address, tags, parentName,
-                appointmentStart, paymentDate);
+                appointmentStart, paymentDate, lastAttendance);
     }
 
     @Override
@@ -151,6 +162,7 @@ public class Person {
                 .add("parentName", parentName.orElse(null))
                 .add("appointmentStart", appointmentStart)
                 .add("paymentDate", paymentDate)
+                .add("lastAttendance", lastAttendance)
                 .toString();
     }
 
