@@ -28,13 +28,13 @@ public class EditAttdCommand extends EditCommand {
 
     public static final String MESSAGE_EDIT_ATTD_SUCCESS = "Recorded last attendance for %1$s: %2$s";
 
-    private final Optional<LocalDateTime> attendanceToSet;
+    private final LocalDateTime attendanceToSet;
 
     /**
      * @param index of the person in the filtered person list to edit
-     * @param attendanceToSet optional last attendance date-time to set
+     * @param attendanceToSet last attendance date-time to set
      */
-    public EditAttdCommand(Index index, Optional<LocalDateTime> attendanceToSet) {
+    public EditAttdCommand(Index index, LocalDateTime attendanceToSet) {
         super(index);
         requireNonNull(attendanceToSet);
         this.attendanceToSet = attendanceToSet;
@@ -42,14 +42,13 @@ public class EditAttdCommand extends EditCommand {
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
-        LocalDateTime lastAttendance = attendanceToSet.orElseGet(() -> LocalDateTime.now().withNano(0));
         Person personToEdit = getTargetPerson(model);
         Person editedPerson = new PersonBuilder(personToEdit)
-                .withLastAttendance(Optional.of(lastAttendance))
+                .withLastAttendance(Optional.of(attendanceToSet))
                 .build();
 
         replacePerson(model, personToEdit, editedPerson);
-        String formattedAttendance = lastAttendance.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String formattedAttendance = attendanceToSet.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         return new CommandResult(String.format(MESSAGE_EDIT_ATTD_SUCCESS,
                 editedPerson.getName().fullName, formattedAttendance));
     }

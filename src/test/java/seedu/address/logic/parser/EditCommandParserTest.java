@@ -34,7 +34,6 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD_PERSON;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -190,12 +189,7 @@ public class EditCommandParserTest {
         // attendance with explicit date-time
         userInput = "attd " + targetIndex.getOneBased() + LAST_ATTENDANCE_DESC;
         EditAttdCommand expectedAttdCommand = new EditAttdCommand(targetIndex,
-                Optional.of(LocalDateTime.parse(VALID_LAST_ATTENDANCE)));
-        assertParseSuccess(parser, userInput, expectedAttdCommand);
-
-        // attendance with no date-time defaults during execution
-        userInput = "attd " + targetIndex.getOneBased();
-        expectedAttdCommand = new EditAttdCommand(targetIndex, Optional.empty());
+                LocalDateTime.parse(VALID_LAST_ATTENDANCE));
         assertParseSuccess(parser, userInput, expectedAttdCommand);
     }
 
