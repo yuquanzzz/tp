@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -18,6 +19,7 @@ public class PersonBuilder {
     private Email email;
     private Address address;
     private Set<Tag> tags;
+    private Set<Subject> subjects;
     private Optional<Name> parentName;
     private Optional<Phone> parentPhone;
     private Optional<Email> parentEmail;
@@ -35,6 +37,7 @@ public class PersonBuilder {
         this.email = email;
         this.address = address;
         this.tags = new HashSet<>(tags);
+        this.subjects = new HashSet<>();
         this.parentName = Optional.empty();
         this.parentPhone = Optional.empty();
         this.parentEmail = Optional.empty();
@@ -52,6 +55,7 @@ public class PersonBuilder {
         this.email = personToCopy.getEmail();
         this.address = personToCopy.getAddress();
         this.tags = new HashSet<>(personToCopy.getTags());
+        this.subjects = new HashSet<>(personToCopy.getSubjects());
         this.parentName = personToCopy.getParentName();
         this.parentPhone = personToCopy.getParentPhone();
         this.parentEmail = personToCopy.getParentEmail();
@@ -113,6 +117,18 @@ public class PersonBuilder {
      */
     public PersonBuilder withTags(Set<Tag> tags) {
         this.tags = new HashSet<>(tags);
+        return this;
+    }
+
+    /**
+     * Replaces the subject set of the {@code Person} being built.
+     * A defensive copy of the provided subject set is created.
+     *
+     * @param subjects the new set of tags
+     * @return this {@code PersonBuilder} instance for method chaining
+     */
+    public PersonBuilder withSubjects(Set<Subject> subjects) {
+        this.subjects = new HashSet<>(subjects);
         return this;
     }
 
@@ -192,6 +208,7 @@ public class PersonBuilder {
                 email,
                 address,
                 tags,
+                subjects,
                 parentName,
                 parentPhone,
                 parentEmail,

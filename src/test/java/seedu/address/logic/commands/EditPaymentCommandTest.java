@@ -40,6 +40,7 @@ public class EditPaymentCommandTest {
         Person editedPerson = new PersonBuilder(personToEdit)
                 .withPaymentDate(VALID_PAYMENT_DATE)
                 .build();
+
         String expectedMessage = String.format(EditPaymentCommand.MESSAGE_EDIT_PAYMENT_SUCCESS,
                 editedPerson.getName().fullName, paymentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
 

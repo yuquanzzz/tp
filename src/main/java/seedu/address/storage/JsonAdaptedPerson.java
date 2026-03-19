@@ -22,6 +22,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.PersonBuilder;
 import seedu.address.model.person.Phone;
+import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -54,6 +55,7 @@ class JsonAdaptedPerson {
     private final String parentEmail; // optional, may be null
     private final String paymentDate;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
+    private final List<JsonAdaptedSubject> subjects = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedPerson} with the given person details.
@@ -61,8 +63,11 @@ class JsonAdaptedPerson {
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("parentName") String parentName, @JsonProperty("parentPhone") String parentPhone,
-            @JsonProperty("parentEmail") String parentEmail, @JsonProperty("tags") List<JsonAdaptedTag> tags,
+            @JsonProperty("tags") List<JsonAdaptedTag> tags,
+            @JsonProperty("subjects") List<JsonAdaptedSubject> subjects,
+            @JsonProperty("parentName") String parentName,
+            @JsonProperty("parentPhone") String parentPhone,
+            @JsonProperty("parentEmail") String parentEmail,
             @JsonProperty("appointmentStart") String appointmentStart,
             @JsonProperty("paymentDate") String paymentDate,
             @JsonProperty("lastAttendance") String lastAttendance) {
@@ -78,6 +83,9 @@ class JsonAdaptedPerson {
         this.lastAttendance = lastAttendance;
         if (tags != null) {
             this.tags.addAll(tags);
+        }
+        if (subjects != null) {
+            this.subjects.addAll(subjects);
         }
     }
 
@@ -98,6 +106,9 @@ class JsonAdaptedPerson {
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
+        subjects.addAll(source.getSubjects().stream()
+                .map(JsonAdaptedSubject::new)
+                .collect(Collectors.toList()));
         parentName = source.getParentName().map(pn -> pn.fullName).orElse(null);
         parentPhone = source.getParentPhone().map(pp -> pp.value).orElse(null);
         parentEmail = source.getParentEmail().map(pe -> pe.value).orElse(null);
@@ -110,13 +121,11 @@ class JsonAdaptedPerson {
      * @throws IllegalValueException if there were any data constraints violated in the adapted person.
      */
     public Person toModelType() throws IllegalValueException {
-        final List<Tag> personTags = new ArrayList<>();
-        for (JsonAdaptedTag tag : tags) {
-            personTags.add(tag.toModelType());
-        }
 
+        // ---------- Validate core fields ----------
         if (name == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName()));
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName()));
         }
         if (!Name.isValidName(name)) {
             throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
@@ -124,7 +133,8 @@ class JsonAdaptedPerson {
         final Name modelName = new Name(name);
 
         if (phone == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
         }
         if (!Phone.isValidPhone(phone)) {
             throw new IllegalValueException(Phone.MESSAGE_CONSTRAINTS);
@@ -132,7 +142,8 @@ class JsonAdaptedPerson {
         final Phone modelPhone = new Phone(phone);
 
         if (email == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName()));
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName()));
         }
         if (!Email.isValidEmail(email)) {
             throw new IllegalValueException(Email.MESSAGE_CONSTRAINTS);
@@ -140,33 +151,33 @@ class JsonAdaptedPerson {
         final Email modelEmail = new Email(email);
 
         if (address == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
         }
         if (!Address.isValidAddress(address)) {
             throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
         }
         final Address modelAddress = new Address(address);
 
-        LocalDateTime modelAppointmentStart = null;
-        if (appointmentStart != null) {
-            try {
-                modelAppointmentStart = LocalDateTime.parse(appointmentStart, DATETIME_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw new IllegalValueException(APPOINTMENT_START_MESSAGE_CONSTRAINTS);
+        // ---------- Tags ----------
+        final List<Tag> personTags = new ArrayList<>();
+        if (tags != null) {
+            for (JsonAdaptedTag tag : tags) {
+                personTags.add(tag.toModelType());
             }
         }
-
-        LocalDateTime modelLastAttendance = null;
-        if (lastAttendance != null) {
-            try {
-                modelLastAttendance = LocalDateTime.parse(lastAttendance, DATETIME_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw new IllegalValueException(LAST_ATTENDANCE_MESSAGE_CONSTRAINTS);
-            }
-        }
-
         final Set<Tag> modelTags = new HashSet<>(personTags);
 
+        // ---------- Subjects ----------
+        final List<Subject> personSubjects = new ArrayList<>();
+        if (subjects != null) {
+            for (JsonAdaptedSubject subject : subjects) {
+                personSubjects.add(subject.toModelType());
+            }
+        }
+        final Set<Subject> modelSubjects = new HashSet<>(personSubjects);
+
+        // ---------- Parent ----------
         Name modelParentName = null;
         if (parentName != null) {
             if (!Name.isValidName(parentName)) {
@@ -191,6 +202,17 @@ class JsonAdaptedPerson {
             modelParentEmail = new Email(parentEmail);
         }
 
+        // ---------- Appointment ----------
+        LocalDateTime modelAppointmentStart = null;
+        if (appointmentStart != null) {
+            try {
+                modelAppointmentStart = LocalDateTime.parse(appointmentStart, DATETIME_FORMATTER);
+            } catch (DateTimeParseException e) {
+                throw new IllegalValueException(APPOINTMENT_START_MESSAGE_CONSTRAINTS);
+            }
+        }
+
+        // ---------- Payment ----------
         LocalDate modelPaymentDate = null;
         if (paymentDate != null) {
             try {
@@ -200,7 +222,18 @@ class JsonAdaptedPerson {
             }
         }
 
+        // ---------- Last attendance ----------
+        LocalDateTime modelLastAttendance = null;
+        if (lastAttendance != null) {
+            try {
+                modelLastAttendance = LocalDateTime.parse(lastAttendance, DATETIME_FORMATTER);
+            } catch (DateTimeParseException e) {
+                throw new IllegalValueException(LAST_ATTENDANCE_MESSAGE_CONSTRAINTS);
+            }
+        }
+
         return new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags)
+            .withSubjects(modelSubjects)
             .withParentName(Optional.ofNullable(modelParentName))
             .withParentPhone(Optional.ofNullable(modelParentPhone))
             .withParentEmail(Optional.ofNullable(modelParentEmail))
@@ -209,5 +242,4 @@ class JsonAdaptedPerson {
             .withLastAttendance(Optional.ofNullable(modelLastAttendance))
             .build();
     }
-
 }

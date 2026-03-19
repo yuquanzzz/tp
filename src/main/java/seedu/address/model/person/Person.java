@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -27,6 +28,7 @@ public class Person {
     // Data fields
     private final Address address;
     private final Set<Tag> tags = new HashSet<>();
+    private final Set<Subject> subjects = new HashSet<>();
     private final Optional<LocalDateTime> appointmentStart;
     private final Optional<LocalDateTime> lastAttendance;
     private final Optional<Name> parentName;
@@ -35,53 +37,41 @@ public class Person {
     private final Optional<LocalDate> paymentDate;
 
     /**
-     * Every field must be present and not null.
+     * Creates a {@code Person} with the given core fields and tags.
      * Fields other than personal details (name, phone, email, and address)
      * are optional and can be empty.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        this(name, phone, email, address, tags, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty());
+        this(name, phone, email, address, tags, new HashSet<>(),
+                Optional.empty(), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.empty());
     }
 
     /**
-     * Every field must be present and not null.
+     * Every field must be present and not null. parentName defaults to empty.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Optional<Name> parentName,
-            Optional<LocalDateTime> appointmentStart, Optional<LocalDate> paymentDate) {
-        this(name, phone, email, address, tags, parentName, Optional.empty(), Optional.empty(), appointmentStart,
-                paymentDate, Optional.empty());
-    }
+    public Person(Name name, Phone phone, Email email, Address address,
+                  Set<Tag> tags, Set<Subject> subjects,
+                  Optional<Name> parentName, Optional<Phone> parentPhone, Optional<Email> parentEmail,
+                  Optional<LocalDateTime> appointmentStart,
+                  Optional<LocalDate> paymentDate,
+                  Optional<LocalDateTime> lastAttendance) {
 
-    /**
-     * Every field must be present and not null.
-     */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags,
-            Optional<Name> parentName, Optional<Phone> parentPhone, Optional<Email> parentEmail,
-            Optional<LocalDateTime> appointmentStart, Optional<LocalDate> paymentDate) {
-        this(name, phone, email, address, tags, parentName, parentPhone, parentEmail, appointmentStart, paymentDate,
-                Optional.empty());
-    }
+        requireAllNonNull(name, phone, email, address, tags, subjects,
+                parentName, parentPhone, parentEmail,
+                appointmentStart, paymentDate, lastAttendance);
 
-    /**
-     * Every field must be present and not null.
-     */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags,
-            Optional<Name> parentName, Optional<Phone> parentPhone, Optional<Email> parentEmail,
-            Optional<LocalDateTime> appointmentStart, Optional<LocalDate> paymentDate,
-            Optional<LocalDateTime> lastAttendance) {
-        requireAllNonNull(name, phone, email, address, tags,
-                parentName, parentPhone, parentEmail, appointmentStart, paymentDate, lastAttendance);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.tags.addAll(tags);
-        this.appointmentStart = appointmentStart;
-        this.lastAttendance = lastAttendance;
+        this.subjects.addAll(subjects);
         this.parentName = parentName;
         this.parentPhone = parentPhone;
         this.parentEmail = parentEmail;
+        this.appointmentStart = appointmentStart;
+        this.lastAttendance = lastAttendance;
         this.paymentDate = paymentDate;
     }
 
@@ -119,6 +109,14 @@ public class Person {
      */
     public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    /**
+     * Returns an immutable subject set, which throws {@code UnsupportedOperationException}
+     * if modification is attempted.
+     */
+    public Set<Subject> getSubjects() {
+        return Collections.unmodifiableSet(subjects);
     }
 
     /**
@@ -170,29 +168,37 @@ public class Person {
         }
 
         Person otherPerson = (Person) other;
-        return name.equals(otherPerson.name) && phone.equals(otherPerson.phone) && email.equals(otherPerson.email)
-                && address.equals(otherPerson.address) && tags.equals(otherPerson.tags)
+        return name.equals(otherPerson.name)
+                && phone.equals(otherPerson.phone)
+                && email.equals(otherPerson.email)
+                && address.equals(otherPerson.address)
+                && tags.equals(otherPerson.tags)
+                && subjects.equals(otherPerson.subjects)
                 && parentName.equals(otherPerson.parentName)
                 && parentPhone.equals(otherPerson.parentPhone)
                 && parentEmail.equals(otherPerson.parentEmail)
                 && appointmentStart.equals(otherPerson.appointmentStart)
                 && paymentDate.equals(otherPerson.paymentDate)
                 && lastAttendance.equals(otherPerson.lastAttendance);
-
     }
 
     @Override
     public int hashCode() {
-        // use this method for custom fields hashing instead of implementing
-        // your own
-        return Objects.hash(name, phone, email, address, tags, parentName, parentPhone, parentEmail, appointmentStart,
-                paymentDate, lastAttendance);
+        // use this method for custom fields hashing instead of implementing your own
+        return Objects.hash(name, phone, email, address, tags, subjects,
+                parentName, parentPhone, parentEmail,
+                appointmentStart, paymentDate, lastAttendance);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).add("name", name).add("phone", phone).add("email", email)
-                .add("address", address).add("tags", tags)
+        return new ToStringBuilder(this)
+                .add("name", name)
+                .add("phone", phone)
+                .add("email", email)
+                .add("address", address)
+                .add("tags", tags)
+                .add("subjects", subjects)
                 .add("parentName", parentName.orElse(null))
                 .add("parentPhone", parentPhone.orElse(null))
                 .add("parentEmail", parentEmail.orElse(null))

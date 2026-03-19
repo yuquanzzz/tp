@@ -44,6 +44,7 @@ public class EditApptCommandTest {
         Person editedPerson = new PersonBuilder(personToEdit)
                 .withAppointmentStart(VALID_APPOINTMENT_START)
                 .build();
+
         String expectedMessage = String.format(EditApptCommand.MESSAGE_EDIT_APPT_SUCCESS,
                 editedPerson.getName().fullName, appointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
