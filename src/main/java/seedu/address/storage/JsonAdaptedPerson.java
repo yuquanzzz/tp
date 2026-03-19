@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -20,7 +21,6 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
-import seedu.address.model.person.PersonBuilder;
 import seedu.address.model.person.Phone;
 import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
@@ -44,6 +44,7 @@ class JsonAdaptedPerson {
             DateTimeFormatter.ISO_LOCAL_DATE_TIME.withResolverStyle(ResolverStyle.STRICT);
 
 
+    private final String id;
     private final String name;
     private final String phone;
     private final String email;
@@ -61,7 +62,8 @@ class JsonAdaptedPerson {
      * Constructs a {@code JsonAdaptedPerson} with the given person details.
      */
     @JsonCreator
-    public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
+    public JsonAdaptedPerson(@JsonProperty("id") String id,
+            @JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
             @JsonProperty("tags") List<JsonAdaptedTag> tags,
             @JsonProperty("subjects") List<JsonAdaptedSubject> subjects,
@@ -71,6 +73,7 @@ class JsonAdaptedPerson {
             @JsonProperty("appointmentStart") String appointmentStart,
             @JsonProperty("paymentDate") String paymentDate,
             @JsonProperty("lastAttendance") String lastAttendance) {
+        this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -93,6 +96,7 @@ class JsonAdaptedPerson {
      * Converts a given {@code Person} into this class for Jackson use.
      */
     public JsonAdaptedPerson(Person source) {
+        id = source.getId().toString();
         name = source.getName().fullName;
         phone = source.getPhone().value;
         email = source.getEmail().value;
@@ -121,35 +125,81 @@ class JsonAdaptedPerson {
      * @throws IllegalValueException if there were any data constraints violated in the adapted person.
      */
     public Person toModelType() throws IllegalValueException {
+        final UUID modelId = validateId();
+        final Name modelName = validateName(name, "Person's");
+        final Phone modelPhone = validatePhone(phone, "Person's");
+        final Email modelEmail = validateEmail(email, "Person's");
+        final Address modelAddress = validateAddress();
+        final Set<Tag> modelTags = validateTags();
+        final Set<Subject> modelSubjects = validateSubjects();
+        final Name modelParentName = parentName != null ? validateName(parentName, "Parent's") : null;
+        final Phone modelParentPhone = parentPhone != null ? validatePhone(parentPhone, "Parent's") : null;
+        final Email modelParentEmail = parentEmail != null ? validateEmail(parentEmail, "Parent's") : null;
+        final LocalDateTime modelAppointmentStart = validateDateTime(
+                appointmentStart, APPOINTMENT_START_MESSAGE_CONSTRAINTS);
+        final LocalDate modelPaymentDate = validateDate(paymentDate, PAYMENT_DATE_MESSAGE_CONSTRAINTS);
+        final LocalDateTime modelLastAttendance = validateDateTime(
+                lastAttendance, LAST_ATTENDANCE_MESSAGE_CONSTRAINTS);
 
-        // ---------- Validate core fields ----------
-        if (name == null) {
+        return new Person(
+                modelId, modelName, modelPhone, modelEmail, modelAddress,
+                modelTags, modelSubjects,
+                Optional.ofNullable(modelParentName),
+                Optional.ofNullable(modelParentPhone),
+                Optional.ofNullable(modelParentEmail),
+                Optional.ofNullable(modelAppointmentStart),
+                Optional.ofNullable(modelPaymentDate),
+                Optional.ofNullable(modelLastAttendance));
+    }
+
+    // ==================== Validation helpers ====================
+
+    private UUID validateId() throws IllegalValueException {
+        if (id == null) {
+            // Backward compatibility: generate a new UUID for old data files
+            return UUID.randomUUID();
+        }
+        try {
+            return UUID.fromString(id);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalValueException("Person's ID must be a valid UUID.");
+        }
+    }
+
+    private Name validateName(String value, String ownerPrefix) throws IllegalValueException {
+        if (value == null) {
             throw new IllegalValueException(
                     String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName()));
         }
-        if (!Name.isValidName(name)) {
+        if (!Name.isValidName(value)) {
             throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
         }
-        final Name modelName = new Name(name);
+        return new Name(value);
+    }
 
-        if (phone == null) {
+    private Phone validatePhone(String value, String ownerPrefix) throws IllegalValueException {
+        if (value == null) {
             throw new IllegalValueException(
                     String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
         }
-        if (!Phone.isValidPhone(phone)) {
+        if (!Phone.isValidPhone(value)) {
             throw new IllegalValueException(Phone.MESSAGE_CONSTRAINTS);
         }
-        final Phone modelPhone = new Phone(phone);
+        return new Phone(value);
+    }
 
-        if (email == null) {
+    private Email validateEmail(String value, String ownerPrefix) throws IllegalValueException {
+        if (value == null) {
             throw new IllegalValueException(
                     String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName()));
         }
-        if (!Email.isValidEmail(email)) {
+        if (!Email.isValidEmail(value)) {
             throw new IllegalValueException(Email.MESSAGE_CONSTRAINTS);
         }
-        final Email modelEmail = new Email(email);
+        return new Email(value);
+    }
 
+    private Address validateAddress() throws IllegalValueException {
         if (address == null) {
             throw new IllegalValueException(
                     String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
@@ -157,89 +207,48 @@ class JsonAdaptedPerson {
         if (!Address.isValidAddress(address)) {
             throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
         }
-        final Address modelAddress = new Address(address);
+        return new Address(address);
+    }
 
-        // ---------- Tags ----------
+    private Set<Tag> validateTags() throws IllegalValueException {
         final List<Tag> personTags = new ArrayList<>();
         if (tags != null) {
             for (JsonAdaptedTag tag : tags) {
                 personTags.add(tag.toModelType());
             }
         }
-        final Set<Tag> modelTags = new HashSet<>(personTags);
+        return new HashSet<>(personTags);
+    }
 
-        // ---------- Subjects ----------
+    private Set<Subject> validateSubjects() throws IllegalValueException {
         final List<Subject> personSubjects = new ArrayList<>();
         if (subjects != null) {
             for (JsonAdaptedSubject subject : subjects) {
                 personSubjects.add(subject.toModelType());
             }
         }
-        final Set<Subject> modelSubjects = new HashSet<>(personSubjects);
+        return new HashSet<>(personSubjects);
+    }
 
-        // ---------- Parent ----------
-        Name modelParentName = null;
-        if (parentName != null) {
-            if (!Name.isValidName(parentName)) {
-                throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
-            }
-            modelParentName = new Name(parentName);
+    private LocalDateTime validateDateTime(String value, String errorMessage) throws IllegalValueException {
+        if (value == null) {
+            return null;
         }
-
-        Phone modelParentPhone = null;
-        if (parentPhone != null) {
-            if (!Phone.isValidPhone(parentPhone)) {
-                throw new IllegalValueException(Phone.MESSAGE_CONSTRAINTS);
-            }
-            modelParentPhone = new Phone(parentPhone);
+        try {
+            return LocalDateTime.parse(value, DATETIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new IllegalValueException(errorMessage);
         }
+    }
 
-        Email modelParentEmail = null;
-        if (parentEmail != null) {
-            if (!Email.isValidEmail(parentEmail)) {
-                throw new IllegalValueException(Email.MESSAGE_CONSTRAINTS);
-            }
-            modelParentEmail = new Email(parentEmail);
+    private LocalDate validateDate(String value, String errorMessage) throws IllegalValueException {
+        if (value == null) {
+            return null;
         }
-
-        // ---------- Appointment ----------
-        LocalDateTime modelAppointmentStart = null;
-        if (appointmentStart != null) {
-            try {
-                modelAppointmentStart = LocalDateTime.parse(appointmentStart, DATETIME_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw new IllegalValueException(APPOINTMENT_START_MESSAGE_CONSTRAINTS);
-            }
+        try {
+            return LocalDate.parse(value, DATE_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new IllegalValueException(errorMessage);
         }
-
-        // ---------- Payment ----------
-        LocalDate modelPaymentDate = null;
-        if (paymentDate != null) {
-            try {
-                modelPaymentDate = LocalDate.parse(paymentDate, DATE_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw new IllegalValueException(PAYMENT_DATE_MESSAGE_CONSTRAINTS);
-            }
-        }
-
-        // ---------- Last attendance ----------
-        LocalDateTime modelLastAttendance = null;
-        if (lastAttendance != null) {
-            try {
-                modelLastAttendance = LocalDateTime.parse(lastAttendance, DATETIME_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw new IllegalValueException(LAST_ATTENDANCE_MESSAGE_CONSTRAINTS);
-            }
-        }
-
-        return new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags)
-            .withSubjects(modelSubjects)
-            .withParentName(Optional.ofNullable(modelParentName))
-            .withParentPhone(Optional.ofNullable(modelParentPhone))
-            .withParentEmail(Optional.ofNullable(modelParentEmail))
-            .withAppointmentStart(Optional.ofNullable(modelAppointmentStart))
-            .withPaymentDate(Optional.ofNullable(modelPaymentDate))
-            .withLastAttendance(Optional.ofNullable(modelLastAttendance))
-            .build();
     }
 }

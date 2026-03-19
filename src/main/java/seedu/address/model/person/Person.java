@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.subject.Subject;
@@ -19,6 +20,9 @@ import seedu.address.model.tag.Tag;
  * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Person {
+
+    // Stable identity
+    private final UUID id;
 
     // Identity fields
     private final Name name;
@@ -38,29 +42,29 @@ public class Person {
 
     /**
      * Creates a {@code Person} with the given core fields and tags.
-     * Fields other than personal details (name, phone, email, and address)
-     * are optional and can be empty.
+     * A new UUID is generated automatically.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        this(name, phone, email, address, tags, new HashSet<>(),
+        this(UUID.randomUUID(), name, phone, email, address, tags, new HashSet<>(),
                 Optional.empty(), Optional.empty(), Optional.empty(),
                 Optional.empty(), Optional.empty(), Optional.empty());
     }
 
     /**
-     * Every field must be present and not null. parentName defaults to empty.
+     * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address,
+    public Person(UUID id, Name name, Phone phone, Email email, Address address,
                   Set<Tag> tags, Set<Subject> subjects,
                   Optional<Name> parentName, Optional<Phone> parentPhone, Optional<Email> parentEmail,
                   Optional<LocalDateTime> appointmentStart,
                   Optional<LocalDate> paymentDate,
                   Optional<LocalDateTime> lastAttendance) {
 
-        requireAllNonNull(name, phone, email, address, tags, subjects,
+        requireAllNonNull(id, name, phone, email, address, tags, subjects,
                 parentName, parentPhone, parentEmail,
                 appointmentStart, paymentDate, lastAttendance);
 
+        this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -73,6 +77,10 @@ public class Person {
         this.appointmentStart = appointmentStart;
         this.lastAttendance = lastAttendance;
         this.paymentDate = paymentDate;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public Name getName() {
@@ -141,15 +149,15 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same name.
-     * This defines a weaker notion of equality between two persons.
+     * Returns true if both persons have the same UUID.
+     * This defines identity equality between two persons.
      */
     public boolean isSamePerson(Person otherPerson) {
         if (otherPerson == this) {
             return true;
         }
 
-        return otherPerson != null && otherPerson.getName().equals(getName());
+        return otherPerson != null && otherPerson.getId().equals(getId());
     }
 
     /**
@@ -184,7 +192,6 @@ public class Person {
 
     @Override
     public int hashCode() {
-        // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, address, tags, subjects,
                 parentName, parentPhone, parentEmail,
                 appointmentStart, paymentDate, lastAttendance);
@@ -193,6 +200,7 @@ public class Person {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
+                .add("id", id)
                 .add("name", name)
                 .add("phone", phone)
                 .add("email", email)

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
@@ -14,6 +15,7 @@ import seedu.address.model.tag.Tag;
  */
 public class PersonBuilder {
 
+    private UUID id;
     private Name name;
     private Phone phone;
     private Email email;
@@ -32,6 +34,7 @@ public class PersonBuilder {
      * Optional fields default to empty.
      */
     public PersonBuilder(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
+        this.id = UUID.randomUUID();
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -50,6 +53,7 @@ public class PersonBuilder {
      * Creates a builder initialized with the data of {@code personToCopy}.
      */
     public PersonBuilder(Person personToCopy) {
+        this.id = personToCopy.getId();
         this.name = personToCopy.getName();
         this.phone = personToCopy.getPhone();
         this.email = personToCopy.getEmail();
@@ -203,6 +207,7 @@ public class PersonBuilder {
      */
     public Person build() {
         return new Person(
+                id,
                 name,
                 phone,
                 email,
