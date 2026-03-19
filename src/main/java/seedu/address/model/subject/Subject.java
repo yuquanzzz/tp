@@ -13,9 +13,9 @@ import java.util.Optional;
 public class Subject {
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Subject names should be alphanumeric";
+            "Subject names should be alphanumeric and may contain spaces";
 
-    public static final String VALIDATION_REGEX = "\\p{Alnum}+";
+    public static final String VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
 
     private final String name;
     private final Level level; // nullable
