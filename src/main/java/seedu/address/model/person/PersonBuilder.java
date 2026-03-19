@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class PersonBuilder {
     private Optional<ParentPhone> parentPhone;
     private Optional<ParentEmail> parentEmail;
     private Optional<LocalDateTime> appointmentStart;
-    private Optional<LocalDateTime> paymentDate;
+    private Optional<LocalDate> paymentDate;
 
     /**
      * Creates a builder initialized with the data of {@code personToCopy}.
@@ -145,7 +146,7 @@ public class PersonBuilder {
      * @param paymentDate the optional payment date
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withPaymentDate(Optional<LocalDateTime> paymentDate) {
+    public PersonBuilder withPaymentDate(Optional<LocalDate> paymentDate) {
         this.paymentDate = paymentDate;
         return this;
     }

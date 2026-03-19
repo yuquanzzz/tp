@@ -6,6 +6,7 @@ import java.util.Map;
 import seedu.address.logic.commands.EditApptCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditParentCommand;
+import seedu.address.logic.commands.EditPaymentCommand;
 import seedu.address.logic.commands.EditPersonCommand;
 import seedu.address.logic.commands.EditTagCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -26,6 +27,7 @@ public class EditCommandParser implements Parser<EditCommand> {
         parsers.put(EditTagCommand.SUB_COMMAND_WORD, new EditTagCommandParser());
         parsers.put(EditParentCommand.SUB_COMMAND_WORD, new EditParentCommandParser());
         parsers.put(EditApptCommand.SUB_COMMAND_WORD, new EditApptCommandParser());
+        parsers.put(EditPaymentCommand.SUB_COMMAND_WORD, new EditPaymentCommandParser());
         this.dispatcher = new SubcommandDispatcherParser<>(parsers, EditCommand.MESSAGE_USAGE);
     }
 

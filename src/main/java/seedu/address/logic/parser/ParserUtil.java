@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -34,6 +35,14 @@ public class ParserUtil {
             e.g. 2026-01-13T08:00:00""";
     private static final DateTimeFormatter ISO_LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME
             .withResolverStyle(ResolverStyle.STRICT);
+    public static final String MESSAGE_INVALID_DATE =
+            "Date must be in ISO 8601 local format, e.g. 2026-01-13";
+    public static final String MESSAGE_INVALID_DATE_TIME =
+            "Date-time must be in ISO 8601 local format, e.g. 2026-01-13T08:00:00";
+    private static final DateTimeFormatter ISO_LOCAL_DATE_FORMATTER =
+            DateTimeFormatter.ISO_LOCAL_DATE.withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter ISO_LOCAL_DATE_TIME_FORMATTER =
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME.withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
@@ -150,14 +159,16 @@ public class ParserUtil {
     /**
      * Parses a {@code String appointmentStart} into a {@code LocalDateTime}. Leading and trailing whitespaces will be
      * trimmed.
+     * Parses a {@code String dateTime} into a {@code LocalDateTime}.
+     * Leading and trailing whitespaces will be trimmed.
      *
-     * @throws ParseException if the given {@code appointmentStart} is invalid.
+     * @throws ParseException if the given {@code dateTime} is invalid.
      */
-    public static LocalDateTime parseIsoDateTime(String appointmentStart) throws ParseException {
-        requireNonNull(appointmentStart);
-        String trimmedAppointmentStart = appointmentStart.trim();
+    public static LocalDateTime parseIsoDateTime(String dateTime) throws ParseException {
+        requireNonNull(dateTime);
+        String trimmedDateTime = dateTime.trim();
         try {
-            return LocalDateTime.parse(trimmedAppointmentStart, ISO_LOCAL_DATE_TIME_FORMATTER);
+            return LocalDateTime.parse(trimmedDateTime, ISO_LOCAL_DATE_TIME_FORMATTER);
         } catch (DateTimeParseException e) {
             throw new ParseException(MESSAGE_INVALID_DATE_TIME);
         }
@@ -165,6 +176,24 @@ public class ParserUtil {
 
     /**
      * Parses a {@code String tag} into a {@code Tag}. Leading and trailing whitespaces will be trimmed.
+     * Parses a {@code String date} into a {@code LocalDate}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code date} is invalid.
+     */
+    public static LocalDate parseIsoDate(String date) throws ParseException {
+        requireNonNull(date);
+        String trimmedDate = date.trim();
+        try {
+            return LocalDate.parse(trimmedDate, ISO_LOCAL_DATE_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new ParseException(MESSAGE_INVALID_DATE);
+        }
+    }
+
+    /**
+     * Parses a {@code String tag} into a {@code Tag}.
+     * Leading and trailing whitespaces will be trimmed.
      *
      * @throws ParseException if the given {@code tag} is invalid.
      */
