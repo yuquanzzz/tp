@@ -37,6 +37,7 @@ public class PersonBuilder {
         this.email = email;
         this.address = address;
         this.tags = new HashSet<>(tags);
+        this.subjects = new HashSet<>();
         this.parentName = Optional.empty();
         this.parentPhone = Optional.empty();
         this.parentEmail = Optional.empty();

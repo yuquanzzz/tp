@@ -196,5 +196,4 @@ public class PersonBuilder {
                 Optional.ofNullable(paymentDate),
                 Optional.ofNullable(lastAttendance));
     }
-
 }
