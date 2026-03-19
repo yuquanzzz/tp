@@ -14,6 +14,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditSubjectCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.subject.Level;
+import seedu.address.model.subject.LevelUtil;
 import seedu.address.model.subject.Subject;
 
 /**
@@ -21,6 +22,27 @@ import seedu.address.model.subject.Subject;
  * STRICT version: enforces level must immediately follow subject.
  */
 public class EditSubjectCommandParser implements Parser<EditSubjectCommand> {
+
+    /**
+     * Parses a {@code String} into a {@code Level}.
+     *
+     * @throws ParseException if the given {@code String} is invalid.
+     */
+    public static Level parseLevel(String input) throws ParseException {
+        requireNonNull(input);
+
+        String normalized = input.trim().toLowerCase();
+
+        switch (normalized) {
+        case "basic":
+            return Level.BASIC;
+        case "strong":
+            return Level.STRONG;
+        default:
+            throw new ParseException(
+                    "Level must be either 'basic' or 'strong' (case-insensitive).");
+        }
+    }
 
     @Override
     public EditSubjectCommand parse(String args) throws ParseException {
@@ -82,9 +104,9 @@ public class EditSubjectCommandParser implements Parser<EditSubjectCommand> {
 
                 Level level;
                 try {
-                    level = Level.fromString(levelStr);
+                    level = LevelUtil.levelFromString(levelStr);
                 } catch (IllegalArgumentException e) {
-                    throw new ParseException(Level.MESSAGE_CONSTRAINTS);
+                    throw new ParseException(LevelUtil.MESSAGE_CONSTRAINTS);
                 }
 
                 // replace last subject with updated one

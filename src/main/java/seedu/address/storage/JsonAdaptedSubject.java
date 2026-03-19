@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.subject.Level;
+import seedu.address.model.subject.LevelUtil;
 import seedu.address.model.subject.Subject;
 
 /**
@@ -49,10 +50,12 @@ class JsonAdaptedSubject {
 
         Level modelLevel = null;
         if (level != null) {
+            String normalized = level.trim().toLowerCase();
+
             try {
-                modelLevel = Level.fromString(level);
+                modelLevel = LevelUtil.levelFromString(level);
             } catch (IllegalArgumentException e) {
-                throw new IllegalValueException(Level.MESSAGE_CONSTRAINTS);
+                throw new IllegalValueException(LevelUtil.MESSAGE_CONSTRAINTS);
             }
         }
 

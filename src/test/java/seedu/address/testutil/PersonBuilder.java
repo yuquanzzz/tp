@@ -12,7 +12,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.ParentName;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
-import seedu.address.model.subject.Level;
+import seedu.address.model.subject.LevelUtil;
 import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
@@ -98,7 +98,7 @@ public class PersonBuilder {
                 );
             }
 
-            this.subjects.add(new Subject(parts[0], Level.fromString(parts[1])));
+            this.subjects.add(new Subject(parts[0], LevelUtil.levelFromString(parts[1])));
         }
 
         return this;
