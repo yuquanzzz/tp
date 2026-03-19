@@ -14,8 +14,8 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a Person in the address book. Guarantees: details are present and
- * not null, field values are validated, immutable.
+ * Represents a Person in the address book.
+ * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Person {
 
@@ -27,12 +27,12 @@ public class Person {
     // Data fields
     private final Address address;
     private final Set<Tag> tags = new HashSet<>();
+    private final Optional<LocalDateTime> appointmentStart;
+    private final Optional<LocalDateTime> lastAttendance;
     private final Optional<Name> parentName;
     private final Optional<Phone> parentPhone;
     private final Optional<Email> parentEmail;
-    private final Optional<LocalDateTime> appointmentStart;
     private final Optional<LocalDate> paymentDate;
-    private final Optional<LocalDateTime> lastAttendance;
 
     /**
      * Every field must be present and not null.
@@ -71,18 +71,18 @@ public class Person {
             Optional<LocalDateTime> appointmentStart, Optional<LocalDate> paymentDate,
             Optional<LocalDateTime> lastAttendance) {
         requireAllNonNull(name, phone, email, address, tags,
-            parentName, parentPhone, parentEmail, appointmentStart, paymentDate, lastAttendance);
+                parentName, parentPhone, parentEmail, appointmentStart, paymentDate, lastAttendance);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.tags.addAll(tags);
+        this.appointmentStart = appointmentStart;
+        this.lastAttendance = lastAttendance;
         this.parentName = parentName;
         this.parentPhone = parentPhone;
         this.parentEmail = parentEmail;
-        this.appointmentStart = appointmentStart;
         this.paymentDate = paymentDate;
-        this.lastAttendance = lastAttendance;
     }
 
     public Name getName() {
@@ -101,25 +101,6 @@ public class Person {
         return address;
     }
 
-    /**
-     * Returns an immutable tag set, which throws {@code UnsupportedOperationException} if modification is attempted.
-     */
-    public Set<Tag> getTags() {
-        return Collections.unmodifiableSet(tags);
-    }
-
-    public Optional<Name> getParentName() {
-        return parentName;
-    }
-
-    public Optional<Phone> getParentPhone() {
-        return parentPhone;
-    }
-
-    public Optional<Email> getParentEmail() {
-        return parentEmail;
-    }
-
     public Optional<LocalDateTime> getAppointmentStart() {
         return appointmentStart;
     }
@@ -133,8 +114,37 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same name. This defines a weaker
-     * notion of equality between two persons.
+     * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
+     * if modification is attempted.
+     */
+    public Set<Tag> getTags() {
+        return Collections.unmodifiableSet(tags);
+    }
+
+    /**
+     * Returns the parent name wrapped in an Optional, or empty if not set.
+     */
+    public Optional<Name> getParentName() {
+        return parentName;
+    }
+
+    /**
+     * Returns the parent phone wrapped in an Optional, or empty if not set.
+     */
+    public Optional<Phone> getParentPhone() {
+        return parentPhone;
+    }
+
+    /**
+     * Returns the parent email wrapped in an Optional, or empty if not set.
+     */
+    public Optional<Email> getParentEmail() {
+        return parentEmail;
+    }
+
+    /**
+     * Returns true if both persons have the same name.
+     * This defines a weaker notion of equality between two persons.
      */
     public boolean isSamePerson(Person otherPerson) {
         if (otherPerson == this) {
@@ -145,8 +155,8 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same identity and data fields. This
-     * defines a stronger notion of equality between two persons.
+     * Returns true if both persons have the same identity and data fields.
+     * This defines a stronger notion of equality between two persons.
      */
     @Override
     public boolean equals(Object other) {
@@ -173,7 +183,8 @@ public class Person {
 
     @Override
     public int hashCode() {
-        // use this method for custom fields hashing instead of implementing your own
+        // use this method for custom fields hashing instead of implementing
+        // your own
         return Objects.hash(name, phone, email, address, tags, parentName, parentPhone, parentEmail, appointmentStart,
                 paymentDate, lastAttendance);
     }

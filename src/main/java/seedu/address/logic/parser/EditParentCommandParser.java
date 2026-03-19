@@ -21,9 +21,8 @@ import seedu.address.model.person.Phone;
 public class EditParentCommandParser implements Parser<EditParentCommand> {
 
     /**
-     * Parses the given {@code String} of arguments in the context of the EditParentCommand and returns an
-     * EditParentCommand object for execution.
-     *
+     * Parses the given {@code String} of arguments in the context of the EditParentCommand
+     * and returns an EditParentCommand object for execution.
      * @throws ParseException if the user input does not conform the expected format
      */
     @Override
