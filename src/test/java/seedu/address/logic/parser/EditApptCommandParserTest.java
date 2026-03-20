@@ -43,7 +43,8 @@ public class EditApptCommandParserTest {
     public void parse_allFieldsSpecified_success() {
         Index targetIndex = INDEX_FIRST_PERSON;
         String userInput = targetIndex.getOneBased() + APPOINTMENT_START_DESC;
-        EditApptCommand expectedCommand = new EditApptCommand(targetIndex, LocalDateTime.parse(VALID_APPOINTMENT_START));
+        EditApptCommand expectedCommand = new EditApptCommand(targetIndex,
+                LocalDateTime.parse(VALID_APPOINTMENT_START));
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 }

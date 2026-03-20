@@ -2,39 +2,50 @@ package seedu.address.logic.parser;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
+
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.model.Model;
-import java.util.Map;
 
 public class SubcommandDispatcherParserTest {
-    
     private static class DummyCommand extends Command {
         public final String args;
-        public DummyCommand(String args) { this.args = args; }
+
+        public DummyCommand(String args) {
+            this.args = args;
+        }
+
         @Override
-        public CommandResult execute(Model model) { return new CommandResult("Dummy " + args); }
+        public CommandResult execute(Model model) {
+            return new CommandResult("Dummy " + args);
+        }
+
         @Override
         public boolean equals(Object other) {
-            return other == this || (other instanceof DummyCommand 
+            return other == this || (other instanceof DummyCommand
                    && args.equals(((DummyCommand) other).args));
         }
     }
-    
+
     private SubcommandDispatcherParser<DummyCommand> parser = new SubcommandDispatcherParser<>(
-            Map.of("sub", args -> new DummyCommand(args)), 
+            Map.of("sub", args -> new DummyCommand(args)),
             "Usage: base subcommand"
     );
 
     @Test
     public void parse_emptyArg_throwsParseException() {
-        assertParseFailure(parser, "     ", String.format(MESSAGE_INVALID_COMMAND_FORMAT, "Usage: base subcommand"));
+        assertParseFailure(parser, "     ",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, "Usage: base subcommand"));
     }
 
     @Test
     public void parse_invalidSubcommand_throwsParseException() {
-        assertParseFailure(parser, "unknown args", String.format(MESSAGE_INVALID_COMMAND_FORMAT, "Usage: base subcommand"));
+        assertParseFailure(parser, "unknown args",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, "Usage: base subcommand"));
     }
 
     @Test
