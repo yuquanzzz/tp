@@ -30,7 +30,7 @@
         <Label text="Address" styleClass="detail-field-label" />
         <Label fx:id="addressLabel" styleClass="detail-field-value" text="-" wrapText="true" HBox.hgrow="ALWAYS" />
       </HBox>
-      
+
       <VBox spacing="6">
         <VBox.margin>
           <Insets top="4" />
