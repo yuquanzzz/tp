@@ -4,6 +4,8 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -110,12 +112,20 @@ public class ModelManager implements Model {
     public void setPerson(Person target, Person editedPerson) {
         requireAllNonNull(target, editedPerson);
 
-        // Add the edited person to the filtered list if there is a filter applied
-        // This is to ensure that the edited person is always visible in the filtered list
+        // Widen the current filter predicate to also match the edited person if a filter is applied
         Predicate<? super Person> currentPredicate = filteredPersons.getPredicate();
         if (currentPredicate != null && currentPredicate != PREDICATE_SHOW_ALL_PERSONS) {
-            Predicate<Person> updatedPredicate = p -> currentPredicate.test(p) || p.equals(editedPerson);
-            filteredPersons.setPredicate(updatedPredicate);
+            if (currentPredicate instanceof PredicateWithPinnedPersons) {
+                PredicateWithPinnedPersons pinnedPredicate = (PredicateWithPinnedPersons) currentPredicate;
+                Set<Person> newPinned = new HashSet<>(pinnedPredicate.pinnedPersons);
+                newPinned.remove(target);
+                newPinned.add(editedPerson);
+                filteredPersons.setPredicate(new PredicateWithPinnedPersons(pinnedPredicate.basePredicate, newPinned));
+            } else {
+                Set<Person> newPinned = new HashSet<>();
+                newPinned.add(editedPerson);
+                filteredPersons.setPredicate(new PredicateWithPinnedPersons(currentPredicate, newPinned));
+            }
         }
 
         addressBook.setPerson(target, editedPerson);
@@ -165,6 +175,40 @@ public class ModelManager implements Model {
                 && userPrefs.equals(otherModelManager.userPrefs)
                 && filteredPersons.equals(otherModelManager.filteredPersons)
                 && listDisplayMode == otherModelManager.listDisplayMode;
+    }
+
+    /**
+     * A predicate that evaluates to true if the person is in the pinned set,
+     * or if the base predicate evaluates to true.
+     */
+    private static class PredicateWithPinnedPersons implements Predicate<Person> {
+        private final Predicate<? super Person> basePredicate;
+        private final Set<Person> pinnedPersons;
+
+        private PredicateWithPinnedPersons(Predicate<? super Person> basePredicate, Set<Person> pinnedPersons) {
+            this.basePredicate = basePredicate;
+            this.pinnedPersons = pinnedPersons;
+        }
+
+        @Override
+        public boolean test(Person person) {
+            return pinnedPersons.contains(person) || basePredicate.test(person);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+
+            if (!(other instanceof PredicateWithPinnedPersons)) {
+                return false;
+            }
+
+            PredicateWithPinnedPersons otherPredicate = (PredicateWithPinnedPersons) other;
+            return basePredicate.equals(otherPredicate.basePredicate)
+                    && pinnedPersons.equals(otherPredicate.pinnedPersons);
+        }
     }
 
 }
