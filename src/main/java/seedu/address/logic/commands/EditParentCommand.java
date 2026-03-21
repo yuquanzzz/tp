@@ -5,9 +5,11 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_PHONE;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.commons.util.CollectionUtil;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -34,38 +36,31 @@ public class EditParentCommand extends EditCommand {
             + "91234567 " + PREFIX_PARENT_EMAIL + "johnlim@example.com";
 
     public static final String MESSAGE_EDIT_PARENT_SUCCESS = "Edited parent details of Person: %1$s";
-    public static final String MESSAGE_NO_FIELD_PROVIDED = "At least one parent field (pn/, pp/, pe/) "
-            + "must be provided.";
 
-    private final Optional<Name> parentName;
-    private final Optional<Phone> parentPhone;
-    private final Optional<Email> parentEmail;
+    private final EditParentDescriptor editParentDescriptor;
 
     /**
      * @param index of the person in the filtered person list whose parent details will be set
-     * @param parentName the optional parent name to set
-     * @param parentPhone the optional parent phone to set
-     * @param parentEmail the optional parent email to set
+     * @param editParentDescriptor details to edit the parent with
      */
-    public EditParentCommand(Index index, Optional<Name> parentName, Optional<Phone> parentPhone,
-            Optional<Email> parentEmail) {
+    public EditParentCommand(Index index, EditParentDescriptor editParentDescriptor) {
         super(index);
-        requireNonNull(parentName);
-        requireNonNull(parentPhone);
-        requireNonNull(parentEmail);
+        requireNonNull(editParentDescriptor);
+        if (!editParentDescriptor.isAnyFieldEdited()) {
+            throw new IllegalArgumentException(MESSAGE_NOT_EDITED);
+        }
 
-        this.parentName = parentName;
-        this.parentPhone = parentPhone;
-        this.parentEmail = parentEmail;
+        this.editParentDescriptor = new EditParentDescriptor(editParentDescriptor);
     }
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
         Person personToEdit = getTargetPerson(model);
         PersonBuilder builder = new PersonBuilder(personToEdit);
-        parentName.ifPresent(pn -> builder.withParentName(Optional.of(pn)));
-        parentPhone.ifPresent(pp -> builder.withParentPhone(Optional.of(pp)));
-        parentEmail.ifPresent(pe -> builder.withParentEmail(Optional.of(pe)));
+        editParentDescriptor.getParentName().ifPresent(builder::withParentName);
+        editParentDescriptor.getParentPhone().ifPresent(builder::withParentPhone);
+        editParentDescriptor.getParentEmail().ifPresent(builder::withParentEmail);
+
         Person editedPerson = builder.build();
 
         replacePerson(model, personToEdit, editedPerson);
@@ -85,13 +80,92 @@ public class EditParentCommand extends EditCommand {
         }
 
         EditParentCommand otherCommand = (EditParentCommand) other;
-        return index.equals(otherCommand.index) && parentName.equals(otherCommand.parentName)
-                && parentPhone.equals(otherCommand.parentPhone) && parentEmail.equals(otherCommand.parentEmail);
+        return index.equals(otherCommand.index)
+                && editParentDescriptor.equals(otherCommand.editParentDescriptor);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).add("index", index).add("parentName", parentName.orElse(null))
-                .add("parentPhone", parentPhone.orElse(null)).add("parentEmail", parentEmail.orElse(null)).toString();
+        return new ToStringBuilder(this)
+                .add("index", index)
+                .add("editParentDescriptor", editParentDescriptor)
+                .toString();
+    }
+
+    /**
+     * Stores the details to edit the parent with. Each non-empty field value will replace the
+     * corresponding parent field value of the person.
+     */
+    public static class EditParentDescriptor {
+        private Name parentName;
+        private Phone parentPhone;
+        private Email parentEmail;
+
+        public EditParentDescriptor() {}
+
+        /**
+         * Copy constructor.
+         */
+        public EditParentDescriptor(EditParentDescriptor toCopy) {
+            setParentName(toCopy.parentName);
+            setParentPhone(toCopy.parentPhone);
+            setParentEmail(toCopy.parentEmail);
+        }
+
+        /**
+         * Returns true if at least one field is edited.
+         */
+        public boolean isAnyFieldEdited() {
+            return CollectionUtil.isAnyNonNull(parentName, parentPhone, parentEmail);
+        }
+
+        public void setParentName(Name parentName) {
+            this.parentName = parentName;
+        }
+
+        public Optional<Name> getParentName() {
+            return Optional.ofNullable(parentName);
+        }
+
+        public void setParentPhone(Phone parentPhone) {
+            this.parentPhone = parentPhone;
+        }
+
+        public Optional<Phone> getParentPhone() {
+            return Optional.ofNullable(parentPhone);
+        }
+
+        public void setParentEmail(Email parentEmail) {
+            this.parentEmail = parentEmail;
+        }
+
+        public Optional<Email> getParentEmail() {
+            return Optional.ofNullable(parentEmail);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+
+            if (!(other instanceof EditParentDescriptor)) {
+                return false;
+            }
+
+            EditParentDescriptor e = (EditParentDescriptor) other;
+            return Objects.equals(parentName, e.parentName)
+                    && Objects.equals(parentPhone, e.parentPhone)
+                    && Objects.equals(parentEmail, e.parentEmail);
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .add("parentName", parentName)
+                    .add("parentPhone", parentPhone)
+                    .add("parentEmail", parentEmail)
+                    .toString();
+        }
     }
 }

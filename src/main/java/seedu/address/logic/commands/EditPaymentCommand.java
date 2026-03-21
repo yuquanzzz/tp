@@ -48,7 +48,7 @@ public class EditPaymentCommand extends EditCommand {
     public CommandResult execute(Model model) throws CommandException {
         Person personToEdit = getTargetPerson(model);
         Person editedPerson = new PersonBuilder(personToEdit)
-                .withPaymentDate(Optional.of(paymentDate))
+                .withPaymentDate(paymentDate)
                 .build();
 
         replacePerson(model, personToEdit, editedPerson);

@@ -135,66 +135,66 @@ public class PersonBuilder {
     /**
      * Sets the parent's {@code Name} of the {@code Person} being built.
      *
-     * @param parentName the optional parent name
+     * @param parentName the parent name
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withParentName(Optional<Name> parentName) {
-        this.parentName = parentName;
+    public PersonBuilder withParentName(Name parentName) {
+        this.parentName = Optional.ofNullable(parentName);
         return this;
     }
 
     /**
      * Sets the parent's {@code Phone} of the {@code Person} being built.
      *
-     * @param parentPhone the optional parent phone
+     * @param parentPhone the parent phone
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withParentPhone(Optional<Phone> parentPhone) {
-        this.parentPhone = parentPhone;
+    public PersonBuilder withParentPhone(Phone parentPhone) {
+        this.parentPhone = Optional.ofNullable(parentPhone);
         return this;
     }
 
     /**
      * Sets the parent's {@code Email} of the {@code Person} being built.
      *
-     * @param parentEmail the optional parent email
+     * @param parentEmail the parent email
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withParentEmail(Optional<Email> parentEmail) {
-        this.parentEmail = parentEmail;
+    public PersonBuilder withParentEmail(Email parentEmail) {
+        this.parentEmail = Optional.ofNullable(parentEmail);
         return this;
     }
 
     /**
      * Sets the appointment start time of the {@code Person} being built.
      *
-     * @param appointmentStart the optional appointment start time
+     * @param appointmentStart the appointment start time
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withAppointmentStart(Optional<LocalDateTime> appointmentStart) {
-        this.appointmentStart = appointmentStart;
+    public PersonBuilder withAppointmentStart(LocalDateTime appointmentStart) {
+        this.appointmentStart = Optional.ofNullable(appointmentStart);
         return this;
     }
 
     /**
      * Sets the payment date of the {@code Person} being built.
      *
-     * @param paymentDate the optional payment date
+     * @param paymentDate the payment date
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withPaymentDate(Optional<LocalDate> paymentDate) {
-        this.paymentDate = paymentDate;
+    public PersonBuilder withPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = Optional.ofNullable(paymentDate);
         return this;
     }
 
     /**
      * Sets the last attendance time of the {@code Person} being built.
      *
-     * @param lastAttendance the optional last attendance time
+     * @param lastAttendance the last attendance time
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withLastAttendance(Optional<LocalDateTime> lastAttendance) {
-        this.lastAttendance = lastAttendance;
+    public PersonBuilder withLastAttendance(LocalDateTime lastAttendance) {
+        this.lastAttendance = Optional.ofNullable(lastAttendance);
         return this;
     }
 

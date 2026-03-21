@@ -234,12 +234,12 @@ class JsonAdaptedPerson {
 
         return new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags)
             .withSubjects(modelSubjects)
-            .withParentName(Optional.ofNullable(modelParentName))
-            .withParentPhone(Optional.ofNullable(modelParentPhone))
-            .withParentEmail(Optional.ofNullable(modelParentEmail))
-            .withAppointmentStart(Optional.ofNullable(modelAppointmentStart))
-            .withPaymentDate(Optional.ofNullable(modelPaymentDate))
-            .withLastAttendance(Optional.ofNullable(modelLastAttendance))
+            .withParentName(modelParentName)
+            .withParentPhone(modelParentPhone)
+            .withParentEmail(modelParentEmail)
+            .withAppointmentStart(modelAppointmentStart)
+            .withPaymentDate(modelPaymentDate)
+            .withLastAttendance(modelLastAttendance)
             .build();
     }
 }

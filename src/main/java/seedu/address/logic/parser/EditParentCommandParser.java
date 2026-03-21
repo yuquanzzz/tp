@@ -1,19 +1,15 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_PHONE;
 
-import java.util.Optional;
-
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditParentCommand;
+import seedu.address.logic.commands.EditParentCommand.EditParentDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.Email;
-import seedu.address.model.person.Name;
-import seedu.address.model.person.Phone;
 
 /**
  * Parses input arguments and creates a new {@code EditParentCommand} object.
@@ -35,26 +31,22 @@ public class EditParentCommandParser implements Parser<EditParentCommand> {
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_PARENT_NAME, PREFIX_PARENT_PHONE, PREFIX_PARENT_EMAIL);
 
-        boolean hasName = argMultimap.getValue(PREFIX_PARENT_NAME).isPresent();
-        boolean hasPhone = argMultimap.getValue(PREFIX_PARENT_PHONE).isPresent();
-        boolean hasEmail = argMultimap.getValue(PREFIX_PARENT_EMAIL).isPresent();
+        EditParentDescriptor editParentDescriptor = new EditParentDescriptor();
 
-        if (!hasName && !hasPhone && !hasEmail) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditParentCommand.MESSAGE_USAGE));
+        if (argMultimap.getValue(PREFIX_PARENT_NAME).isPresent()) {
+            editParentDescriptor.setParentName(ParserUtil.parseParentName(argMultimap.getValue(PREFIX_PARENT_NAME).get()));
+        }
+        if (argMultimap.getValue(PREFIX_PARENT_PHONE).isPresent()) {
+            editParentDescriptor.setParentPhone(ParserUtil.parseParentPhone(argMultimap.getValue(PREFIX_PARENT_PHONE).get()));
+        }
+        if (argMultimap.getValue(PREFIX_PARENT_EMAIL).isPresent()) {
+            editParentDescriptor.setParentEmail(ParserUtil.parseParentEmail(argMultimap.getValue(PREFIX_PARENT_EMAIL).get()));
         }
 
-        Optional<Name> parentName = hasName
-                ? Optional.of(ParserUtil.parseParentName(argMultimap.getValue(PREFIX_PARENT_NAME).get()))
-                : Optional.empty();
+        if (!editParentDescriptor.isAnyFieldEdited()) {
+            throw new ParseException(EditCommand.MESSAGE_NOT_EDITED);
+        }
 
-        Optional<Phone> parentPhone = hasPhone
-                ? Optional.of(ParserUtil.parseParentPhone(argMultimap.getValue(PREFIX_PARENT_PHONE).get()))
-                : Optional.empty();
-
-        Optional<Email> parentEmail = hasEmail
-                ? Optional.of(ParserUtil.parseParentEmail(argMultimap.getValue(PREFIX_PARENT_EMAIL).get()))
-                : Optional.empty();
-
-        return new EditParentCommand(index, parentName, parentPhone, parentEmail);
+        return new EditParentCommand(index, editParentDescriptor);
     }
 }

@@ -45,7 +45,7 @@ public class EditAttdCommand extends EditCommand {
     public CommandResult execute(Model model) throws CommandException {
         Person personToEdit = getTargetPerson(model);
         Person editedPerson = new PersonBuilder(personToEdit)
-                .withLastAttendance(Optional.of(attendanceToSet))
+                .withLastAttendance(attendanceToSet)
                 .build();
 
         replacePerson(model, personToEdit, editedPerson);
