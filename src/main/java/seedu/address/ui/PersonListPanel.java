@@ -14,6 +14,8 @@ import seedu.address.model.person.Person;
 public class PersonListPanel extends UiPart<Region> {
     private static final String FXML = "PersonListPanel.fxml";
 
+    private boolean showAppointments = false;
+
     @FXML
     private ListView<Person> personListView;
 
@@ -24,6 +26,11 @@ public class PersonListPanel extends UiPart<Region> {
         super(FXML);
         personListView.setItems(personList);
         personListView.setCellFactory(listView -> new PersonListViewCell());
+    }
+
+    public void setShowAppointments(boolean showAppointments) {
+        this.showAppointments = showAppointments;
+        personListView.refresh();
     }
 
     /**
@@ -63,7 +70,7 @@ public class PersonListPanel extends UiPart<Region> {
                 setGraphic(null);
                 setText(null);
             } else {
-                setGraphic(new PersonCard(person, getIndex() + 1).getRoot());
+                setGraphic(new PersonCard(person, getIndex() + 1, showAppointments).getRoot());
             }
         }
     }

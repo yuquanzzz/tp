@@ -34,10 +34,8 @@ public class MainWindow extends UiPart<Stage> {
     // Independent Ui parts residing in this Ui container
     private PersonListPanel personListPanel;
     private PersonDetailPanel personDetailPanel;
-    private AppointmentListPanel appointmentListPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
-    private boolean isAppointmentPanelVisible;
 
     @FXML
     private StackPane commandBoxPlaceholder;
@@ -118,9 +116,7 @@ public class MainWindow extends UiPart<Stage> {
      */
     void fillInnerParts() {
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
-        appointmentListPanel = new AppointmentListPanel(logic.getFilteredPersonList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
-        isAppointmentPanelVisible = false;
 
         personDetailPanel = new PersonDetailPanel();
         personDetailPanelPlaceholder.getChildren().add(personDetailPanel.getRoot());
@@ -183,22 +179,6 @@ public class MainWindow extends UiPart<Stage> {
         return personListPanel;
     }
 
-    /**
-     * Switches between person and appointment list panels.
-     */
-    private void showAppointmentPanel(boolean shouldShowAppointmentPanel) {
-        if (isAppointmentPanelVisible == shouldShowAppointmentPanel) {
-            return;
-        }
-
-        personListPanelPlaceholder.getChildren().clear();
-        if (shouldShowAppointmentPanel) {
-            personListPanelPlaceholder.getChildren().add(appointmentListPanel.getRoot());
-        } else {
-            personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
-        }
-        isAppointmentPanelVisible = shouldShowAppointmentPanel;
-    }
 
     /**
      * Executes the command and returns the result.
@@ -210,7 +190,9 @@ public class MainWindow extends UiPart<Stage> {
             CommandResult commandResult = logic.execute(commandText);
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
-            showAppointmentPanel(logic.getListDisplayMode() == ListDisplayMode.APPOINTMENT);
+
+            boolean isApptMode = logic.getListDisplayMode() == ListDisplayMode.APPOINTMENT;
+            personListPanel.setShowAppointments(isApptMode);
 
             if (commandResult.getViewIndex() != null) {
                 personListPanel.selectIndex(commandResult.getViewIndex());

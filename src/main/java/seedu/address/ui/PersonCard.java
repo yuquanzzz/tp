@@ -1,5 +1,6 @@
 package seedu.address.ui;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
 import javafx.fxml.FXML;
@@ -43,15 +44,28 @@ public class PersonCard extends UiPart<Region> {
     private FlowPane tags;
     @FXML
     private FlowPane subjects;
+    @FXML
+    private Label appointment;
 
     /**
      * Creates a {@code PersonCode} with the given {@code Person} and index to display.
      */
-    public PersonCard(Person person, int displayedIndex) {
+    public PersonCard(Person person, int displayedIndex, boolean showAppointments) {
         super(FXML);
         this.person = person;
         id.setText(displayedIndex + ". ");
         name.setText(person.getName().fullName);
+
+        // show appointments if showAppointments is true and person has an appointment
+        if (showAppointments && person.getAppointmentStart().isPresent()) {
+            String formattedTime = person.getAppointmentStart().get()
+                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            appointment.setText("Appt: " + formattedTime);
+        } else {
+            appointment.setVisible(false);
+            appointment.setManaged(false);
+        }
+
         phone.setText(person.getPhone().value);
         address.setText(person.getAddress().value);
         email.setText(person.getEmail().value);
