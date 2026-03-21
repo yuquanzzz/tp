@@ -195,7 +195,12 @@ public class MainWindow extends UiPart<Stage> {
             personListPanel.setShowAppointments(isApptMode);
 
             if (commandResult.getViewIndex() != null) {
-                personListPanel.selectIndex(commandResult.getViewIndex());
+                personListPanel.selectIndex(commandResult.getViewIndex().getZeroBased());
+            } else if (commandResult.getViewPerson() != null) {
+                int index = logic.getFilteredPersonList().indexOf(commandResult.getViewPerson());
+                if (index >= 0) {
+                    personListPanel.selectIndex(index);
+                }
             }
 
             if (commandResult.isShowHelp()) {

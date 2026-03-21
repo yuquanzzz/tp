@@ -53,7 +53,7 @@ public class EditApptCommand extends EditCommand {
         replacePerson(model, personToEdit, editedPerson);
         String formattedStart = appointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         return new CommandResult(String.format(MESSAGE_EDIT_APPT_SUCCESS,
-                editedPerson.getName().fullName, formattedStart));
+                editedPerson.getName().fullName, formattedStart), editedPerson);
     }
 
     @Override

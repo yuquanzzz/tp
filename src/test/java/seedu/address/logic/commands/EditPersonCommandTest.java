@@ -44,12 +44,13 @@ public class EditPersonCommandTest {
         EditPersonCommand editCommand = new EditPersonCommand(INDEX_FIRST_PERSON, descriptor);
 
         String expectedMessage = String.format(EditPersonCommand.MESSAGE_EDIT_PERSON_SUCCESS,
-                Messages.format(editedPerson));
+                editedPerson.getName().fullName);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personToEdit, editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
@@ -66,12 +67,13 @@ public class EditPersonCommandTest {
         EditPersonCommand editCommand = new EditPersonCommand(indexLastPerson, descriptor);
 
         String expectedMessage = String.format(EditPersonCommand.MESSAGE_EDIT_PERSON_SUCCESS,
-                Messages.format(editedPerson));
+                editedPerson.getName().fullName);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(lastPerson, editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
@@ -90,13 +92,14 @@ public class EditPersonCommandTest {
                 new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
         String expectedMessage = String.format(EditPersonCommand.MESSAGE_EDIT_PERSON_SUCCESS,
-                Messages.format(editedPerson));
+                editedPerson.getName().fullName);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
         expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test

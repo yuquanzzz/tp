@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
+
 public class CommandResultTest {
     @Test
     public void equals() {
@@ -35,7 +37,7 @@ public class CommandResultTest {
         assertFalse(commandResult.equals(new CommandResult("feedback", false, true)));
 
         // different viewIndex value -> returns false
-        assertFalse(commandResult.equals(new CommandResult("feedback", false, false, 1)));
+        assertFalse(commandResult.equals(new CommandResult("feedback", Index.fromOneBased(2))));
 
     }
 
@@ -56,7 +58,7 @@ public class CommandResultTest {
         assertNotEquals(commandResult.hashCode(), new CommandResult("feedback", false, true).hashCode());
 
         // different viewIndex value -> returns different hashcode
-        assertNotEquals(commandResult.hashCode(), new CommandResult("feedback", false, false, 1).hashCode());
+        assertNotEquals(commandResult.hashCode(), new CommandResult("feedback", Index.fromOneBased(2)).hashCode());
 
     }
 
@@ -65,7 +67,8 @@ public class CommandResultTest {
         CommandResult commandResult = new CommandResult("feedback");
         String expected = CommandResult.class.getCanonicalName() + "{feedbackToUser="
                 + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
-                + ", exit=" + commandResult.isExit() + ", viewIndex=" + commandResult.getViewIndex() + "}";
+                + ", exit=" + commandResult.isExit() + ", viewIndex=" + commandResult.getViewIndex()
+                + ", viewPerson=" + commandResult.getViewPerson() + "}";
         assertEquals(expected, commandResult.toString());
     }
 }

@@ -34,8 +34,7 @@ public class ViewCommandTest {
         String expectedMessage = String.format(ViewCommand.MESSAGE_VIEW_PERSON_SUCCESS,
                 personToView.getName().fullName);
 
-        CommandResult expectedCommandResult = new CommandResult(expectedMessage,
-                false, false, INDEX_FIRST_PERSON.getZeroBased());
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, INDEX_FIRST_PERSON);
 
         assertCommandSuccess(viewCommand, model, expectedCommandResult, model);
     }
@@ -58,8 +57,7 @@ public class ViewCommandTest {
         String expectedMessage = String.format(ViewCommand.MESSAGE_VIEW_PERSON_SUCCESS,
                 personToView.getName().fullName);
 
-        CommandResult expectedCommandResult = new CommandResult(expectedMessage,
-                false, false, INDEX_FIRST_PERSON.getZeroBased());
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, INDEX_FIRST_PERSON);
 
         assertCommandSuccess(viewCommand, model, expectedCommandResult, model);
     }

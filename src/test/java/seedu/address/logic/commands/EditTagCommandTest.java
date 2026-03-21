@@ -46,12 +46,13 @@ public class EditTagCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditTagCommand.MESSAGE_EDIT_TAG_SUCCESS,
-                Messages.format(editedPerson));
+                editedPerson.getName().fullName);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personInList, editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
@@ -67,12 +68,13 @@ public class EditTagCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditTagCommand.MESSAGE_EDIT_TAG_SUCCESS,
-                Messages.format(editedPerson));
+                editedPerson.getName().fullName);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personInList, editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
@@ -90,13 +92,14 @@ public class EditTagCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditTagCommand.MESSAGE_EDIT_TAG_SUCCESS,
-                Messages.format(editedPerson));
+                editedPerson.getName().fullName);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
         expectedModel.setPerson(personInFilteredList, editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test

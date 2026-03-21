@@ -51,7 +51,7 @@ public class EditAttdCommand extends EditCommand {
         replacePerson(model, personToEdit, editedPerson);
         String formattedAttendance = lastAttendance.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         return new CommandResult(String.format(MESSAGE_EDIT_ATTD_SUCCESS,
-                editedPerson.getName().fullName, formattedAttendance));
+                editedPerson.getName().fullName, formattedAttendance), editedPerson);
     }
 
     @Override

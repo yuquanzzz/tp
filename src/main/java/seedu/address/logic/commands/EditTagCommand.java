@@ -8,7 +8,6 @@ import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
@@ -56,8 +55,7 @@ public class EditTagCommand extends EditCommand {
 
         replacePerson(model, personToEdit, editedPerson);
 
-        return new CommandResult(
-                String.format(MESSAGE_EDIT_TAG_SUCCESS, Messages.format(editedPerson)));
+        return new CommandResult(String.format(MESSAGE_EDIT_TAG_SUCCESS, editedPerson.getName().fullName), editedPerson);
     }
 
     @Override

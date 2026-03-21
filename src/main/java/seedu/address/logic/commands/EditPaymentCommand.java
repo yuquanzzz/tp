@@ -53,7 +53,7 @@ public class EditPaymentCommand extends EditCommand {
         replacePerson(model, personToEdit, editedPerson);
         String formattedDate = paymentDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
         return new CommandResult(String.format(MESSAGE_EDIT_PAYMENT_SUCCESS,
-                editedPerson.getName().fullName, formattedDate));
+                editedPerson.getName().fullName, formattedDate), editedPerson);
     }
 
     @Override

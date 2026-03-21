@@ -41,12 +41,13 @@ public class EditParentCommandTest {
 
         Person editedPerson = new PersonBuilder(personToEdit).withParentName(VALID_PARENT_NAME_AMY).build();
         String expectedMessage = String.format(EditParentCommand.MESSAGE_EDIT_PARENT_SUCCESS,
-                Messages.format(editedPerson));
+                editedPerson.getName().fullName);
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setPerson(personToEdit, editedPerson);
 
-        assertCommandSuccess(editParentCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editParentCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
@@ -69,13 +70,14 @@ public class EditParentCommandTest {
 
         Person editedPerson = new PersonBuilder(personToEdit).withParentName(VALID_PARENT_NAME_AMY).build();
         String expectedMessage = String.format(EditParentCommand.MESSAGE_EDIT_PARENT_SUCCESS,
-                Messages.format(editedPerson));
+                editedPerson.getName().fullName);
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
         expectedModel.setPerson(personToEdit, editedPerson);
 
-        assertCommandSuccess(editParentCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editParentCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test

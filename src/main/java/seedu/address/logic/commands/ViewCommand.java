@@ -40,8 +40,9 @@ public class ViewCommand extends Command {
         }
 
         Person personToView = lastShownList.get(targetIndex.getZeroBased());
-        return new CommandResult(String.format(MESSAGE_VIEW_PERSON_SUCCESS, personToView.getName().fullName),
-                false, false, targetIndex.getZeroBased());
+        return new CommandResult(
+                String.format(MESSAGE_VIEW_PERSON_SUCCESS, personToView.getName().fullName),
+                targetIndex);
     }
 
     @Override
