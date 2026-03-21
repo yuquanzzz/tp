@@ -46,7 +46,7 @@ public class EditApptCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditApptCommand.MESSAGE_EDIT_APPT_SUCCESS,
-                editedPerson.getName().fullName, appointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                Messages.format(editedPerson), appointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personToEdit, editedPerson);
@@ -87,7 +87,7 @@ public class EditApptCommandTest {
                 .withAppointmentStart(VALID_APPOINTMENT_START)
                 .build();
         String expectedMessage = String.format(EditApptCommand.MESSAGE_EDIT_APPT_SUCCESS,
-                editedPerson.getName().fullName, newAppointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                Messages.format(editedPerson), newAppointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
         expectedModel.setListDisplayMode(ListDisplayMode.APPOINTMENT);
@@ -111,7 +111,7 @@ public class EditApptCommandTest {
                 .withAppointmentStart(VALID_APPOINTMENT_START)
                 .build();
         String expectedMessage = String.format(EditApptCommand.MESSAGE_EDIT_APPT_SUCCESS,
-                editedPerson.getName().fullName, appointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                Messages.format(editedPerson), appointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         showPersonAtIndex(expectedModel, INDEX_SECOND_PERSON);
@@ -151,7 +151,7 @@ public class EditApptCommandTest {
                 .withAppointmentStart("2026-01-22T08:00:00")
                 .build();
         String expectedMessage = String.format(EditApptCommand.MESSAGE_EDIT_APPT_SUCCESS,
-                editedPerson.getName().fullName, newAppointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                Messages.format(editedPerson), newAppointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         Model expectedModel = new ModelManager(new AddressBook(addressBook), new UserPrefs());
         expectedModel.updateFilteredPersonList(targetWeekPredicate);

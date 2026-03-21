@@ -46,7 +46,7 @@ public class EditTagCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditTagCommand.MESSAGE_EDIT_TAG_SUCCESS,
-                editedPerson.getName().fullName);
+                Messages.format(editedPerson));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personInList, editedPerson);
@@ -68,7 +68,7 @@ public class EditTagCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditTagCommand.MESSAGE_EDIT_TAG_SUCCESS,
-                editedPerson.getName().fullName);
+                Messages.format(editedPerson));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personInList, editedPerson);
@@ -92,7 +92,7 @@ public class EditTagCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditTagCommand.MESSAGE_EDIT_TAG_SUCCESS,
-                editedPerson.getName().fullName);
+                Messages.format(editedPerson));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);

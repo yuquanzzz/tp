@@ -44,7 +44,7 @@ public class EditSubjectCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditSubjectCommand.MESSAGE_EDIT_SUBJECT_SUCCESS,
-                editedPerson.getName().fullName);
+                Messages.format(editedPerson));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personInList, editedPerson);

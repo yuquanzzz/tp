@@ -42,7 +42,7 @@ public class EditPaymentCommandTest {
                 .build();
 
         String expectedMessage = String.format(EditPaymentCommand.MESSAGE_EDIT_PAYMENT_SUCCESS,
-                editedPerson.getName().fullName, paymentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+                Messages.format(editedPerson), paymentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personToEdit, editedPerson);
