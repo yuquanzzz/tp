@@ -8,7 +8,6 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -20,29 +19,29 @@ public class PaymentTest {
     private static final LocalDate DATE_3 = LocalDate.of(2026, 3, 1);
 
     @Test
-    public void constructor_validRecurrenceAndDates_success() {
+    public void constructor_validPaidDates_success() {
         Set<LocalDate> dates = new HashSet<>();
         dates.add(DATE_1);
-        Payment payment = new Payment(Recurrence.MONTHLY, dates);
-        assertEquals(Recurrence.MONTHLY, payment.getRecurrence());
+        Payment payment = new Payment(dates);
+        assertEquals(1, payment.getPaidDates().size());
         assertTrue(payment.getPaidDates().contains(DATE_1));
     }
 
     @Test
-    public void constructor_nullRecurrence_throwsNullPointerException() {
+    public void constructor_emptyPaidDates_success() {
         Set<LocalDate> dates = new HashSet<>();
-        assertThrows(NullPointerException.class, () -> new Payment(null, dates));
+        Payment payment = new Payment(dates);
+        assertEquals(0, payment.getPaidDates().size());
     }
 
     @Test
     public void constructor_nullPaidDates_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> new Payment(Recurrence.MONTHLY, null));
+        assertThrows(NullPointerException.class, () -> new Payment(null));
     }
 
     @Test
     public void withInitialDate_validDate_returnsPaymentWithDate() {
         Payment payment = Payment.withInitialDate(DATE_1);
-        assertEquals(Recurrence.MONTHLY, payment.getRecurrence());
         assertTrue(payment.getPaidDates().contains(DATE_1));
         assertEquals(1, payment.getPaidDates().size());
     }
@@ -57,7 +56,19 @@ public class PaymentTest {
         Payment original = Payment.EMPTY;
         Payment updated = original.recordPayment(DATE_1);
         assertTrue(updated.getPaidDates().contains(DATE_1));
-        assertFalse(original.getPaidDates().contains(DATE_1)); // Original unchanged
+        assertFalse(original.getPaidDates().contains(DATE_1)); // Original unchanged (immutable)
+    }
+
+    @Test
+    public void recordPayment_addMultipleDates_returnsPaymentWithAllDates() {
+        Payment payment = Payment.EMPTY;
+        payment = payment.recordPayment(DATE_1);
+        payment = payment.recordPayment(DATE_2);
+        payment = payment.recordPayment(DATE_3);
+        assertEquals(3, payment.getPaidDates().size());
+        assertTrue(payment.getPaidDates().contains(DATE_1));
+        assertTrue(payment.getPaidDates().contains(DATE_2));
+        assertTrue(payment.getPaidDates().contains(DATE_3));
     }
 
     @Test
@@ -92,58 +103,29 @@ public class PaymentTest {
     }
 
     @Test
-    public void getLastPaidDate_noPayments_returnsEmpty() {
-        Payment payment = Payment.EMPTY;
-        assertEquals(Optional.empty(), payment.getLastPaidDate());
-    }
-
-    @Test
-    public void getLastPaidDate_hasPayments_returnsLatestDate() {
-        Set<LocalDate> dates = new HashSet<>();
-        dates.add(DATE_1);
-        dates.add(DATE_2);
-        dates.add(DATE_3);
-        Payment payment = new Payment(Recurrence.MONTHLY, dates);
-        assertEquals(Optional.of(DATE_3), payment.getLastPaidDate());
-    }
-
-    @Test
-    public void getNextDueDate_noPayments_returnsEmpty() {
-        Payment payment = Payment.EMPTY;
-        assertEquals(Optional.empty(), payment.getNextDueDate());
-    }
-
-    @Test
-    public void getNextDueDate_hasPayments_returnsNextDueDate() {
-        Payment payment = Payment.withInitialDate(DATE_1);
-        LocalDate expectedNext = DATE_1.plusDays(30); // MONTHLY is 30 days
-        assertEquals(Optional.of(expectedNext), payment.getNextDueDate());
-    }
-
-    @Test
     public void equals_sameObject_returnsTrue() {
         Payment payment = Payment.EMPTY;
         assertTrue(payment.equals(payment));
     }
 
     @Test
-    public void equals_sameValues_returnsTrue() {
-        Set<LocalDate> dates1 = new HashSet<>();
-        dates1.add(DATE_1);
-        Set<LocalDate> dates2 = new HashSet<>();
-        dates2.add(DATE_1);
-        Payment payment1 = new Payment(Recurrence.MONTHLY, dates1);
-        Payment payment2 = new Payment(Recurrence.MONTHLY, dates2);
+    public void equals_emptyPayments_returnsTrue() {
+        Payment payment1 = Payment.EMPTY;
+        Payment payment2 = Payment.EMPTY;
         assertTrue(payment1.equals(payment2));
     }
 
     @Test
-    public void equals_differentRecurrence_returnsFalse() {
-        Set<LocalDate> dates = new HashSet<>();
-        dates.add(DATE_1);
-        Payment payment1 = new Payment(Recurrence.MONTHLY, dates);
-        Payment payment2 = new Payment(Recurrence.NONE, dates);
-        assertFalse(payment1.equals(payment2));
+    public void equals_sameValues_returnsTrue() {
+        Set<LocalDate> dates1 = new HashSet<>();
+        dates1.add(DATE_1);
+        dates1.add(DATE_2);
+        Set<LocalDate> dates2 = new HashSet<>();
+        dates2.add(DATE_1);
+        dates2.add(DATE_2);
+        Payment payment1 = new Payment(dates1);
+        Payment payment2 = new Payment(dates2);
+        assertTrue(payment1.equals(payment2));
     }
 
     @Test
@@ -152,8 +134,20 @@ public class PaymentTest {
         dates1.add(DATE_1);
         Set<LocalDate> dates2 = new HashSet<>();
         dates2.add(DATE_2);
-        Payment payment1 = new Payment(Recurrence.MONTHLY, dates1);
-        Payment payment2 = new Payment(Recurrence.MONTHLY, dates2);
+        Payment payment1 = new Payment(dates1);
+        Payment payment2 = new Payment(dates2);
+        assertFalse(payment1.equals(payment2));
+    }
+
+    @Test
+    public void equals_differentDateCount_returnsFalse() {
+        Set<LocalDate> dates1 = new HashSet<>();
+        dates1.add(DATE_1);
+        Set<LocalDate> dates2 = new HashSet<>();
+        dates2.add(DATE_1);
+        dates2.add(DATE_2);
+        Payment payment1 = new Payment(dates1);
+        Payment payment2 = new Payment(dates2);
         assertFalse(payment1.equals(payment2));
     }
 
@@ -166,7 +160,7 @@ public class PaymentTest {
     @Test
     public void equals_differentType_returnsFalse() {
         Payment payment = Payment.EMPTY;
-        assertFalse(payment.equals("empty"));
+        assertFalse(payment.equals("payment"));
     }
 
     @Test
@@ -175,26 +169,39 @@ public class PaymentTest {
         dates1.add(DATE_1);
         Set<LocalDate> dates2 = new HashSet<>();
         dates2.add(DATE_1);
-        Payment payment1 = new Payment(Recurrence.MONTHLY, dates1);
-        Payment payment2 = new Payment(Recurrence.MONTHLY, dates2);
+        Payment payment1 = new Payment(dates1);
+        Payment payment2 = new Payment(dates2);
         assertEquals(payment1.hashCode(), payment2.hashCode());
     }
 
     @Test
-    public void hashCode_differentValues_differentHashCode() {
+    public void hashCode_differentDates_differentHashCode() {
         Set<LocalDate> dates1 = new HashSet<>();
         dates1.add(DATE_1);
         Set<LocalDate> dates2 = new HashSet<>();
         dates2.add(DATE_2);
-        Payment payment1 = new Payment(Recurrence.MONTHLY, dates1);
-        Payment payment2 = new Payment(Recurrence.MONTHLY, dates2);
+        Payment payment1 = new Payment(dates1);
+        Payment payment2 = new Payment(dates2);
         assertNotEquals(payment1.hashCode(), payment2.hashCode());
     }
 
     @Test
     public void toString_validPayment_returnsFormattedString() {
-        Payment payment = Payment.withInitialDate(DATE_1);
-        String expected = "Payment[recurrence=MONTHLY, paidDates=[" + DATE_1 + "]]";
-        assertEquals(expected, payment.toString());
+        Set<LocalDate> dates = new HashSet<>();
+        dates.add(DATE_1);
+        Payment payment = new Payment(dates);
+        String result = payment.toString();
+        assertTrue(result.contains("Payment"));
+        assertTrue(result.contains(DATE_1.toString()));
+    }
+
+    @Test
+    public void getPaidDates_returnsUnmodifiableSet() {
+        Set<LocalDate> dates = new HashSet<>();
+        dates.add(DATE_1);
+        Payment payment = new Payment(dates);
+        Set<LocalDate> retrievedDates = payment.getPaidDates();
+        assertThrows(UnsupportedOperationException.class, () ->
+                retrievedDates.add(DATE_2)); // Should not be able to modify
     }
 }

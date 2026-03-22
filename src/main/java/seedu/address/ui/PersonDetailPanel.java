@@ -53,7 +53,7 @@ public class PersonDetailPanel extends UiPart<Region> {
     private Label lessonStartLabel;
 
     @FXML
-    private Label paymentDateLabel;
+    private Label paymentDueDateLabel;
 
     @FXML
     private FlowPane paymentHistoryFlowPane;
@@ -94,7 +94,7 @@ public class PersonDetailPanel extends UiPart<Region> {
         parentPhoneLabel.setText(person.getParentPhone().map(phone -> phone.value).orElse("-"));
         parentEmailLabel.setText(person.getParentEmail().map(email -> email.value).orElse("-"));
         lessonStartLabel.setText(formatDateTime(person.getAppointmentStart().orElse(null)));
-        paymentDateLabel.setText(person.getPayment().getLastPaidDate().map(this::formatDate).orElse("-"));
+        paymentDueDateLabel.setText(formatDate(person.getBilling().getNextDueDate()));
         lastAttendanceLabel.setText(formatDateTime(person.getLastAttendance().orElse(null)));
 
         tagsFlowPane.getChildren().clear();

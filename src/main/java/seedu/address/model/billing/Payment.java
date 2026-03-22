@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -14,20 +13,16 @@ import java.util.Set;
  */
 public class Payment {
 
-    public static final Payment EMPTY = new Payment(Recurrence.MONTHLY, Collections.emptySet());
+    public static final Payment EMPTY = new Payment(Collections.emptySet());
 
-    private final Recurrence recurrence;
     private final Set<LocalDate> paidDates;
 
     /**
-     * Creates a {@code Payment} object with payment frequency and payment history
-     * @param recurrence Payment frequency
+     * Creates a {@code Payment} object with payment history
      * @param paidDates Payment history
      */
-    public Payment(Recurrence recurrence, Set<LocalDate> paidDates) {
-        requireNonNull(recurrence);
+    public Payment(Set<LocalDate> paidDates) {
         requireNonNull(paidDates);
-        this.recurrence = recurrence;
         this.paidDates = Collections.unmodifiableSet(new LinkedHashSet<>(paidDates));
     }
 
@@ -40,11 +35,7 @@ public class Payment {
         requireNonNull(date);
         Set<LocalDate> dates = new LinkedHashSet<>();
         dates.add(date);
-        return new Payment(Recurrence.MONTHLY, dates);
-    }
-
-    public Recurrence getRecurrence() {
-        return recurrence;
+        return new Payment(dates);
     }
 
     public Set<LocalDate> getPaidDates() {
@@ -60,7 +51,7 @@ public class Payment {
         requireNonNull(date);
         Set<LocalDate> next = new LinkedHashSet<>(paidDates);
         next.add(date);
-        return new Payment(recurrence, next);
+        return new Payment(next);
     }
 
     /**
@@ -74,23 +65,6 @@ public class Payment {
         return paidDates.contains(date);
     }
 
-    public Optional<LocalDate> getLastPaidDate() {
-        if (paidDates.isEmpty()) {
-            return Optional.empty();
-        }
-        LocalDate last = null;
-        for (LocalDate d : paidDates) {
-            if (last == null || d.isAfter(last)) {
-                last = d;
-            }
-        }
-        return Optional.of(last);
-    }
-
-    public Optional<LocalDate> getNextDueDate() {
-        return getLastPaidDate().map(recurrence::nextDueDate);
-    }
-
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -100,17 +74,16 @@ public class Payment {
             return false;
         }
         Payment otherPayment = (Payment) other;
-        return recurrence == otherPayment.recurrence
-                && paidDates.equals(otherPayment.paidDates);
+        return paidDates.equals(otherPayment.paidDates);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(recurrence, paidDates);
+        return java.util.Objects.hash(paidDates);
     }
 
     @Override
     public String toString() {
-        return String.format("Payment[recurrence=%s, paidDates=%s]", recurrence, paidDates);
+        return String.format("Payment[paidDates=%s]", paidDates);
     }
 }

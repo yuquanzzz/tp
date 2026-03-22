@@ -1,4 +1,4 @@
-package seedu.address.model.billing;
+package seedu.address.model.recurrence;
 
 import java.time.LocalDate;
 
@@ -6,6 +6,7 @@ import java.time.LocalDate;
  * Recurrence schedule options for tuition payment.
  */
 public enum Recurrence {
+    WEEKLY(7),
     BIWEEKLY(14),
     MONTHLY(30),
     NONE(0);

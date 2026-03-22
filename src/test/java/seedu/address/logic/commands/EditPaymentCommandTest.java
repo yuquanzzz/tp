@@ -21,6 +21,7 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.billing.Billing;
 import seedu.address.model.billing.Payment;
 import seedu.address.model.person.Person;
 import seedu.address.testutil.PersonBuilder;
@@ -39,9 +40,11 @@ public class EditPaymentCommandTest {
         EditPaymentCommand editCommand = new EditPaymentCommand(INDEX_FIRST_PERSON, paymentDate);
 
         Payment updatedPayment = personToEdit.getPayment().recordPayment(paymentDate);
+        Billing updatedBilling = personToEdit.getBilling().advanceDueDate();
 
         Person editedPerson = new PersonBuilder(personToEdit)
                 .withPayment(updatedPayment)
+                .withBilling(updatedBilling)
                 .build();
 
         String expectedMessage = String.format(EditPaymentCommand.MESSAGE_EDIT_PAYMENT_SUCCESS,

@@ -1,4 +1,4 @@
-package seedu.address.model.billing;
+package seedu.address.model.recurrence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
