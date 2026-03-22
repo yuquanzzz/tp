@@ -16,7 +16,7 @@ import seedu.address.model.person.AppointmentInWeekPredicate;
  */
 public class ViewApptCommand extends Command {
 
-    public static final String COMMAND_WORD = "viewAppt";
+    public static final String COMMAND_WORD = "viewappt";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Shows appointments for the week containing the given date.\n"
