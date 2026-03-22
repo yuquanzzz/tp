@@ -64,7 +64,7 @@ public class BillingTest {
     public void getNextDueDate_returnsDatePlusPeriod() {
         // For MONTHLY recurrence, next due date should be current due date + 30 days
         Billing billing = new Billing(Recurrence.MONTHLY, DUE_DATE, 100.0);
-        LocalDate expectedNextDueDate = DUE_DATE.plusDays(30);
+        LocalDate expectedNextDueDate = DUE_DATE.plusMonths(1);
         assertEquals(expectedNextDueDate, billing.getNextDueDate());
     }
 
@@ -83,7 +83,7 @@ public class BillingTest {
         // Test advancing due date
         Billing original = new Billing(Recurrence.MONTHLY, DUE_DATE, 100.0);
         Billing advanced = original.advanceDueDate();
-        LocalDate expectedNextDate = DUE_DATE.plusDays(30); // MONTHLY = 30 days
+        LocalDate expectedNextDate = DUE_DATE.plusMonths(1);
         assertEquals(expectedNextDate, advanced.getLastDueDate());
         assertEquals(original.getTuitionFee(), advanced.getTuitionFee()); // Fee unchanged
     }

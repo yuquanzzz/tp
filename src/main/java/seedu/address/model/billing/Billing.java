@@ -57,6 +57,9 @@ public class Billing {
     }
 
     public LocalDate getNextDueDate() {
+        if (recurrence == Recurrence.MONTHLY) {
+            return paymentDueDate.plusMonths(1);
+        }
         return paymentDueDate.plusDays(recurrence.getDays());
     }
 
