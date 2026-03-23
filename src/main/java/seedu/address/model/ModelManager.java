@@ -141,9 +141,7 @@ public class ModelManager implements Model {
     @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
         requireNonNull(predicate);
-        if (predicate == PREDICATE_SHOW_ALL_PERSONS) {
-            preservedPersons.clear();
-        }
+        preservedPersons.clear();
         currentFilterPredicate = predicate;
         applyEffectiveFilterPredicate();
     }
