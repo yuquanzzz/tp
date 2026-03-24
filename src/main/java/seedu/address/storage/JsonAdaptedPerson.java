@@ -8,7 +8,6 @@ import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -226,12 +225,12 @@ class JsonAdaptedPerson {
 
         return new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags)
             .withAcademics(modelAcademics)
-            .withParentName(Optional.ofNullable(modelParentName))
-            .withParentPhone(Optional.ofNullable(modelParentPhone))
-            .withParentEmail(Optional.ofNullable(modelParentEmail))
-            .withAppointmentStart(Optional.ofNullable(modelAppointmentStart))
-            .withPaymentDate(Optional.ofNullable(modelPaymentDate))
-            .withLastAttendance(Optional.ofNullable(modelLastAttendance))
+            .withParentName(modelParentName)
+            .withParentPhone(modelParentPhone)
+            .withParentEmail(modelParentEmail)
+            .withAppointmentStart(modelAppointmentStart)
+            .withPaymentDate(modelPaymentDate)
+            .withLastAttendance(modelLastAttendance)
             .build();
     }
 }

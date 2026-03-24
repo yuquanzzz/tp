@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.commons.util.CollectionUtil;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -119,60 +118,69 @@ public class EditPersonCommand extends EditCommand {
      * corresponding field value of the person.
      */
     public static class EditPersonDescriptor {
-        private Name name;
-        private Phone phone;
-        private Email email;
-        private Address address;
+        private Optional<Name> name;
+        private Optional<Phone> phone;
+        private Optional<Email> email;
+        private Optional<Address> address;
 
-        public EditPersonDescriptor() {}
+        /**
+         * Creates an empty descriptor with no fields set for editing.
+         */
+        public EditPersonDescriptor() {
+            name = Optional.empty();
+            phone = Optional.empty();
+            email = Optional.empty();
+            address = Optional.empty();
+        }
 
         /**
          * Copy constructor.
          */
         public EditPersonDescriptor(EditPersonDescriptor toCopy) {
-            setName(toCopy.name);
-            setPhone(toCopy.phone);
-            setEmail(toCopy.email);
-            setAddress(toCopy.address);
+            requireNonNull(toCopy);
+            name = toCopy.name;
+            phone = toCopy.phone;
+            email = toCopy.email;
+            address = toCopy.address;
         }
 
         /**
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, phone, email, address);
+            return name.isPresent() || phone.isPresent() || email.isPresent() || address.isPresent();
         }
 
         public void setName(Name name) {
-            this.name = name;
+            this.name = Optional.of(requireNonNull(name));
         }
 
         public Optional<Name> getName() {
-            return Optional.ofNullable(name);
+            return name;
         }
 
         public void setPhone(Phone phone) {
-            this.phone = phone;
+            this.phone = Optional.of(requireNonNull(phone));
         }
 
         public Optional<Phone> getPhone() {
-            return Optional.ofNullable(phone);
+            return phone;
         }
 
         public void setEmail(Email email) {
-            this.email = email;
+            this.email = Optional.of(requireNonNull(email));
         }
 
         public Optional<Email> getEmail() {
-            return Optional.ofNullable(email);
+            return email;
         }
 
         public void setAddress(Address address) {
-            this.address = address;
+            this.address = Optional.of(requireNonNull(address));
         }
 
         public Optional<Address> getAddress() {
-            return Optional.ofNullable(address);
+            return address;
         }
 
         @Override
@@ -196,10 +204,10 @@ public class EditPersonCommand extends EditCommand {
         @Override
         public String toString() {
             return new ToStringBuilder(this)
-                    .add("name", name)
-                    .add("phone", phone)
-                    .add("email", email)
-                    .add("address", address)
+                    .add("name", name.orElse(null))
+                    .add("phone", phone.orElse(null))
+                    .add("email", email.orElse(null))
+                    .add("address", address.orElse(null))
                     .toString();
         }
     }
