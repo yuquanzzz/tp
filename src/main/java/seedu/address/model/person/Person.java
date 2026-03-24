@@ -42,9 +42,22 @@ public class Person {
      * are optional and can be empty.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        this(name, phone, email, address, tags, new Academics(),
-                Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty());
+        requireAllNonNull(name, phone, email, address, tags);
+
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.tags.addAll(tags);
+
+        this.academics = new Academics();
+
+        this.parentName = Optional.empty();
+        this.parentPhone = Optional.empty();
+        this.parentEmail = Optional.empty();
+        this.appointmentStart = Optional.empty();
+        this.paymentDate = Optional.empty();
+        this.lastAttendance = Optional.empty();
     }
 
     /**
@@ -66,7 +79,9 @@ public class Person {
         this.email = email;
         this.address = address;
         this.tags.addAll(tags);
+
         this.academics = academics;
+
         this.parentName = parentName;
         this.parentPhone = parentPhone;
         this.parentEmail = parentEmail;
