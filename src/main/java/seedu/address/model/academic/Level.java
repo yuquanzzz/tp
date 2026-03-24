@@ -1,4 +1,4 @@
-package seedu.address.model.subject;
+package seedu.address.model.academic;
 
 /**
  * Represents the level of a Subject.

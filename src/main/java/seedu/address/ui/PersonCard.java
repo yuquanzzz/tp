@@ -8,8 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import seedu.address.model.academic.Subject;
 import seedu.address.model.person.Person;
-import seedu.address.model.subject.Subject;
 
 /**
  * An UI component that displays information of a {@code Person}.
@@ -72,7 +72,7 @@ public class PersonCard extends UiPart<Region> {
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
-        person.getSubjects().stream()
+        person.getAcademics().getSubjects().stream()
                 .sorted(Comparator.comparing(Subject::getName))
                 .forEach(subject -> {
                     Label subjectLabel = new Label(subject.toString());

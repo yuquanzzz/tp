@@ -6,8 +6,8 @@ import static seedu.address.testutil.Assert.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
-import seedu.address.model.subject.Level;
-import seedu.address.model.subject.Subject;
+import seedu.address.model.academic.Level;
+import seedu.address.model.academic.Subject;
 
 public class JsonAdaptedSubjectTest {
     private static final String INVALID_SUBJECT = "M@th";
