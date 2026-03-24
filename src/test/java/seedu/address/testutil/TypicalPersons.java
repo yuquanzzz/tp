@@ -14,8 +14,12 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_JC;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import seedu.address.model.AddressBook;
+import seedu.address.model.academic.Academics;
+import seedu.address.model.academic.Level;
+import seedu.address.model.academic.Subject;
 import seedu.address.model.person.Person;
 
 /**
@@ -27,13 +31,18 @@ public class TypicalPersons {
             .withAddress("123, Jurong West Ave 6, #08-111").withEmail("alice@example.com")
             .withPhone("94351253")
             .withTags("friends")
-            .withSubjects("Math:Strong")
+            .withAcademics(new Academics(Set.of(
+                    new Subject("Math", Level.STRONG)
+            )))
             .build();
     public static final Person BENSON = new PersonBuilder().withName("Benson Meier")
             .withAddress("311, Clementi Ave 2, #02-25")
             .withEmail("johnd@example.com").withPhone("98765432")
             .withTags("owesMoney", "friends")
-            .withSubjects("Math:Strong", "Science:Basic")
+            .withAcademics(new Academics(Set.of(
+                    new Subject("Math", Level.STRONG),
+                    new Subject("Science", Level.BASIC)
+            )))
             .withParentName("Susan Meier")
             .build();
     public static final Person CARL = new PersonBuilder().withName("Carl Kurz").withPhone("95352563")

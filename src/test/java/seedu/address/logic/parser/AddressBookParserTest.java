@@ -98,6 +98,15 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_caseInsensitive_success() throws Exception {
+        assertTrue(parser.parseCommand("LiSt") instanceof ListCommand);
+        assertTrue(parser.parseCommand("HeLP") instanceof HelpCommand);
+
+        DeleteCommand command = (DeleteCommand) parser.parseCommand("DeLeTe " + INDEX_FIRST_PERSON.getOneBased());
+        assertEquals(new DeleteCommand(INDEX_FIRST_PERSON), command);
+    }
+
+    @Test
     public void parseCommand_help() throws Exception {
         assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD) instanceof HelpCommand);
         assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD + " 3") instanceof HelpCommand);

@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.academic.Academics;
 import seedu.address.model.billing.Billing;
 import seedu.address.model.billing.PaymentHistory;
-import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -30,7 +30,7 @@ public class Person {
     // Data fields
     private final Address address;
     private final Set<Tag> tags = new HashSet<>();
-    private final Set<Subject> subjects = new HashSet<>();
+    private final Academics academics;
     private final Optional<LocalDateTime> appointmentStart;
     private final Optional<LocalDateTime> lastAttendance;
     private final Optional<Name> parentName;
@@ -44,22 +44,35 @@ public class Person {
      * are optional and can be empty.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        this(name, phone, email, address, tags, new HashSet<>(),
-                Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Billing.defaultBilling(), Optional.empty());
+        requireAllNonNull(name, phone, email, address, tags);
+
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.tags.addAll(tags);
+
+        this.academics = new Academics();
+
+        this.parentName = Optional.empty();
+        this.parentPhone = Optional.empty();
+        this.parentEmail = Optional.empty();
+        this.appointmentStart = Optional.empty();
+        this.billing = Billing.defaultBilling();
+        this.lastAttendance = Optional.empty();
     }
 
     /**
      * Every field must be present and not null. parentName defaults to empty.
      */
     public Person(Name name, Phone phone, Email email, Address address,
-                  Set<Tag> tags, Set<Subject> subjects,
+                  Set<Tag> tags, Academics academics,
                   Optional<Name> parentName, Optional<Phone> parentPhone, Optional<Email> parentEmail,
                   Optional<LocalDateTime> appointmentStart,
                   Billing billing,
                   Optional<LocalDateTime> lastAttendance) {
 
-        requireAllNonNull(name, phone, email, address, tags, subjects,
+        requireAllNonNull(name, phone, email, address, tags, academics,
                 parentName, parentPhone, parentEmail,
                 appointmentStart, billing, lastAttendance);
 
@@ -68,7 +81,9 @@ public class Person {
         this.email = email;
         this.address = address;
         this.tags.addAll(tags);
-        this.subjects.addAll(subjects);
+
+        this.academics = academics;
+
         this.parentName = parentName;
         this.parentPhone = parentPhone;
         this.parentEmail = parentEmail;
@@ -117,12 +132,8 @@ public class Person {
         return Collections.unmodifiableSet(tags);
     }
 
-    /**
-     * Returns an immutable subject set, which throws {@code UnsupportedOperationException}
-     * if modification is attempted.
-     */
-    public Set<Subject> getSubjects() {
-        return Collections.unmodifiableSet(subjects);
+    public Academics getAcademics() {
+        return academics;
     }
 
     /**
@@ -190,7 +201,7 @@ public class Person {
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
                 && tags.equals(otherPerson.tags)
-                && subjects.equals(otherPerson.subjects)
+                && academics.equals(otherPerson.academics)
                 && parentName.equals(otherPerson.parentName)
                 && parentPhone.equals(otherPerson.parentPhone)
                 && parentEmail.equals(otherPerson.parentEmail)
@@ -202,7 +213,7 @@ public class Person {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags, subjects,
+        return Objects.hash(name, phone, email, address, tags, academics,
                 parentName, parentPhone, parentEmail,
                 appointmentStart, billing, lastAttendance);
     }
@@ -215,7 +226,7 @@ public class Person {
                 .add("email", email)
                 .add("address", address)
                 .add("tags", tags)
-                .add("subjects", subjects)
+                .add("academics", academics)
                 .add("parentName", parentName.orElse(null))
                 .add("parentPhone", parentPhone.orElse(null))
                 .add("parentEmail", parentEmail.orElse(null))

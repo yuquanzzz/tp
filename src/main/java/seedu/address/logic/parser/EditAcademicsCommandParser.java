@@ -11,26 +11,27 @@ import java.util.List;
 import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.commands.EditSubjectCommand;
+import seedu.address.logic.commands.EditAcademicsCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.subject.Level;
-import seedu.address.model.subject.LevelUtil;
-import seedu.address.model.subject.Subject;
+import seedu.address.model.academic.Academics;
+import seedu.address.model.academic.Level;
+import seedu.address.model.academic.LevelUtil;
+import seedu.address.model.academic.Subject;
 
 /**
- * Parses input arguments and creates a new {@code EditSubjectCommand} object.
+ * Parses input arguments and creates a new {@code EditAcademicsCommand} object.
  * STRICT version: enforces level must immediately follow subject.
  */
-public class EditSubjectCommandParser implements Parser<EditSubjectCommand> {
+public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> {
 
     @Override
-    public EditSubjectCommand parse(String args) throws ParseException {
+    public EditAcademicsCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
         String trimmed = args.trim();
         if (trimmed.isEmpty()) {
             throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditSubjectCommand.MESSAGE_USAGE));
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditAcademicsCommand.MESSAGE_USAGE));
         }
 
         // Split index and rest
@@ -41,12 +42,12 @@ public class EditSubjectCommandParser implements Parser<EditSubjectCommand> {
             index = ParserUtil.parseIndex(split[0]);
         } catch (ParseException e) {
             throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditSubjectCommand.MESSAGE_USAGE), e);
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditAcademicsCommand.MESSAGE_USAGE), e);
         }
 
         // No subjects → clear
         if (split.length == 1) {
-            return new EditSubjectCommand(index, new HashSet<>());
+            return new EditAcademicsCommand(index, new Academics());
         }
 
         String remainder = split[1];
@@ -95,7 +96,7 @@ public class EditSubjectCommandParser implements Parser<EditSubjectCommand> {
 
             } else {
                 throw new ParseException(
-                        String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditSubjectCommand.MESSAGE_USAGE));
+                        String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditAcademicsCommand.MESSAGE_USAGE));
             }
         }
 
@@ -107,6 +108,6 @@ public class EditSubjectCommandParser implements Parser<EditSubjectCommand> {
             }
         }
 
-        return new EditSubjectCommand(index, new HashSet<>(subjects));
+        return new EditAcademicsCommand(index, new Academics(new HashSet<>(subjects)));
     }
 }

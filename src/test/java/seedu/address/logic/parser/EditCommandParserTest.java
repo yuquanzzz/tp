@@ -203,6 +203,23 @@ public class EditCommandParserTest {
     }
 
     @Test
+    public void parse_caseInsensitiveSubcommand_success() {
+        Index targetIndex = INDEX_FIRST_PERSON;
+
+        String personInput = "PeRsOn " + targetIndex.getOneBased() + NAME_DESC_AMY;
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_AMY).build();
+        assertParseSuccess(parser, personInput, new EditPersonCommand(targetIndex, descriptor));
+
+        String apptInput = "ApPt " + targetIndex.getOneBased() + APPOINTMENT_START_DESC;
+        assertParseSuccess(parser, apptInput,
+                new EditApptCommand(targetIndex, LocalDateTime.parse(VALID_APPOINTMENT_START)));
+
+        String attdInput = "AtTd " + targetIndex.getOneBased() + LAST_ATTENDANCE_DESC;
+        assertParseSuccess(parser, attdInput,
+                new EditAttdCommand(targetIndex, LocalDateTime.parse(VALID_LAST_ATTENDANCE)));
+    }
+
+    @Test
     public void parse_multipleRepeatedFields_failure() {
         // More extensive testing of duplicate parameter detections is done in
         // AddCommandParserTest#parse_repeatedNonTagValue_failure()

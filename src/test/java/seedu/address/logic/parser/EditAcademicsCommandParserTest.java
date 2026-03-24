@@ -15,15 +15,16 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.commands.EditAcademicsCommand;
 import seedu.address.logic.commands.EditCommand;
-import seedu.address.logic.commands.EditSubjectCommand;
-import seedu.address.model.subject.Level;
-import seedu.address.model.subject.Subject;
+import seedu.address.model.academic.Academics;
+import seedu.address.model.academic.Level;
+import seedu.address.model.academic.Subject;
 
 /**
- * Tests for EditSubjectCommandParser.
+ * Tests for EditAcademicsCommandParser.
  */
-public class EditSubjectCommandParserTest {
+public class EditAcademicsCommandParserTest {
 
     private static final String SUBJECT_EMPTY = " " + PREFIX_SUBJECT;
 
@@ -31,9 +32,9 @@ public class EditSubjectCommandParserTest {
             String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE);
 
     private static final String MESSAGE_INVALID_SUBJECT_FORMAT =
-            String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditSubjectCommand.MESSAGE_USAGE);
+            String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditAcademicsCommand.MESSAGE_USAGE);
 
-    private EditSubjectCommandParser parser = new EditSubjectCommandParser();
+    private EditAcademicsCommandParser parser = new EditAcademicsCommandParser();
 
     @Test
     public void parse_missingParts_failure() {
@@ -68,8 +69,9 @@ public class EditSubjectCommandParserTest {
         String userInput = targetIndex.getOneBased() + SUBJECT_DESC_MATH_STRONG;
 
         Set<Subject> subjects = Set.of(new Subject("Math", Level.STRONG));
+        Academics academics = new Academics(subjects);
 
-        EditSubjectCommand expectedCommand = new EditSubjectCommand(targetIndex, subjects);
+        EditAcademicsCommand expectedCommand = new EditAcademicsCommand(targetIndex, academics);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -85,8 +87,9 @@ public class EditSubjectCommandParserTest {
                 new Subject("Math", Level.STRONG),
                 new Subject("Science", Level.BASIC)
         );
+        Academics academics = new Academics(subjects);
 
-        EditSubjectCommand expectedCommand = new EditSubjectCommand(targetIndex, subjects);
+        EditAcademicsCommand expectedCommand = new EditAcademicsCommand(targetIndex, academics);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -97,8 +100,9 @@ public class EditSubjectCommandParserTest {
         String userInput = targetIndex.getOneBased() + " s/Math";
 
         Set<Subject> subjects = Set.of(new Subject("Math", null));
+        Academics academics = new Academics(subjects);
 
-        EditSubjectCommand expectedCommand = new EditSubjectCommand(targetIndex, subjects);
+        EditAcademicsCommand expectedCommand = new EditAcademicsCommand(targetIndex, academics);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -109,8 +113,9 @@ public class EditSubjectCommandParserTest {
         String userInput = String.valueOf(targetIndex.getOneBased());
 
         Set<Subject> subjects = Set.of();
+        Academics academics = new Academics(subjects);
 
-        EditSubjectCommand expectedCommand = new EditSubjectCommand(targetIndex, subjects);
+        EditAcademicsCommand expectedCommand = new EditAcademicsCommand(targetIndex, academics);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }

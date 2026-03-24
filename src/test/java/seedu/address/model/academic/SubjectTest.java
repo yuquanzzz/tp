@@ -1,4 +1,4 @@
-package seedu.address.model.subject;
+package seedu.address.model.academic;
 
 import static seedu.address.testutil.Assert.assertThrows;
 

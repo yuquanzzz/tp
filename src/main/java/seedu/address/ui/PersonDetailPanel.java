@@ -115,13 +115,13 @@ public class PersonDetailPanel extends UiPart<Region> {
                     });
         }
 
-        if (person.getSubjects().isEmpty()) {
+        if (person.getAcademics().getSubjects().isEmpty()) {
             Label noSubjectsLabel = new Label("-");
             noSubjectsLabel.getStyleClass().add("detail-field-value");
             subjectsFlowPane.getChildren().add(noSubjectsLabel);
         } else {
-            person.getSubjects().stream()
-                    .sorted(java.util.Comparator.comparing(seedu.address.model.subject.Subject::getName))
+            person.getAcademics().getSubjects().stream()
+                    .sorted(java.util.Comparator.comparing(seedu.address.model.academic.Subject::getName))
                     .forEach(subject -> {
                         Label subjectLabel = new Label(subject.toString());
                         subjectLabel.getStyleClass().add("detail-subject-tag");

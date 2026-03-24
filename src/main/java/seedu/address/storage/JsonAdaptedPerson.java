@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.academic.Academics;
 import seedu.address.model.billing.Billing;
 import seedu.address.model.billing.PaymentHistory;
 import seedu.address.model.person.Address;
@@ -25,7 +26,6 @@ import seedu.address.model.person.Person;
 import seedu.address.model.person.PersonBuilder;
 import seedu.address.model.person.Phone;
 import seedu.address.model.recurrence.Recurrence;
-import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -63,7 +63,7 @@ class JsonAdaptedPerson {
     private final String paymentRecurrence;
     private final Double tuitionFee;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
-    private final List<JsonAdaptedSubject> subjects = new ArrayList<>();
+    private final JsonAdaptedAcademics academics;
 
     /**
      * Constructs a {@code JsonAdaptedPerson} with the given person details.
@@ -72,7 +72,7 @@ class JsonAdaptedPerson {
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
             @JsonProperty("tags") List<JsonAdaptedTag> tags,
-            @JsonProperty("subjects") List<JsonAdaptedSubject> subjects,
+            @JsonProperty("academics") JsonAdaptedAcademics academics,
             @JsonProperty("parentName") String parentName,
             @JsonProperty("parentPhone") String parentPhone,
             @JsonProperty("parentEmail") String parentEmail,
@@ -98,9 +98,7 @@ class JsonAdaptedPerson {
         if (tags != null) {
             this.tags.addAll(tags);
         }
-        if (subjects != null) {
-            this.subjects.addAll(subjects);
-        }
+        this.academics = academics;
     }
 
     /**
@@ -120,9 +118,7 @@ class JsonAdaptedPerson {
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
-        subjects.addAll(source.getSubjects().stream()
-                .map(JsonAdaptedSubject::new)
-                .collect(Collectors.toList()));
+        academics = new JsonAdaptedAcademics(source.getAcademics());
         parentName = source.getParentName().map(pn -> pn.fullName).orElse(null);
         parentPhone = source.getParentPhone().map(pp -> pp.value).orElse(null);
         parentEmail = source.getParentEmail().map(pe -> pe.value).orElse(null);
@@ -188,14 +184,10 @@ class JsonAdaptedPerson {
         }
         final Set<Tag> modelTags = new HashSet<>(personTags);
 
-        // ---------- Subjects ----------
-        final List<Subject> personSubjects = new ArrayList<>();
-        if (subjects != null) {
-            for (JsonAdaptedSubject subject : subjects) {
-                personSubjects.add(subject.toModelType());
-            }
-        }
-        final Set<Subject> modelSubjects = new HashSet<>(personSubjects);
+        // ---------- Academics ----------
+        final Academics modelAcademics = academics != null
+                ? academics.toModelType()
+                : new Academics(new HashSet<>());
 
         // ---------- Parent ----------
         Name modelParentName = null;
@@ -290,7 +282,7 @@ class JsonAdaptedPerson {
         }
 
         return new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags)
-            .withSubjects(modelSubjects)
+            .withAcademics(modelAcademics)
             .withParentName(Optional.ofNullable(modelParentName))
             .withParentPhone(Optional.ofNullable(modelParentPhone))
             .withParentEmail(Optional.ofNullable(modelParentEmail))
