@@ -63,8 +63,9 @@ public class AcademicsTest {
 
         Set<Subject> returned = academics.getSubjects();
 
-        assertThrows(UnsupportedOperationException.class, ()
-                -> returned.add(new Subject("English", null)));
+        assertThrows(
+                UnsupportedOperationException.class, () -> returned.add(new Subject("English", null))
+        );
     }
 
     @Test
