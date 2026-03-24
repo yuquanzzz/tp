@@ -26,9 +26,9 @@ public class Person {
     private final Name name;
     private final Phone phone;
     private final Email email;
+    private final Address address;
 
     // Data fields
-    private final Address address;
     private final Set<Tag> tags = new HashSet<>();
     private final Academics academics;
     private final Optional<LocalDateTime> appointmentStart;

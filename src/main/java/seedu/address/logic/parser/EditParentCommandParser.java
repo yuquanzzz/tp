@@ -1,24 +1,28 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PARENT_PHONE;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditParentCommand;
+import seedu.address.logic.commands.EditParentCommand.EditParentDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.Email;
-import seedu.address.model.person.Name;
-import seedu.address.model.person.Phone;
 
 /**
  * Parses input arguments and creates a new {@code EditParentCommand} object.
  */
 public class EditParentCommandParser implements Parser<EditParentCommand> {
+
+    @FunctionalInterface
+    private interface ThrowingParser<T> {
+        T parse(String value) throws ParseException;
+    }
 
     /**
      * Parses the given {@code String} of arguments in the context of the EditParentCommand
@@ -35,26 +39,28 @@ public class EditParentCommandParser implements Parser<EditParentCommand> {
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_PARENT_NAME, PREFIX_PARENT_PHONE, PREFIX_PARENT_EMAIL);
 
-        boolean hasName = argMultimap.getValue(PREFIX_PARENT_NAME).isPresent();
-        boolean hasPhone = argMultimap.getValue(PREFIX_PARENT_PHONE).isPresent();
-        boolean hasEmail = argMultimap.getValue(PREFIX_PARENT_EMAIL).isPresent();
+        EditParentDescriptor editParentDescriptor = new EditParentDescriptor();
 
-        if (!hasName && !hasPhone && !hasEmail) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditParentCommand.MESSAGE_USAGE));
+        parseAndSet(argMultimap, PREFIX_PARENT_NAME, ParserUtil::parseParentName,
+                editParentDescriptor::setParentName);
+        parseAndSet(argMultimap, PREFIX_PARENT_PHONE, ParserUtil::parseParentPhone,
+                editParentDescriptor::setParentPhone);
+        parseAndSet(argMultimap, PREFIX_PARENT_EMAIL, ParserUtil::parseParentEmail,
+                editParentDescriptor::setParentEmail);
+
+        if (!editParentDescriptor.isAnyFieldEdited()) {
+            throw new ParseException(EditCommand.MESSAGE_NOT_EDITED);
         }
 
-        Optional<Name> parentName = hasName
-                ? Optional.of(ParserUtil.parseParentName(argMultimap.getValue(PREFIX_PARENT_NAME).get()))
-                : Optional.empty();
+        return new EditParentCommand(index, editParentDescriptor);
+    }
 
-        Optional<Phone> parentPhone = hasPhone
-                ? Optional.of(ParserUtil.parseParentPhone(argMultimap.getValue(PREFIX_PARENT_PHONE).get()))
-                : Optional.empty();
-
-        Optional<Email> parentEmail = hasEmail
-                ? Optional.of(ParserUtil.parseParentEmail(argMultimap.getValue(PREFIX_PARENT_EMAIL).get()))
-                : Optional.empty();
-
-        return new EditParentCommand(index, parentName, parentPhone, parentEmail);
+    private static <T> void parseAndSet(ArgumentMultimap argMultimap, Prefix prefix,
+                                        ThrowingParser<T> parser, Consumer<T> setter)
+            throws ParseException {
+        Optional<String> value = argMultimap.getValue(prefix);
+        if (value.isPresent()) {
+            setter.accept(parser.parse(value.get()));
+        }
     }
 }
