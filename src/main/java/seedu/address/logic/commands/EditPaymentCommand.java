@@ -5,13 +5,13 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.billing.Billing;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.PersonBuilder;
 
@@ -47,8 +47,9 @@ public class EditPaymentCommand extends EditCommand {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         Person personToEdit = getTargetPerson(model);
+        Billing updatedBilling = personToEdit.recordFeesPaidAndAdvanceBilling(paymentDate);
         Person editedPerson = new PersonBuilder(personToEdit)
-                .withPaymentDate(Optional.of(paymentDate))
+                .withBilling(updatedBilling)
                 .build();
 
         replacePerson(model, personToEdit, editedPerson);

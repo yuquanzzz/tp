@@ -1,12 +1,12 @@
 package seedu.address.model.person;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import seedu.address.model.subject.Subject;
+import seedu.address.model.academic.Academics;
+import seedu.address.model.billing.Billing;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -19,14 +19,15 @@ public class PersonBuilder {
     private Email email;
     private Address address;
     private Set<Tag> tags;
-    private Set<Subject> subjects;
+    private Academics academics;
     private Optional<Guardian> guardian;
     private Optional<LocalDateTime> appointmentStart;
-    private Optional<LocalDate> paymentDate;
     private Optional<LocalDateTime> lastAttendance;
+    private Billing billing;
 
     /**
-     * Creates a builder initialized with required person fields. Optional fields default to empty.
+     * Creates a builder initialized with required person fields.
+     * Optional fields default to empty.
      */
     public PersonBuilder(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
         this.name = name;
@@ -34,11 +35,11 @@ public class PersonBuilder {
         this.email = email;
         this.address = address;
         this.tags = new HashSet<>(tags);
-        this.subjects = new HashSet<>();
+        this.academics = new Academics();
         this.guardian = Optional.empty();
         this.appointmentStart = Optional.empty();
-        this.paymentDate = Optional.empty();
         this.lastAttendance = Optional.empty();
+        this.billing = Billing.defaultBilling();
     }
 
     /**
@@ -50,11 +51,11 @@ public class PersonBuilder {
         this.email = personToCopy.getEmail();
         this.address = personToCopy.getAddress();
         this.tags = new HashSet<>(personToCopy.getTags());
-        this.subjects = new HashSet<>(personToCopy.getSubjects());
+        this.academics = personToCopy.getAcademics();
         this.guardian = personToCopy.getGuardian();
         this.appointmentStart = personToCopy.getAppointmentStart();
-        this.paymentDate = personToCopy.getPaymentDate();
         this.lastAttendance = personToCopy.getLastAttendance();
+        this.billing = personToCopy.getBilling();
     }
 
     /**
@@ -102,7 +103,8 @@ public class PersonBuilder {
     }
 
     /**
-     * Replaces the tag set of the {@code Person} being built. A defensive copy of the provided tag set is created.
+     * Replaces the tag set of the {@code Person} being built.
+     * A defensive copy of the provided tag set is created.
      *
      * @param tags the new set of tags
      * @return this {@code PersonBuilder} instance for method chaining
@@ -113,58 +115,56 @@ public class PersonBuilder {
     }
 
     /**
-     * Replaces the subject set of the {@code Person} being built. A defensive copy of the provided subject set is
-     * created.
+     * Replaces the subject set of the {@code Person} being built.
+     * A defensive copy of the provided subject set is created.
      *
-     * @param subjects the new set of tags
+     * @param academics
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withSubjects(Set<Subject> subjects) {
-        this.subjects = new HashSet<>(subjects);
+    public PersonBuilder withAcademics(Academics academics) {
+        this.academics = academics;
         return this;
     }
 
     /**
      * Sets the {@code Guardian} of the {@code Person} being built.
      *
-     * @param guardian the optional guardian
+     * @param guardian the guardian
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withGuardian(Optional<Guardian> guardian) {
-        this.guardian = guardian;
+    public PersonBuilder withGuardian(Guardian guardian) {
+        this.guardian = Optional.ofNullable(guardian);
         return this;
     }
 
     /**
      * Sets the appointment start time of the {@code Person} being built.
      *
-     * @param appointmentStart the optional appointment start time
+     * @param appointmentStart the appointment start time
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withAppointmentStart(Optional<LocalDateTime> appointmentStart) {
-        this.appointmentStart = appointmentStart;
+    public PersonBuilder withAppointmentStart(LocalDateTime appointmentStart) {
+        this.appointmentStart = Optional.ofNullable(appointmentStart);
         return this;
     }
 
     /**
-     * Sets the payment date of the {@code Person} being built.
-     *
-     * @param paymentDate the optional payment date
+     * Sets the billing information of the {@code Person} being built.
+     * @param billing the new billing cycle
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withPaymentDate(Optional<LocalDate> paymentDate) {
-        this.paymentDate = paymentDate;
+    public PersonBuilder withBilling(Billing billing) {
+        this.billing = billing;
         return this;
     }
 
     /**
      * Sets the last attendance time of the {@code Person} being built.
-     *
      * @param lastAttendance the optional last attendance time
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withLastAttendance(Optional<LocalDateTime> lastAttendance) {
-        this.lastAttendance = lastAttendance;
+    public PersonBuilder withLastAttendance(LocalDateTime lastAttendance) {
+        this.lastAttendance = Optional.ofNullable(lastAttendance);
         return this;
     }
 
@@ -172,7 +172,16 @@ public class PersonBuilder {
      * Builds a {@code Person} with the current builder state.
      */
     public Person build() {
-        return new Person(name, phone, email, address, tags, subjects, guardian, appointmentStart, paymentDate,
+        return new Person(
+                name,
+                phone,
+                email,
+                address,
+                tags,
+                academics,
+                guardian,
+                appointmentStart,
+                billing,
                 lastAttendance);
     }
 }

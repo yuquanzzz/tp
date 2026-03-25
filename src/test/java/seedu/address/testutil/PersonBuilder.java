@@ -3,17 +3,16 @@ package seedu.address.testutil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
+import seedu.address.model.academic.Academics;
+import seedu.address.model.billing.Billing;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
-import seedu.address.model.subject.LevelUtil;
-import seedu.address.model.subject.Subject;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -26,18 +25,19 @@ public class PersonBuilder {
     public static final String DEFAULT_PHONE = "85355255";
     public static final String DEFAULT_EMAIL = "amy@gmail.com";
     public static final String DEFAULT_ADDRESS = "123, Jurong West Ave 6, #08-111";
+    public static final LocalDate DEFAULT_PAYMENT_DATE = LocalDate.of(2026, 02, 10);
 
     private Name name;
     private Phone phone;
     private Email email;
     private Address address;
     private Set<Tag> tags;
-    private Set<Subject> subjects;
+    private Academics academics;
     private Name parentName;
     private Phone parentPhone;
     private Email parentEmail;
     private LocalDateTime appointmentStart;
-    private LocalDate paymentDate;
+    private Billing billing;
     private LocalDateTime lastAttendance;
 
     /**
@@ -49,12 +49,12 @@ public class PersonBuilder {
         email = new Email(DEFAULT_EMAIL);
         address = new Address(DEFAULT_ADDRESS);
         tags = new HashSet<>();
-        subjects = new HashSet<>();
+        academics = new Academics();
         parentName = null;
         parentPhone = null;
         parentEmail = null;
         appointmentStart = null;
-        paymentDate = null;
+        billing = Billing.defaultBilling();
         lastAttendance = null;
     }
 
@@ -67,14 +67,14 @@ public class PersonBuilder {
         email = personToCopy.getEmail();
         address = personToCopy.getAddress();
         tags = new HashSet<>(personToCopy.getTags());
-        subjects = new HashSet<>(personToCopy.getSubjects());
+        academics = personToCopy.getAcademics();
         Guardian guardianToCopy = personToCopy.getGuardian().orElse(null);
         parentName = guardianToCopy != null ? guardianToCopy.getName() : null;
         parentPhone = guardianToCopy != null ? guardianToCopy.getPhone() : null;
         parentEmail = guardianToCopy != null ? guardianToCopy.getEmail() : null;
         appointmentStart = personToCopy.getAppointmentStart().orElse(null);
+        billing = personToCopy.getBilling();
         lastAttendance = personToCopy.getLastAttendance().orElse(null);
-        paymentDate = personToCopy.getPaymentDate().orElse(null);
     }
 
     /**
@@ -94,21 +94,10 @@ public class PersonBuilder {
     }
 
     /**
-     * Parses the {@code tags} into a {@code Set<Subject>} and set it to the {@code Person} that we are building.
+     * Sets the {@code Academics} of the {@code Person} that we are building.
      */
-    public PersonBuilder withSubjects(String... subjects) {
-        this.subjects = new HashSet<>();
-
-        for (String subjectStr : subjects) {
-            String[] parts = subjectStr.split(":");
-
-            if (parts.length != 2) {
-                throw new IllegalArgumentException("Subject must be in format 'Name:Level', e.g. Math:Strong");
-            }
-
-            this.subjects.add(new Subject(parts[0], LevelUtil.levelFromString(parts[1])));
-        }
-
+    public PersonBuilder withAcademics(Academics academics) {
+        this.academics = academics;
         return this;
     }
 
@@ -177,10 +166,10 @@ public class PersonBuilder {
     }
 
     /**
-     * Sets the payment date of the {@code Person} that we are building.
+     * Sets the {@code Billing} information of the {@code Person} that we are building.
      */
-    public PersonBuilder withPaymentDate(String paymentDate) {
-        this.paymentDate = LocalDate.parse(paymentDate);
+    public PersonBuilder withBilling(Billing billing) {
+        this.billing = billing;
         return this;
     }
 
@@ -192,8 +181,12 @@ public class PersonBuilder {
         if (parentName != null || parentPhone != null || parentEmail != null) {
             guardian = new Guardian(parentName, parentPhone, parentEmail);
         }
-        return new Person(name, phone, email, address, tags, subjects, Optional.ofNullable(guardian),
-                Optional.ofNullable(appointmentStart), Optional.ofNullable(paymentDate),
-                Optional.ofNullable(lastAttendance));
+        return new seedu.address.model.person.PersonBuilder(name, phone, email, address, tags)
+                .withAcademics(academics)
+                .withGuardian(guardian)
+                .withAppointmentStart(appointmentStart)
+                .withBilling(billing)
+                .withLastAttendance(lastAttendance)
+                .build();
     }
 }

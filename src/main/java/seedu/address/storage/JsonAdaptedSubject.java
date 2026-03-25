@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
-import seedu.address.model.subject.Level;
-import seedu.address.model.subject.LevelUtil;
-import seedu.address.model.subject.Subject;
+import seedu.address.model.academic.Level;
+import seedu.address.model.academic.LevelUtil;
+import seedu.address.model.academic.Subject;
 
 /**
  * Jackson-friendly version of {@link Subject}.

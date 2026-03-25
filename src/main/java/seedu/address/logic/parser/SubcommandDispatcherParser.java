@@ -5,6 +5,7 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import seedu.address.logic.commands.Command;
@@ -26,7 +27,11 @@ public class SubcommandDispatcherParser<T extends Command> implements Parser<T> 
     public SubcommandDispatcherParser(Map<String, Parser<? extends T>> subcommandParsers, String usageMessage) {
         requireNonNull(subcommandParsers);
         requireNonNull(usageMessage);
-        this.subcommandParsers = Collections.unmodifiableMap(new HashMap<>(subcommandParsers));
+        Map<String, Parser<? extends T>> normalizedParsers = new HashMap<>();
+        for (Map.Entry<String, Parser<? extends T>> entry : subcommandParsers.entrySet()) {
+            normalizedParsers.put(entry.getKey().toLowerCase(Locale.ROOT), entry.getValue());
+        }
+        this.subcommandParsers = Collections.unmodifiableMap(normalizedParsers);
         this.usageMessage = usageMessage;
     }
 
@@ -40,7 +45,7 @@ public class SubcommandDispatcherParser<T extends Command> implements Parser<T> 
         }
 
         String[] parts = trimmedArgs.split("\\s+", 2);
-        String subcommand = parts[0];
+        String subcommand = parts[0].toLowerCase(Locale.ROOT);
         String subcommandBody = parts.length > 1 ? parts[1] : "";
 
         Parser<? extends T> subcommandParser = subcommandParsers.get(subcommand);

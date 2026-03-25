@@ -16,6 +16,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.academic.Academics;
+import seedu.address.model.billing.Billing;
+import seedu.address.model.billing.PaymentHistory;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Guardian;
@@ -23,7 +26,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.PersonBuilder;
 import seedu.address.model.person.Phone;
-import seedu.address.model.subject.Subject;
+import seedu.address.model.recurrence.Recurrence;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -33,17 +36,19 @@ class JsonAdaptedPerson {
 
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Person's %s field is missing!";
     private static final String APPOINTMENT_START_MESSAGE_CONSTRAINTS =
-            "Appointment start date-time must be in ISO 8601 local format,"
-                    + " e.g. 2026-01-13T08:00:00";
-    private static final String LAST_ATTENDANCE_MESSAGE_CONSTRAINTS = "Last attendance date-time must be in ISO 8601"
-            + " local format, e.g. 2026-01-29T08:00:00";
-    private static final String PAYMENT_DATE_MESSAGE_CONSTRAINTS = "Payment date must be in ISO 8601 local date format,"
-            + " e.g. 2026-01-13";
+            "Appointment start date-time must be in ISO 8601 local format, e.g. 2026-01-13T08:00:00";
+    private static final String LAST_ATTENDANCE_MESSAGE_CONSTRAINTS =
+            "Last attendance date-time must be in ISO 8601 local format, e.g. 2026-01-29T08:00:00";
+    private static final String PAYMENT_DATE_MESSAGE_CONSTRAINTS =
+            "Payment date must be in ISO 8601 local date format, e.g. 2026-01-13";
+    private static final String PAYMENT_DUE_DATE_MESSAGE_CONSTRAINTS =
+            "Payment due date must be in ISO 8601 local date format, e.g. 2026-01-13";
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE
             .withResolverStyle(ResolverStyle.STRICT);
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-            .withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter DATETIME_FORMATTER =
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME.withResolverStyle(ResolverStyle.STRICT);
+
 
     private final String name;
     private final String phone;
@@ -54,9 +59,12 @@ class JsonAdaptedPerson {
     private final String parentName; // optional, may be null
     private final String parentPhone; // optional, may be null
     private final String parentEmail; // optional, may be null
-    private final String paymentDate;
+    private final List<String> paymentDates;
+    private final String paymentDueDate;
+    private final String paymentRecurrence;
+    private final Double tuitionFee;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
-    private final List<JsonAdaptedSubject> subjects = new ArrayList<>();
+    private final JsonAdaptedAcademics academics;
 
     /**
      * Constructs a {@code JsonAdaptedPerson} with the given person details.
@@ -65,9 +73,15 @@ class JsonAdaptedPerson {
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
             @JsonProperty("tags") List<JsonAdaptedTag> tags,
-            @JsonProperty("subjects") List<JsonAdaptedSubject> subjects, @JsonProperty("parentName") String parentName,
-            @JsonProperty("parentPhone") String parentPhone, @JsonProperty("parentEmail") String parentEmail,
-            @JsonProperty("appointmentStart") String appointmentStart, @JsonProperty("paymentDate") String paymentDate,
+            @JsonProperty("academics") JsonAdaptedAcademics academics,
+            @JsonProperty("parentName") String parentName,
+            @JsonProperty("parentPhone") String parentPhone,
+            @JsonProperty("parentEmail") String parentEmail,
+            @JsonProperty("appointmentStart") String appointmentStart,
+            @JsonProperty("paymentDates") List<String> paymentDates,
+            @JsonProperty("paymentDueDate") String paymentDueDate,
+            @JsonProperty("paymentRecurrence") String paymentRecurrence,
+            @JsonProperty("billingMonthlyRate") Double tuitionFee,
             @JsonProperty("lastAttendance") String lastAttendance) {
         this.name = name;
         this.phone = phone;
@@ -77,14 +91,15 @@ class JsonAdaptedPerson {
         this.parentPhone = parentPhone;
         this.parentEmail = parentEmail;
         this.appointmentStart = appointmentStart;
-        this.paymentDate = paymentDate;
+        this.paymentDates = paymentDates;
+        this.paymentDueDate = paymentDueDate;
+        this.paymentRecurrence = paymentRecurrence;
+        this.tuitionFee = tuitionFee;
         this.lastAttendance = lastAttendance;
         if (tags != null) {
             this.tags.addAll(tags);
         }
-        if (subjects != null) {
-            this.subjects.addAll(subjects);
-        }
+        this.academics = academics;
     }
 
     /**
@@ -96,19 +111,32 @@ class JsonAdaptedPerson {
         email = source.getEmail().value;
         address = source.getAddress().value;
         appointmentStart = source.getAppointmentStart()
-                .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)).orElse(null);
-        lastAttendance = source.getLastAttendance().map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .orElse(null);
-        tags.addAll(source.getTags().stream().map(JsonAdaptedTag::new).collect(Collectors.toList()));
-        subjects.addAll(source.getSubjects().stream().map(JsonAdaptedSubject::new).collect(Collectors.toList()));
+        lastAttendance = source.getLastAttendance()
+            .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            .orElse(null);
+        tags.addAll(source.getTags().stream()
+                .map(JsonAdaptedTag::new)
+                .collect(Collectors.toList()));
+        academics = new JsonAdaptedAcademics(source.getAcademics());
         Guardian guardian = source.getGuardian().orElse(null);
-        parentName = guardian != null ? Optional.ofNullable(guardian.getName()).map(pn -> pn.fullName).orElse(null)
+        parentName = guardian != null
+                ? Optional.ofNullable(guardian.getName()).map(pn -> pn.fullName).orElse(null)
                 : null;
-        parentPhone = guardian != null ? Optional.ofNullable(guardian.getPhone()).map(pp -> pp.value).orElse(null)
+        parentPhone = guardian != null
+                ? Optional.ofNullable(guardian.getPhone()).map(pp -> pp.value).orElse(null)
                 : null;
-        parentEmail = guardian != null ? Optional.ofNullable(guardian.getEmail()).map(pe -> pe.value).orElse(null)
+        parentEmail = guardian != null
+                ? Optional.ofNullable(guardian.getEmail()).map(pe -> pe.value).orElse(null)
                 : null;
-        paymentDate = source.getPaymentDate().map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE)).orElse(null);
+        paymentDates = source.getPaymentHistory().getPaidDates().stream()
+                .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .collect(java.util.stream.Collectors.toList());
+        paymentDueDate = source.getBilling().getLastDueDate()
+                .format(DATE_FORMATTER);
+        paymentRecurrence = source.getBilling().getRecurrence().name();
+        tuitionFee = source.getBilling().getTuitionFee();
     }
 
     /**
@@ -120,7 +148,8 @@ class JsonAdaptedPerson {
 
         // ---------- Validate core fields ----------
         if (name == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName()));
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName()));
         }
         if (!Name.isValidName(name)) {
             throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
@@ -128,7 +157,8 @@ class JsonAdaptedPerson {
         final Name modelName = new Name(name);
 
         if (phone == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
         }
         if (!Phone.isValidPhone(phone)) {
             throw new IllegalValueException(Phone.MESSAGE_CONSTRAINTS);
@@ -136,7 +166,8 @@ class JsonAdaptedPerson {
         final Phone modelPhone = new Phone(phone);
 
         if (email == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName()));
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName()));
         }
         if (!Email.isValidEmail(email)) {
             throw new IllegalValueException(Email.MESSAGE_CONSTRAINTS);
@@ -144,7 +175,8 @@ class JsonAdaptedPerson {
         final Email modelEmail = new Email(email);
 
         if (address == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
         }
         if (!Address.isValidAddress(address)) {
             throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
@@ -160,14 +192,10 @@ class JsonAdaptedPerson {
         }
         final Set<Tag> modelTags = new HashSet<>(personTags);
 
-        // ---------- Subjects ----------
-        final List<Subject> personSubjects = new ArrayList<>();
-        if (subjects != null) {
-            for (JsonAdaptedSubject subject : subjects) {
-                personSubjects.add(subject.toModelType());
-            }
-        }
-        final Set<Subject> modelSubjects = new HashSet<>(personSubjects);
+        // ---------- Academics ----------
+        final Academics modelAcademics = academics != null
+                ? academics.toModelType()
+                : new Academics(new HashSet<>());
 
         // ---------- Guardian ----------
         Name modelParentName = null;
@@ -210,13 +238,50 @@ class JsonAdaptedPerson {
         }
 
         // ---------- Payment ----------
-        LocalDate modelPaymentDate = null;
-        if (paymentDate != null) {
-            try {
-                modelPaymentDate = LocalDate.parse(paymentDate, DATE_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw new IllegalValueException(PAYMENT_DATE_MESSAGE_CONSTRAINTS);
+        Set<LocalDate> modelPaidDates = new java.util.LinkedHashSet<>();
+        if (paymentDates != null) {
+            for (String dateString : paymentDates) {
+                try {
+                    modelPaidDates.add(LocalDate.parse(dateString, DATE_FORMATTER));
+                } catch (DateTimeParseException e) {
+                    throw new IllegalValueException(PAYMENT_DATE_MESSAGE_CONSTRAINTS);
+                }
             }
+        }
+
+        PaymentHistory modelPayment;
+        if (!modelPaidDates.isEmpty()) {
+            modelPayment = new PaymentHistory(modelPaidDates.toArray(new LocalDate[0]));
+        } else {
+            modelPayment = PaymentHistory.EMPTY;
+        }
+
+        // ---------- Billing ----------
+        Recurrence modelRecurrence = Recurrence.MONTHLY;
+        if (paymentRecurrence != null) {
+            try {
+                modelRecurrence = Recurrence.valueOf(paymentRecurrence);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalValueException(
+                    "Payment recurrence must be one of: WEEKLY, BIWEEKLY, MONTHLY, NONE");
+            }
+        }
+
+        LocalDate modelPaymentDueDate = LocalDate.now();
+        if (paymentDueDate != null) {
+            try {
+                modelPaymentDueDate = LocalDate.parse(paymentDueDate, DATE_FORMATTER);
+            } catch (DateTimeParseException e) {
+                throw new IllegalValueException(PAYMENT_DUE_DATE_MESSAGE_CONSTRAINTS);
+            }
+        }
+
+        Billing modelBilling;
+        if (tuitionFee == null) {
+            modelBilling = Billing.defaultBilling();
+        } else {
+            modelBilling = new Billing(
+                    modelRecurrence, modelPaymentDueDate, tuitionFee, modelPayment);
         }
 
         // ---------- Last attendance ----------
@@ -229,10 +294,12 @@ class JsonAdaptedPerson {
             }
         }
 
-        return new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags).withSubjects(modelSubjects)
-                .withGuardian(Optional.ofNullable(modelGuardian))
-                .withAppointmentStart(Optional.ofNullable(modelAppointmentStart))
-                .withPaymentDate(Optional.ofNullable(modelPaymentDate))
-                .withLastAttendance(Optional.ofNullable(modelLastAttendance)).build();
+        return new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags)
+            .withAcademics(modelAcademics)
+            .withGuardian(modelGuardian)
+            .withAppointmentStart(modelAppointmentStart)
+            .withBilling(modelBilling)
+            .withLastAttendance(modelLastAttendance)
+            .build();
     }
 }

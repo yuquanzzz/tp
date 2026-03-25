@@ -32,4 +32,11 @@ public class FindCommandParserTest {
         assertParseSuccess(parser, " \n person \n \t Alice  \t Bob", expectedFindCommand);
     }
 
+    @Test
+    public void parse_caseInsensitiveSubcommand_success() {
+        FindPersonCommand expectedFindCommand =
+                new FindPersonCommand(new NameContainsKeywordsPredicate(Arrays.asList("Alice", "Bob")));
+        assertParseSuccess(parser, "PeRsOn Alice Bob", expectedFindCommand);
+    }
+
 }

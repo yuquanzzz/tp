@@ -1,4 +1,4 @@
-package seedu.address.model.subject;
+package seedu.address.model.academic;
 
 /**
  * Utility class for parsing and validating {@link Level}.

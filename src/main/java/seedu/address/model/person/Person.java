@@ -11,12 +11,14 @@ import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.model.subject.Subject;
+import seedu.address.model.academic.Academics;
+import seedu.address.model.billing.Billing;
+import seedu.address.model.billing.PaymentHistory;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a Person in the address book. Guarantees: details are present and not null, field values are validated,
- * immutable.
+ * Represents a Person in the address book.
+ * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Person {
 
@@ -24,45 +26,63 @@ public class Person {
     private final Name name;
     private final Phone phone;
     private final Email email;
+    private final Address address;
 
     // Data fields
-    private final Address address;
     private final Set<Tag> tags = new HashSet<>();
-    private final Set<Subject> subjects = new HashSet<>();
+    private final Academics academics;
     private final Optional<LocalDateTime> appointmentStart;
     private final Optional<LocalDateTime> lastAttendance;
     private final Optional<Guardian> guardian;
-    private final Optional<LocalDate> paymentDate;
+    private final Billing billing;
 
     /**
-     * Creates a {@code Person} with the given core fields and tags. Fields other than personal details (name, phone,
-     * email, and address) are optional and can be empty.
+     * Creates a {@code Person} with the given core fields and tags.
+     * Fields other than personal details (name, phone, email, and address)
+     * are optional and can be empty.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        this(name, phone, email, address, tags, new HashSet<>(), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty());
-    }
-
-    /**
-     * Every field must be present and not null.
-     */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, Set<Subject> subjects,
-            Optional<Guardian> guardian, Optional<LocalDateTime> appointmentStart, Optional<LocalDate> paymentDate,
-            Optional<LocalDateTime> lastAttendance) {
-
-        requireAllNonNull(name, phone, email, address, tags, subjects, guardian, appointmentStart, paymentDate,
-                lastAttendance);
+        requireAllNonNull(name, phone, email, address, tags);
 
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.tags.addAll(tags);
-        this.subjects.addAll(subjects);
+
+        this.academics = new Academics();
+
+        this.guardian = Optional.empty();
+        this.appointmentStart = Optional.empty();
+        this.billing = Billing.defaultBilling();
+        this.lastAttendance = Optional.empty();
+    }
+
+    /**
+     * Every field must be present and not null.
+     */
+    public Person(Name name, Phone phone, Email email, Address address,
+                  Set<Tag> tags, Academics academics,
+                  Optional<Guardian> guardian,
+                  Optional<LocalDateTime> appointmentStart,
+                  Billing billing,
+                  Optional<LocalDateTime> lastAttendance) {
+
+        requireAllNonNull(name, phone, email, address, tags, academics,
+                guardian, appointmentStart, billing, lastAttendance);
+
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.tags.addAll(tags);
+
+        this.academics = academics;
+
         this.guardian = guardian;
         this.appointmentStart = appointmentStart;
         this.lastAttendance = lastAttendance;
-        this.paymentDate = paymentDate;
+        this.billing = billing;
     }
 
     public Name getName() {
@@ -85,8 +105,12 @@ public class Person {
         return appointmentStart;
     }
 
-    public Optional<LocalDate> getPaymentDate() {
-        return paymentDate;
+    public Billing getBilling() {
+        return billing;
+    }
+
+    public PaymentHistory getPaymentHistory() {
+        return billing.getPaymentHistory();
     }
 
     public Optional<LocalDateTime> getLastAttendance() {
@@ -94,18 +118,15 @@ public class Person {
     }
 
     /**
-     * Returns an immutable tag set, which throws {@code UnsupportedOperationException} if modification is attempted.
+     * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
+     * if modification is attempted.
      */
     public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
     }
 
-    /**
-     * Returns an immutable subject set, which throws {@code UnsupportedOperationException} if modification is
-     * attempted.
-     */
-    public Set<Subject> getSubjects() {
-        return Collections.unmodifiableSet(subjects);
+    public Academics getAcademics() {
+        return academics;
     }
 
     /**
@@ -116,7 +137,8 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same name. This defines a weaker notion of equality between two persons.
+     * Returns true if both persons have the same name.
+     * This defines a weaker notion of equality between two persons.
      */
     public boolean isSamePerson(Person otherPerson) {
         if (otherPerson == this) {
@@ -127,8 +149,19 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same identity and data fields. This defines a stronger notion of equality
-     * between two persons.
+     * Returns an immutable {@code Billing} object with updated payment history
+     * and advanced billing cycle
+     * @param paymentDate A valid {@code LocalDate}
+     * @return {@code Billing} object
+     */
+    public Billing recordFeesPaidAndAdvanceBilling(LocalDate paymentDate) {
+        Billing updatedBilling = billing.recordTuitionPaid(paymentDate);
+        return updatedBilling.advanceDueDate();
+    }
+
+    /**
+     * Returns true if both persons have the same identity and data fields.
+     * This defines a stronger notion of equality between two persons.
      */
     @Override
     public boolean equals(Object other) {
@@ -142,26 +175,39 @@ public class Person {
         }
 
         Person otherPerson = (Person) other;
-        return name.equals(otherPerson.name) && phone.equals(otherPerson.phone) && email.equals(otherPerson.email)
-                && address.equals(otherPerson.address) && tags.equals(otherPerson.tags)
-                && subjects.equals(otherPerson.subjects) && guardian.equals(otherPerson.guardian)
-                && appointmentStart.equals(otherPerson.appointmentStart) && paymentDate.equals(otherPerson.paymentDate)
+        return name.equals(otherPerson.name)
+                && phone.equals(otherPerson.phone)
+                && email.equals(otherPerson.email)
+                && address.equals(otherPerson.address)
+                && tags.equals(otherPerson.tags)
+                && academics.equals(otherPerson.academics)
+                && guardian.equals(otherPerson.guardian)
+                && appointmentStart.equals(otherPerson.appointmentStart)
+                && billing.equals(otherPerson.billing)
                 && lastAttendance.equals(otherPerson.lastAttendance);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags, subjects, guardian, appointmentStart, paymentDate,
-                lastAttendance);
+        return Objects.hash(name, phone, email, address, tags, academics,
+                guardian, appointmentStart, billing, lastAttendance);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).add("name", name).add("phone", phone).add("email", email)
-                .add("address", address).add("tags", tags).add("subjects", subjects)
-                .add("guardian", guardian.orElse(null)).add("appointmentStart", appointmentStart)
-                .add("paymentDate", paymentDate).add("lastAttendance", lastAttendance).toString();
+        return new ToStringBuilder(this)
+                .add("name", name)
+                .add("phone", phone)
+                .add("email", email)
+                .add("address", address)
+                .add("tags", tags)
+                .add("academics", academics)
+                .add("guardian", guardian.orElse(null))
+                .add("appointmentStart", appointmentStart)
+                .add("billing", billing)
+                .add("lastAttendance", lastAttendance)
+                .toString();
     }
 
 }
