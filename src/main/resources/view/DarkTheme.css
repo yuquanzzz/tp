@@ -317,6 +317,12 @@
     -fx-text-fill: #F70D1A;
 }
 
+#commandHintLabel {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 11px;
+    -fx-text-fill: #b8c7d1;
+}
+
 #commandTextField {
     -fx-background-color: transparent #383838 transparent #383838;
     -fx-background-insets: 0;
@@ -326,6 +332,18 @@
     -fx-font-family: "Segoe UI Light";
     -fx-font-size: 13pt;
     -fx-text-fill: white;
+}
+
+.command-suggestion-item {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-text-fill: white;
+    -fx-padding: 2 8 2 8;
+}
+
+.command-suggestion-item-selected {
+    -fx-background-color: #4f6d85;
+    -fx-background-radius: 3;
 }
 
 .detail-panel {
