@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.academic.Academics;
@@ -31,7 +32,7 @@ public class Person {
     // Data fields
     private final Set<Tag> tags = new HashSet<>();
     private final Academics academics;
-    private final Optional<LocalDateTime> appointmentStart;
+    private final Set<LocalDateTime> appointmentStarts = new TreeSet<>();
     private final Optional<LocalDateTime> lastAttendance;
     private final Optional<Name> parentName;
     private final Optional<Phone> parentPhone;
@@ -57,7 +58,6 @@ public class Person {
         this.parentName = Optional.empty();
         this.parentPhone = Optional.empty();
         this.parentEmail = Optional.empty();
-        this.appointmentStart = Optional.empty();
         this.billing = Billing.defaultBilling();
         this.lastAttendance = Optional.empty();
     }
@@ -68,13 +68,13 @@ public class Person {
     public Person(Name name, Phone phone, Email email, Address address,
                   Set<Tag> tags, Academics academics,
                   Optional<Name> parentName, Optional<Phone> parentPhone, Optional<Email> parentEmail,
-                  Optional<LocalDateTime> appointmentStart,
+                  Set<LocalDateTime> appointmentStarts,
                   Billing billing,
                   Optional<LocalDateTime> lastAttendance) {
 
         requireAllNonNull(name, phone, email, address, tags, academics,
                 parentName, parentPhone, parentEmail,
-                appointmentStart, billing, lastAttendance);
+                appointmentStarts, billing, lastAttendance);
 
         this.name = name;
         this.phone = phone;
@@ -87,7 +87,8 @@ public class Person {
         this.parentName = parentName;
         this.parentPhone = parentPhone;
         this.parentEmail = parentEmail;
-        this.appointmentStart = appointmentStart;
+        appointmentStarts.forEach(Objects::requireNonNull);
+        this.appointmentStarts.addAll(appointmentStarts);
         this.lastAttendance = lastAttendance;
         this.billing = billing;
     }
@@ -108,8 +109,18 @@ public class Person {
         return address;
     }
 
+    /**
+     * Returns the earliest appointment start, or empty if no appointments exist.
+     */
     public Optional<LocalDateTime> getAppointmentStart() {
-        return appointmentStart;
+        return appointmentStarts.stream().min(LocalDateTime::compareTo);
+    }
+
+    /**
+     * Returns an immutable appointment set.
+     */
+    public Set<LocalDateTime> getAppointmentStarts() {
+        return Collections.unmodifiableSet(appointmentStarts);
     }
 
     public Billing getBilling() {
@@ -205,7 +216,7 @@ public class Person {
                 && parentName.equals(otherPerson.parentName)
                 && parentPhone.equals(otherPerson.parentPhone)
                 && parentEmail.equals(otherPerson.parentEmail)
-                && appointmentStart.equals(otherPerson.appointmentStart)
+                && appointmentStarts.equals(otherPerson.appointmentStarts)
                 && billing.equals(otherPerson.billing)
                 && lastAttendance.equals(otherPerson.lastAttendance);
     }
@@ -215,7 +226,7 @@ public class Person {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, address, tags, academics,
                 parentName, parentPhone, parentEmail,
-                appointmentStart, billing, lastAttendance);
+                appointmentStarts, billing, lastAttendance);
     }
 
     @Override
@@ -230,7 +241,8 @@ public class Person {
                 .add("parentName", parentName.orElse(null))
                 .add("parentPhone", parentPhone.orElse(null))
                 .add("parentEmail", parentEmail.orElse(null))
-                .add("appointmentStart", appointmentStart)
+                .add("appointmentStart", getAppointmentStart())
+                .add("appointmentStarts", appointmentStarts)
                 .add("billing", billing)
                 .add("lastAttendance", lastAttendance)
                 .toString();
