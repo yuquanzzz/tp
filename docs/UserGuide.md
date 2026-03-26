@@ -156,7 +156,7 @@ Format: `find payment d/YYYY-MM`
 * The search matches any payment due date in that month (ignores day of month).
 
 Examples:
-* `find payment d/2026-03` returns all students with payment due dates in March 2026.
+* `find payment d/2026-03` returns all students in currently displayed list with payment due dates in March 2026.
 * `find payment d/2025-12` returns students with due dates in December 2025.
 
 ### Viewing appointments for a week: `viewAppt`
