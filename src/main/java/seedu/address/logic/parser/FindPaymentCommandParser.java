@@ -25,6 +25,7 @@ public class FindPaymentCommandParser implements Parser<FindPaymentCommand> {
         requireNonNull(args);
 
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(" " + args, PREFIX_DATE);
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_DATE);
 
         if (!argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindPaymentCommand.MESSAGE_USAGE));

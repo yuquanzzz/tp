@@ -152,8 +152,10 @@ Finds all persons whose billing payment due date falls within the specified year
 
 Format: `find payment d/YYYY-MM`
 
+* Exactly one `d/` prefix must be provided.
+* Duplicate `d/` prefixes are invalid (e.g., `d/2026-03 d/2026-04`).
 * `YYYY-MM` must be a valid year-month (e.g., `2026-03`).
-* The search matches any payment due date in that month (ignores day of month).
+* The search matches any displayed payment due month (ignores day of month).
 
 Examples:
 * `find payment d/2026-03` returns all students in currently displayed list with payment due dates in March 2026.
