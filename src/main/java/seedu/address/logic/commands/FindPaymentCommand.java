@@ -17,7 +17,7 @@ public class FindPaymentCommand extends FindCommand {
     public static final String SUB_COMMAND_WORD = "payment";
 
     public static final String MESSAGE_USAGE = FindCommand.COMMAND_WORD + " " + SUB_COMMAND_WORD
-            + ": Finds all persons whose payment due date matches the specified year-month (YYYY-MM).\n"
+            + ": Finds all displayed students whose payment due date matches the specified year-month (YYYY-MM).\n"
             + "Parameters: d/YYYY-MM\n"
             + "Example: " + FindCommand.COMMAND_WORD + " " + SUB_COMMAND_WORD + " d/2026-03";
 
