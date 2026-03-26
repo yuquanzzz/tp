@@ -125,7 +125,7 @@ class JsonAdaptedPerson {
         paymentDates = source.getPaymentHistory().getPaidDates().stream()
                 .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE))
                 .collect(java.util.stream.Collectors.toList());
-        paymentDueDate = source.getBilling().getLastDueDate()
+        paymentDueDate = source.getBilling().getCurrentDueDate()
                 .format(DATE_FORMATTER);
         paymentRecurrence = source.getBilling().getRecurrence().name();
         tuitionFee = source.getBilling().getTuitionFee();

@@ -52,7 +52,7 @@ public class Billing {
         return recurrence;
     }
 
-    public LocalDate getLastDueDate() {
+    public LocalDate getCurrentDueDate() {
         return paymentDueDate;
     }
 
@@ -71,7 +71,7 @@ public class Billing {
     public Billing updateRate(Double newTuitionFees) {
         checkArgument(newTuitionFees >= 0, "Tuition fees must be non-negative");
         return new Billing(
-                getRecurrence(), getLastDueDate(), newTuitionFees, getPaymentHistory());
+                getRecurrence(), getCurrentDueDate(), newTuitionFees, getPaymentHistory());
     }
 
     public LocalDate getNextDueDate() {

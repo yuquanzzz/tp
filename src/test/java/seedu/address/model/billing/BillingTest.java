@@ -24,7 +24,7 @@ public class BillingTest {
         // Test valid tuition fee
         Billing billing = new Billing(Recurrence.MONTHLY, DUE_DATE, 100.0, DEFAULT_PAYMENT_HISTORY);
         assertEquals(100.0, billing.getTuitionFee());
-        assertEquals(DUE_DATE, billing.getLastDueDate());
+        assertEquals(DUE_DATE, billing.getCurrentDueDate());
         assertEquals(Recurrence.MONTHLY, billing.getRecurrence());
     }
 
@@ -75,8 +75,8 @@ public class BillingTest {
         // Test updating due date
         Billing original = new Billing(Recurrence.MONTHLY, DUE_DATE, 100.0, DEFAULT_PAYMENT_HISTORY);
         Billing updated = original.updatePaymentDueDate(ANOTHER_DUE_DATE);
-        assertEquals(DUE_DATE, original.getLastDueDate()); // Original unchanged
-        assertEquals(ANOTHER_DUE_DATE, updated.getLastDueDate()); // Updated changed
+        assertEquals(DUE_DATE, original.getCurrentDueDate()); // Original unchanged
+        assertEquals(ANOTHER_DUE_DATE, updated.getCurrentDueDate()); // Updated changed
         assertEquals(original.getTuitionFee(), updated.getTuitionFee()); // Fee unchanged
     }
 
@@ -86,7 +86,7 @@ public class BillingTest {
         Billing original = new Billing(Recurrence.MONTHLY, DUE_DATE, 100.0, DEFAULT_PAYMENT_HISTORY);
         Billing advanced = original.advanceDueDate();
         LocalDate expectedNextDate = DUE_DATE.plusMonths(1);
-        assertEquals(expectedNextDate, advanced.getLastDueDate());
+        assertEquals(expectedNextDate, advanced.getCurrentDueDate());
         assertEquals(original.getTuitionFee(), advanced.getTuitionFee()); // Fee unchanged
     }
 

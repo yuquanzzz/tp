@@ -146,6 +146,21 @@ Examples:
 * `find person alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find person alex david'](images/findAlexDavidResult.png)
 
+### Finding payment due by month: `find payment`
+
+Finds all persons whose billing payment due date falls within the specified year-month.
+
+Format: `find payment d/YYYY-MM`
+
+* Exactly one `d/` prefix must be provided.
+* Duplicate `d/` prefixes are invalid (e.g., `d/2026-03 d/2026-04`).
+* `YYYY-MM` must be a valid year-month (e.g., `2026-03`).
+* The search matches any displayed payment due month (ignores day of month).
+
+Examples:
+* `find payment d/2026-03` returns all students in currently displayed list with payment due dates in March 2026.
+* `find payment d/2025-12` returns students with due dates in December 2025.
+
 ### Viewing appointments for a week: `viewAppt`
 
 Shows all appointments in the Monday-Sunday week containing the given date.
@@ -228,6 +243,7 @@ Action | Format, Examples
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Edit Attendance** | `edit attd INDEX [d/ISO8601_DATETIME]`<br> e.g., `edit attd 1 d/2026-01-29T08:00:00`, `edit attd 1`
 **Find** | `find person KEYWORD [MORE_KEYWORDS]`<br> e.g., `find person James Jake`
+**Find Payment** | `find payment d/YYYY-MM`<br> e.g., `find payment d/2026-03`
 **View Appointments** | `viewAppt [d/DATE]`<br> e.g., `viewAppt d/2026-02-13`
 **List** | `list`
 **Help** | `help`

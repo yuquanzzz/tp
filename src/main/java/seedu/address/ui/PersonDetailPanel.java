@@ -98,7 +98,7 @@ public class PersonDetailPanel extends UiPart<Region> {
         parentEmailLabel.setText(person.getParentEmail().map(email -> email.value).orElse("-"));
         lessonStartLabel.setText(formatDateTime(person.getAppointmentStart().orElse(null)));
         paymentAmountLabel.setText(formatAmount(person.getBilling().getTuitionFee()));
-        paymentDueDateLabel.setText(formatDate(person.getBilling().getNextDueDate()));
+        paymentDueDateLabel.setText(formatDate(person.getBilling().getCurrentDueDate()));
 
         tagsFlowPane.getChildren().clear();
         subjectsFlowPane.getChildren().clear();
