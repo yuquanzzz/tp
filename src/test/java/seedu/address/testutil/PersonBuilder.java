@@ -13,6 +13,7 @@ import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.session.Attendance;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -36,9 +37,9 @@ public class PersonBuilder {
     private Name parentName;
     private Phone parentPhone;
     private Email parentEmail;
-    private LocalDateTime appointmentStart;
+    private Set<LocalDateTime> appointmentStarts;
     private Billing billing;
-    private LocalDateTime lastAttendance;
+    private Attendance attendance;
 
     /**
      * Creates a {@code PersonBuilder} with the default details.
@@ -53,9 +54,9 @@ public class PersonBuilder {
         parentName = null;
         parentPhone = null;
         parentEmail = null;
-        appointmentStart = null;
+        appointmentStarts = new HashSet<>();
         billing = Billing.defaultBilling();
-        lastAttendance = null;
+        attendance = Attendance.EMPTY;
     }
 
     /**
@@ -71,9 +72,9 @@ public class PersonBuilder {
         parentName = personToCopy.getParentName().orElse(null);
         parentPhone = personToCopy.getParentPhone().orElse(null);
         parentEmail = personToCopy.getParentEmail().orElse(null);
-        appointmentStart = personToCopy.getAppointmentStart().orElse(null);
+        appointmentStarts = new HashSet<>(personToCopy.getAppointmentStarts());
         billing = personToCopy.getBilling();
-        lastAttendance = personToCopy.getLastAttendance().orElse(null);
+        attendance = personToCopy.getAttendance();
     }
 
     /**
@@ -149,18 +150,21 @@ public class PersonBuilder {
     }
 
     /**
-     * Sets the appointment start date-time of the {@code Person} that we are building.
+     * Sets the appointment start date-times of the {@code Person} that we are building.
      */
-    public PersonBuilder withAppointmentStart(String appointmentStart) {
-        this.appointmentStart = LocalDateTime.parse(appointmentStart);
+    public PersonBuilder withAppointmentStart(String... appointmentStartTimes) {
+        this.appointmentStarts.clear();
+        for (String dateTime : appointmentStartTimes) {
+            this.appointmentStarts.add(LocalDateTime.parse(dateTime));
+        }
         return this;
     }
 
     /**
-     * Sets the last attendance date-time of the {@code Person} that we are building.
+     * Adds an attendance date-time to the {@code Person} that we are building.
      */
-    public PersonBuilder withLastAttendance(String lastAttendance) {
-        this.lastAttendance = LocalDateTime.parse(lastAttendance);
+    public PersonBuilder addAttendance(String attendanceDateTime) {
+        this.attendance = this.attendance.addAttendance(LocalDateTime.parse(attendanceDateTime));
         return this;
     }
 
@@ -180,8 +184,8 @@ public class PersonBuilder {
                 Optional.ofNullable(parentName),
                 Optional.ofNullable(parentPhone),
                 Optional.ofNullable(parentEmail),
-                appointmentStart == null ? Set.of() : Set.of(appointmentStart),
+                appointmentStarts,
                 billing,
-                Optional.ofNullable(lastAttendance));
+                attendance);
     }
 }

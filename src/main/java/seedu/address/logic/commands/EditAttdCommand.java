@@ -12,21 +12,22 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.PersonBuilder;
+import seedu.address.model.session.Attendance;
 
 /**
- * Edits the last attendance date-time of an existing person in the address book.
+ * Appends an attendance date-time for an existing person in the address book.
  */
 public class EditAttdCommand extends EditCommand {
 
     public static final String SUB_COMMAND_WORD = "attd";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUB_COMMAND_WORD
-            + ": Records the last attendance date-time for the student identified by the index number used "
+            + ": Records an attendance date-time for the student identified by the index number used "
             + "in the displayed student list.\n"
             + "Parameters: INDEX (must be a positive integer) [d/DATETIME]\n"
             + "Example: " + COMMAND_WORD + " " + SUB_COMMAND_WORD + " 1 d/2026-01-29T08:00:00";
 
-    public static final String MESSAGE_EDIT_ATTD_SUCCESS = "Recorded last attendance for %1$s: %2$s";
+    public static final String MESSAGE_EDIT_ATTD_SUCCESS = "Added attendance for %1$s: %2$s";
 
     private final LocalDateTime attendanceToSet;
 
@@ -43,8 +44,9 @@ public class EditAttdCommand extends EditCommand {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         Person personToEdit = getTargetPerson(model);
+        Attendance updatedAttendance = personToEdit.addAttendance(attendanceToSet);
         Person editedPerson = new PersonBuilder(personToEdit)
-                .withLastAttendance(attendanceToSet)
+                .withAttendance(updatedAttendance)
                 .build();
 
         replacePerson(model, personToEdit, editedPerson);

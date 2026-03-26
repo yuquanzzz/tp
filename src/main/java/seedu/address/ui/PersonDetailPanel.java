@@ -62,7 +62,7 @@ public class PersonDetailPanel extends UiPart<Region> {
     private FlowPane paymentHistoryFlowPane;
 
     @FXML
-    private Label lastAttendanceLabel;
+    private FlowPane attendanceHistoryFlowPane;
 
     @FXML
     private FlowPane tagsFlowPane;
@@ -99,11 +99,11 @@ public class PersonDetailPanel extends UiPart<Region> {
         lessonStartLabel.setText(formatDateTime(person.getAppointmentStart().orElse(null)));
         paymentAmountLabel.setText(formatAmount(person.getBilling().getTuitionFee()));
         paymentDueDateLabel.setText(formatDate(person.getBilling().getNextDueDate()));
-        lastAttendanceLabel.setText(formatDateTime(person.getLastAttendance().orElse(null)));
 
         tagsFlowPane.getChildren().clear();
         subjectsFlowPane.getChildren().clear();
         paymentHistoryFlowPane.getChildren().clear();
+        attendanceHistoryFlowPane.getChildren().clear();
 
         if (person.getTags().isEmpty()) {
             Label noTagsLabel = new Label("-");
@@ -148,6 +148,18 @@ public class PersonDetailPanel extends UiPart<Region> {
                     });
         }
 
+        if (person.getAttendance().isEmpty()) {
+            Label noAttendanceLabel = new Label("No attendance history");
+            noAttendanceLabel.getStyleClass().add("detail-field-value");
+            attendanceHistoryFlowPane.getChildren().add(noAttendanceLabel);
+        } else {
+            person.getAttendance().getHistoryDescending().forEach(attendanceDateTime -> {
+                Label attendanceLabel = new Label(formatDateTime(attendanceDateTime));
+                attendanceLabel.getStyleClass().add("detail-attendance-date");
+                attendanceHistoryFlowPane.getChildren().add(attendanceLabel);
+            });
+        }
+
         contentContainer.setManaged(true);
         contentContainer.setVisible(true);
         emptyStateLabel.setManaged(false);
@@ -158,6 +170,7 @@ public class PersonDetailPanel extends UiPart<Region> {
         tagsFlowPane.getChildren().clear();
         subjectsFlowPane.getChildren().clear();
         paymentHistoryFlowPane.getChildren().clear();
+        attendanceHistoryFlowPane.getChildren().clear();
         contentContainer.setManaged(false);
         contentContainer.setVisible(false);
         emptyStateLabel.setManaged(true);

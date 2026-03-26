@@ -8,6 +8,7 @@ import java.util.Set;
 
 import seedu.address.model.academic.Academics;
 import seedu.address.model.billing.Billing;
+import seedu.address.model.session.Attendance;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -25,7 +26,7 @@ public class PersonBuilder {
     private Optional<Phone> parentPhone;
     private Optional<Email> parentEmail;
     private Set<LocalDateTime> appointmentStarts;
-    private Optional<LocalDateTime> lastAttendance;
+    private Attendance attendance;
     private Billing billing;
 
     /**
@@ -43,7 +44,7 @@ public class PersonBuilder {
         this.parentPhone = Optional.empty();
         this.parentEmail = Optional.empty();
         this.appointmentStarts = new HashSet<>();
-        this.lastAttendance = Optional.empty();
+        this.attendance = Attendance.EMPTY;
         this.billing = Billing.defaultBilling();
     }
 
@@ -61,7 +62,7 @@ public class PersonBuilder {
         this.parentPhone = personToCopy.getParentPhone();
         this.parentEmail = personToCopy.getParentEmail();
         this.appointmentStarts = new HashSet<>(personToCopy.getAppointmentStarts());
-        this.lastAttendance = personToCopy.getLastAttendance();
+        this.attendance = personToCopy.getAttendance();
         this.billing = personToCopy.getBilling();
     }
 
@@ -187,12 +188,12 @@ public class PersonBuilder {
     }
 
     /**
-     * Sets the last attendance time of the {@code Person} being built.
-     * @param lastAttendance the optional last attendance time
+     * Sets the attendance history of the {@code Person} being built.
+     * @param attendance attendance history value object
      * @return this {@code PersonBuilder} instance for method chaining
      */
-    public PersonBuilder withLastAttendance(LocalDateTime lastAttendance) {
-        this.lastAttendance = Optional.ofNullable(lastAttendance);
+    public PersonBuilder withAttendance(Attendance attendance) {
+        this.attendance = attendance;
         return this;
     }
 
@@ -212,6 +213,6 @@ public class PersonBuilder {
                 parentEmail,
                 appointmentStarts,
                 billing,
-                lastAttendance);
+                attendance);
     }
 }

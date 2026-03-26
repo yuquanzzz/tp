@@ -57,6 +57,7 @@ public class PersonTest {
         assertTrue(person.getParentPhone().isEmpty());
         assertTrue(person.getParentEmail().isEmpty());
         assertTrue(person.getAppointmentStart().isEmpty());
+        assertTrue(person.getAttendance().isEmpty());
         assertTrue(person.getLastAttendance().isEmpty());
     }
 
@@ -145,11 +146,9 @@ public class PersonTest {
 
     @Test
     public void getAppointmentStart_multipleAppointments_returnsEarliest() {
-        Person person = new Person(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
-                ALICE.getTags(), ALICE.getAcademics(), ALICE.getParentName(), ALICE.getParentPhone(),
-                ALICE.getParentEmail(),
-                Set.of(LocalDateTime.parse("2026-01-15T08:00:00"), LocalDateTime.parse("2026-01-13T08:00:00")),
-                ALICE.getBilling(), ALICE.getLastAttendance());
+        Person person = new PersonBuilder(ALICE)
+                .withAppointmentStart("2026-01-15T08:00:00", "2026-01-13T08:00:00")
+                .build();
         assertEquals(LocalDateTime.parse("2026-01-13T08:00:00"), person.getAppointmentStart().orElseThrow());
     }
 
@@ -217,7 +216,7 @@ public class PersonTest {
         editedAlice = new PersonBuilder(ALICE).withBilling(updatedBilling).build();
         assertFalse(ALICE.equals(editedAlice));
 
-        editedAlice = new PersonBuilder(ALICE).withLastAttendance("2026-01-29T08:00:00").build();
+        editedAlice = new PersonBuilder(ALICE).addAttendance("2026-01-29T08:00:00").build();
         assertFalse(ALICE.equals(editedAlice));
     }
 
@@ -236,7 +235,7 @@ public class PersonTest {
                 + ", appointmentStart=" + ALICE.getAppointmentStart()
                 + ", appointmentStarts=" + ALICE.getAppointmentStarts()
                 + ", billing=" + ALICE.getBilling()
-                + ", lastAttendance=" + ALICE.getLastAttendance()
+                + ", attendance=" + ALICE.getAttendance()
                 + "}";
 
         assertEquals(expected, ALICE.toString());

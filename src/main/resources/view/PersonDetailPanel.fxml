@@ -73,10 +73,13 @@
         <Label text="Lesson Start" styleClass="detail-field-label" />
         <Label fx:id="lessonStartLabel" styleClass="detail-field-value" text="-" />
       </HBox>
-      <HBox spacing="10">
-        <Label text="Last Attendance" styleClass="detail-field-label" />
-        <Label fx:id="lastAttendanceLabel" styleClass="detail-field-value" text="-" />
-      </HBox>
+      <VBox spacing="6">
+        <VBox.margin>
+          <Insets top="4" />
+        </VBox.margin>
+        <Label text="Attendance History" styleClass="detail-section-title" />
+        <FlowPane fx:id="attendanceHistoryFlowPane" hgap="6" vgap="6" prefWrapLength="320" />
+      </VBox>
     </VBox>
 
     <!-- Payments Section -->
