@@ -25,14 +25,14 @@ public class EditPaymentCommand extends EditCommand {
     public static final String SUB_COMMAND_WORD = "payment";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUB_COMMAND_WORD
-        + ": Records the day tuition fees was paid by the person identified "
-        + "by the index number used in the displayed person list.\n"
-        + "Optional amount field to update the current tuition fee rate.\n"
-        + "Parameters: payment INDEX (must be a positive integer) "
-        + PREFIX_DATE + "DATE\n"
-        + "Example: " + COMMAND_WORD + " " + SUB_COMMAND_WORD + " 1 "
-        + PREFIX_DATE + "2026-01-13 "
-        + PREFIX_AMOUNT + "25";
+            + ": Records the day tuition fees were paid by the student identified by the index number used "
+            + "in the displayed student list.\n"
+            + "Optional amount field to update the current tuition fee rate.\n"
+            + "Parameters: INDEX (must be a positive integer) "
+            + PREFIX_DATE + "DATE\n"
+            + "Example: " + COMMAND_WORD + " " + SUB_COMMAND_WORD + " 1 "
+            + PREFIX_DATE + "2026-01-13 "
+            + PREFIX_AMOUNT + "25";
 
     public static final String DATE_NOT_PROVIDED = "Please enter a valid payment date!";
     public static final String MESSAGE_EDIT_PAYMENT_SUCCESS = "%1$s paid by %2$s on %3$s";
