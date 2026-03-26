@@ -112,9 +112,9 @@ class JsonAdaptedPerson {
         appointmentStart = source.getAppointmentStart()
                 .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .orElse(null);
-        attendanceHistory = source.getAttendance().getHistory().stream()
-            .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-            .collect(Collectors.toList());
+        attendanceHistory = source.getAttendanceHistory().stream()
+                .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .collect(Collectors.toList());
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));

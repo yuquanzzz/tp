@@ -46,7 +46,7 @@ public final class Attendance {
 
     /**
      * Returns a new {@code Attendance} with {@code attendanceDate} added.
-     * Exact duplicate timestamps are deduplicated.
+     * Exact duplicate timestamps (up to the minute) are deduplicated.
      */
     public Attendance addAttendance(LocalDateTime attendanceDate) {
         requireAllNonNull(attendanceDate);

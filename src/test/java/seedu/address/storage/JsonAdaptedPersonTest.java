@@ -265,7 +265,7 @@ public class JsonAdaptedPersonTest {
                         VALID_APPOINTMENT_START,
                         VALID_PAYMENT_DATES, VALID_PAYMENT_DUE_DATE,
                         VALID_PAYMENT_RECURRENCE, VALID_TUITION_FEE,
-                                                List.of(INVALID_ATTENDANCE_ENTRY));
+                        List.of(INVALID_ATTENDANCE_ENTRY));
         assertThrows(IllegalValueException.class, person::toModelType);
     }
 
@@ -285,7 +285,7 @@ public class JsonAdaptedPersonTest {
     }
 
     @Test
-        public void toModelType_attendanceHistory_roundTripsSuccessfully() throws Exception {
+    public void toModelType_attendanceHistory_roundTripsSuccessfully() throws Exception {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
                 VALID_TAGS, VALID_ACADEMICS,
                 VALID_PARENT_NAME, VALID_PARENT_PHONE, VALID_PARENT_EMAIL,

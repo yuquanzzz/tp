@@ -65,14 +65,13 @@ public class Person {
     }
 
     /**
-     * Every field must be present and not null. parentName defaults to empty.
+     * Every field must be present and not null.
      */
     public Person(Name name, Phone phone, Email email, Address address,
                   Set<Tag> tags, Academics academics,
                   Optional<Name> parentName, Optional<Phone> parentPhone, Optional<Email> parentEmail,
                   Set<LocalDateTime> appointmentStarts,
-                  Billing billing,
-                                    Attendance attendance) {
+                  Billing billing, Attendance attendance) {
 
         requireAllNonNull(name, phone, email, address, tags, academics,
                 parentName, parentPhone, parentEmail,
@@ -137,6 +136,13 @@ public class Person {
 
     public Attendance getAttendance() {
         return attendance;
+    }
+
+    /**
+     * Returns attendance history in insertion order.
+     */
+    public Set<LocalDateTime> getAttendanceHistory() {
+        return attendance.getHistory();
     }
 
     public Optional<LocalDateTime> getLastAttendance() {

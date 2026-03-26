@@ -107,8 +107,8 @@ public class SampleDataUtil {
                     .withParentEmail(new Email("priya@example.com"))
                     .withAppointmentStarts(LocalDateTime.of(2026, 3, 26, 17, 0))
                     .withBilling(new Billing(Recurrence.MONTHLY, LocalDate.of(2026, 2, 25), 25,
-                            new PaymentHistory(LocalDate.of(2026, 2, 24))))
-                                        .withAttendance(new Attendance(LocalDateTime.of(2026, 3, 20, 17, 0)))
+                        new PaymentHistory(LocalDate.of(2026, 2, 24))))
+                    .withAttendance(new Attendance(LocalDateTime.of(2026, 3, 20, 17, 0)))
                     .build()
         };
     }
