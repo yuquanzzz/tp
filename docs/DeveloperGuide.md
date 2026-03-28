@@ -182,6 +182,36 @@ How the `edit` command works:
 1. The command updates the `Model`, which replaces the target `Person` in the `AddressBook` while preserving the active filter.
 1. `LogicManager` detects that the address book changed and persists the updated state through `Storage`.
 
+
+### Find command
+
+The `find` family uses subcommand dispatch similar to `edit`. To keep the diagrams readable, the flow is split into smaller diagrams using `find tag t/JC` as the representative example.
+
+The class diagram below shows the `find` command hierarchy. All concrete find commands share the same top-level command word `find`, while each subcommand encapsulates its own filtering logic.
+
+<img src="images/FindCommandHierachyClassDiagram.png" width="520" />
+
+The following diagram shows the parser structure for `find`. `AddressBookParser` identifies `find` as the command word and forwards the remaining input to `FindCommandParser`, which uses a dispatcher to route to the appropriate subcommand parser.
+
+<img src="images/FindCommandParserHierachyClassDiagram.png" width="720" />
+
+The next diagram illustrates how parsing is performed. `FindCommandParser` delegates to the appropriate concrete parser (e.g., `FindTagCommandParser`) based on the subcommand.
+
+<img src="images/FindTagCommandParsingSequenceDiagram.png" width="700" />
+
+The final diagram shows the successful execution path after parsing. Error paths such as invalid formats or missing prefixes are omitted to keep the diagram compact.
+
+<img src="images/FindTagCommandExecutionSequenceDiagram.png" width="760" />
+
+How the `find` command works:
+
+1. `AddressBookParser` recognizes `find` as the command word and forwards the remaining input to `FindCommandParser`.
+1. `FindCommandParser` uses a dispatcher to route the input by subcommand name (`person`, `tag`, `subject`, `payment`, etc.) to the appropriate concrete parser.
+1. The concrete parser validates the input arguments and constructs the corresponding `Find...Command` with an appropriate predicate.
+1. During execution, the command applies the predicate to the `Model` using `updateFilteredPersonList(...)`, which updates the currently displayed list.
+1. The command also updates the list display mode (e.g., `PERSON`) to ensure the UI reflects the correct view.
+1. `LogicManager` checks whether the underlying `AddressBook` has changed. Since `find` only modifies transient model state (filtered list and display mode), no changes are detected in the `AddressBook`, and the storage step is therefore skipped.
+
 ### View appointments command
 
 The `viewappt` command is simpler than `edit`, so a single sequence diagram is enough. The example below uses `viewappt d/2026-02-13`.

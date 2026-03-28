@@ -165,6 +165,36 @@ Examples:
 * `find person alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find person alex david'](images/findAlexDavidResult.png)
 
+
+### Locating persons by tag: `find tag`
+
+Finds persons whose tags match any of the given keywords.
+
+Format: `find tag t/TAG [t/MORE_TAGS]...`
+
+* At least one `t/` prefix must be provided.
+* Multiple `t/` prefixes are allowed.
+* Tags can contain spaces (e.g. `t/Upper Sec`, `t/JC Year 1`).
+* The search is case-insensitive.
+* Partial matching is supported (e.g. `t/math` matches `Mathematics`).
+* Persons matching **at least one** tag keyword will be returned (i.e. `OR` search).
+* The displayed list is updated to show only matching persons.
+
+### Locating persons by subject: `find subject`
+
+Finds persons whose subjects match any of the given keywords.
+
+Format: `find subject s/SUBJECT [s/MORE_SUBJECTS]...`
+
+* At least one `s/` prefix must be provided.
+* Multiple `s/` prefixes are allowed.
+* Subjects can contain spaces (e.g. `s/Additional Math`, `s/Computer Science`).
+* The search is case-insensitive.
+* Partial matching is supported.
+* Persons matching **at least one** subject keyword will be returned (i.e. `OR` search).
+* The displayed list is updated to show only matching persons.
+
+
 ### Finding payment due by month: `find payment`
 
 Finds all persons whose billing payment due date falls within the specified year-month.
