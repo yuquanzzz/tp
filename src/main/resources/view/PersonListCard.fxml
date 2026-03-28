@@ -33,7 +33,7 @@
           <Insets top="5"/>
         </VBox.margin>
       </FlowPane>
-      <Label fx:id="appointment" styleClass="cell_small_label"/>
+      <VBox fx:id="appointmentList" spacing="2" />
       <Label fx:id="phone" styleClass="cell_small_label" text="\$phone" />
       <Label fx:id="address" styleClass="cell_small_label" text="\$address" />
       <Label fx:id="email" styleClass="cell_small_label" text="\$email" />

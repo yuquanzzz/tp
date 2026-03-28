@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.util.AppClock;
 import seedu.address.logic.commands.ViewApptCommand;
 
 public class ViewApptCommandParserTest {
@@ -15,7 +16,7 @@ public class ViewApptCommandParserTest {
 
     @Test
     public void parse_emptyArgs_returnsCommandWithCurrentDate() {
-        assertParseSuccess(parser, "   ", new ViewApptCommand(LocalDate.now()));
+        assertParseSuccess(parser, "   ", new ViewApptCommand(AppClock.today()));
     }
 
     @Test

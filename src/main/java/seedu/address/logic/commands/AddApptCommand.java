@@ -61,7 +61,7 @@ public class AddApptCommand extends AddCommand {
         Appointment appointment = new Appointment(recurrence, appointmentStart, appointmentStart,
                 AttendanceRecords.EMPTY, description);
         Person editedPerson = new PersonBuilder(personToEdit)
-                .withAppointment(appointment)
+                .addAppointment(appointment)
                 .build();
 
         model.setPerson(personToEdit, editedPerson);

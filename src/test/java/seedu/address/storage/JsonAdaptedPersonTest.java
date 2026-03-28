@@ -9,6 +9,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,10 +20,14 @@ import org.junit.jupiter.api.Test;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.academic.Academics;
 import seedu.address.model.academic.Subject;
+import seedu.address.model.attendance.AttendanceRecords;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.recurrence.Recurrence;
+import seedu.address.model.session.Appointment;
+import seedu.address.testutil.PersonBuilder;
 
 public class JsonAdaptedPersonTest {
     private static final String INVALID_NAME = "R@chel";
@@ -71,7 +76,7 @@ public class JsonAdaptedPersonTest {
             List<String> paymentDates, String paymentDueDate, String paymentRecurrence,
             Double tuitionFee, List<String> attendanceHistory) {
         return new JsonAdaptedPerson(name, phone, email, address, tags, academics, parentName, parentPhone,
-                parentEmail, appointmentStart, null, null, null, null, paymentDates, paymentDueDate,
+                parentEmail, null, appointmentStart, null, null, null, null, paymentDates, paymentDueDate,
                 paymentRecurrence, tuitionFee, attendanceHistory);
     }
 
@@ -432,5 +437,19 @@ public class JsonAdaptedPersonTest {
                         List.of(VALID_ATTENDANCE_ENTRY));
 
         assertEquals(new JsonAdaptedPerson(person.toModelType()).toModelType(), person.toModelType());
+    }
+
+    @Test
+    public void toModelType_multipleAppointments_roundTripsSuccessfully() throws Exception {
+        seedu.address.model.person.Person person = new PersonBuilder(BENSON)
+                .withAppointment("2026-01-13T08:00:00", "Algebra", Recurrence.NONE)
+                .addAppointment(new Appointment(Recurrence.WEEKLY,
+                        LocalDateTime.parse("2026-02-03T09:00:00"),
+                        LocalDateTime.parse("2026-02-03T09:00:00"),
+                        AttendanceRecords.EMPTY,
+                        "Physics"))
+                .build();
+
+        assertEquals(person, new JsonAdaptedPerson(person).toModelType());
     }
 }

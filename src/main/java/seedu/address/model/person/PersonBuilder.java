@@ -1,6 +1,7 @@
 package seedu.address.model.person;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class PersonBuilder {
     private Set<Tag> tags;
     private Academics academics;
     private Optional<Guardian> guardian;
-    private Optional<Appointment> appointment;
+    private List<Appointment> appointments;
     private Billing billing;
 
     /**
@@ -36,7 +37,7 @@ public class PersonBuilder {
         this.tags = new HashSet<>(tags);
         this.academics = new Academics();
         this.guardian = Optional.empty();
-        this.appointment = Optional.empty();
+        this.appointments = List.of();
         this.billing = Billing.defaultBilling();
     }
 
@@ -51,7 +52,7 @@ public class PersonBuilder {
         this.tags = new HashSet<>(personToCopy.getTags());
         this.academics = personToCopy.getAcademics();
         this.guardian = personToCopy.getGuardian();
-        this.appointment = personToCopy.getAppointment();
+        this.appointments = personToCopy.getAppointments();
         this.billing = personToCopy.getBilling();
     }
 
@@ -134,13 +135,40 @@ public class PersonBuilder {
     }
 
     /**
-     * Replaces the appointment of the {@code Person} being built.
+     * Replaces the appointments of the {@code Person} being built with a single appointment.
      *
      * @param appointment the new appointment
      * @return this {@code PersonBuilder} instance for method chaining
      */
     public PersonBuilder withAppointment(Appointment appointment) {
-        this.appointment = Optional.ofNullable(appointment);
+        this.appointments = appointment == null ? List.of() : List.of(appointment);
+        return this;
+    }
+
+    /**
+     * Replaces the appointments of the {@code Person} being built.
+     *
+     * @param appointments the new appointments
+     * @return this {@code PersonBuilder} instance for method chaining
+     */
+    public PersonBuilder withAppointments(List<Appointment> appointments) {
+        this.appointments = List.copyOf(appointments);
+        return this;
+    }
+
+    /**
+     * Adds an appointment to the {@code Person} being built.
+     *
+     * @param appointment the appointment to add
+     * @return this {@code PersonBuilder} instance for method chaining
+     */
+    public PersonBuilder addAppointment(Appointment appointment) {
+        if (appointment == null) {
+            return this;
+        }
+        java.util.ArrayList<Appointment> updatedAppointments = new java.util.ArrayList<>(appointments);
+        updatedAppointments.add(appointment);
+        this.appointments = List.copyOf(updatedAppointments);
         return this;
     }
 
@@ -166,7 +194,7 @@ public class PersonBuilder {
                 tags,
                 academics,
                 guardian,
-                appointment,
+                appointments,
                 billing);
     }
 }

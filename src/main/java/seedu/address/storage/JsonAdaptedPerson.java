@@ -64,6 +64,7 @@ class JsonAdaptedPerson {
     private final String phone;
     private final String email;
     private final String address;
+    private final List<JsonAdaptedAppointment> appointments;
     private final String appointmentStart;
     private final String appointmentNext;
     private final String appointmentRecurrence;
@@ -91,6 +92,7 @@ class JsonAdaptedPerson {
             @JsonProperty("parentName") String parentName,
             @JsonProperty("parentPhone") String parentPhone,
             @JsonProperty("parentEmail") String parentEmail,
+            @JsonProperty("appointments") List<JsonAdaptedAppointment> appointments,
             @JsonProperty("appointmentStart") String appointmentStart,
             @JsonProperty("appointmentNext") String appointmentNext,
             @JsonProperty("appointmentRecurrence") String appointmentRecurrence,
@@ -109,6 +111,7 @@ class JsonAdaptedPerson {
         this.parentName = parentName;
         this.parentPhone = parentPhone;
         this.parentEmail = parentEmail;
+        this.appointments = appointments;
         this.appointmentStart = appointmentStart;
         this.appointmentNext = appointmentNext;
         this.appointmentRecurrence = appointmentRecurrence;
@@ -133,28 +136,14 @@ class JsonAdaptedPerson {
         phone = source.getPhone().value;
         email = source.getEmail().value;
         address = source.getAddress().value;
-        appointmentStart = source.getAppointment()
-                .map(Appointment::getStart)
-                .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .orElse(null);
-        appointmentNext = source.getAppointment()
-                .map(Appointment::getNext)
-                .map(value -> value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .orElse(null);
-        appointmentRecurrence = source.getAppointment()
-                .map(Appointment::getRecurrence)
-                .map(Enum::name)
-                .orElse(null);
-        appointmentDescription = source.getAppointment()
-                .map(Appointment::getDescription)
-                .orElse(null);
-        appointmentAttendanceRecords = source.getAppointment()
-                .map(Appointment::getAttendance)
-                .map(AttendanceRecords::getRecords)
-                .orElse(List.of())
-                .stream()
-                .map(JsonAdaptedAppointmentAttendance::new)
+        appointments = source.getAppointments().stream()
+                .map(JsonAdaptedAppointment::new)
                 .collect(Collectors.toList());
+        appointmentStart = null;
+        appointmentNext = null;
+        appointmentRecurrence = null;
+        appointmentDescription = null;
+        appointmentAttendanceRecords = null;
         attendanceHistory = null;
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
@@ -272,38 +261,16 @@ class JsonAdaptedPerson {
             modelGuardian = new Guardian(modelParentName, modelParentPhone, modelParentEmail);
         }
 
-        // ---------- Appointment ----------
-        LocalDateTime modelAppointmentStart = null;
-        if (appointmentStart != null) {
-            try {
-                modelAppointmentStart = LocalDateTime.parse(appointmentStart, DATETIME_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw new IllegalValueException(APPOINTMENT_START_MESSAGE_CONSTRAINTS);
+        // ---------- Appointments ----------
+        List<Appointment> modelAppointments = new ArrayList<>();
+        if (appointments != null && !appointments.isEmpty()) {
+            for (JsonAdaptedAppointment appointment : appointments) {
+                modelAppointments.add(appointment.toModelType());
             }
-        }
-        LocalDateTime modelAppointmentNext = modelAppointmentStart;
-        if (appointmentNext != null) {
-            try {
-                modelAppointmentNext = LocalDateTime.parse(appointmentNext, DATETIME_FORMATTER);
-            } catch (DateTimeParseException e) {
-                throw new IllegalValueException(APPOINTMENT_START_MESSAGE_CONSTRAINTS);
-            }
-        }
-        Recurrence modelAppointmentRecurrence = Recurrence.NONE;
-        if (appointmentRecurrence != null) {
-            try {
-                modelAppointmentRecurrence = Recurrence.valueOf(appointmentRecurrence);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalValueException(
-                        "Appointment recurrence must be one of: WEEKLY, BIWEEKLY, MONTHLY, NONE");
-            }
-        }
-        String modelAppointmentDescription = appointmentDescription == null ? "" : appointmentDescription;
-        AttendanceRecords modelAppointmentAttendanceRecords = AttendanceRecords.EMPTY;
-        if (appointmentAttendanceRecords != null && !appointmentAttendanceRecords.isEmpty()) {
-            for (JsonAdaptedAppointmentAttendance attendanceRecord : appointmentAttendanceRecords) {
-                modelAppointmentAttendanceRecords = modelAppointmentAttendanceRecords
-                        .addAttendance(attendanceRecord.toModelType());
+        } else {
+            Appointment legacyAppointment = parseLegacyAppointment();
+            if (legacyAppointment != null) {
+                modelAppointments.add(legacyAppointment);
             }
         }
 
@@ -362,28 +329,67 @@ class JsonAdaptedPerson {
         PersonBuilder personBuilder = new PersonBuilder(modelName, modelPhone, modelEmail, modelAddress, modelTags)
             .withAcademics(modelAcademics)
             .withGuardian(modelGuardian)
-            .withBilling(modelBilling);
-
-        if (modelAppointmentStart != null) {
-            if ((appointmentAttendanceRecords == null || appointmentAttendanceRecords.isEmpty())
-                    && attendanceHistory != null && !attendanceHistory.isEmpty()) {
-                for (String attendanceDateTime : attendanceHistory) {
-                    try {
-                        modelAppointmentAttendanceRecords = modelAppointmentAttendanceRecords.addAttendance(
-                                new Attendance(true,
-                                        LocalDateTime.parse(attendanceDateTime, DATETIME_FORMATTER).toLocalDate()));
-                    } catch (DateTimeParseException e) {
-                        throw new IllegalValueException(ATTENDANCE_HISTORY_MESSAGE_CONSTRAINTS);
-                    }
-                }
-            }
-            personBuilder.withAppointment(new Appointment(modelAppointmentRecurrence,
-                    modelAppointmentStart,
-                    modelAppointmentNext != null ? modelAppointmentNext : modelAppointmentStart,
-                    modelAppointmentAttendanceRecords,
-                    modelAppointmentDescription));
-        }
+            .withBilling(modelBilling)
+            .withAppointments(modelAppointments);
 
         return personBuilder.build();
+    }
+
+    private Appointment parseLegacyAppointment() throws IllegalValueException {
+        LocalDateTime modelAppointmentStart = null;
+        if (appointmentStart != null) {
+            try {
+                modelAppointmentStart = LocalDateTime.parse(appointmentStart, DATETIME_FORMATTER);
+            } catch (DateTimeParseException e) {
+                throw new IllegalValueException(APPOINTMENT_START_MESSAGE_CONSTRAINTS);
+            }
+        }
+        if (modelAppointmentStart == null) {
+            return null;
+        }
+
+        LocalDateTime modelAppointmentNext = modelAppointmentStart;
+        if (appointmentNext != null) {
+            try {
+                modelAppointmentNext = LocalDateTime.parse(appointmentNext, DATETIME_FORMATTER);
+            } catch (DateTimeParseException e) {
+                throw new IllegalValueException(APPOINTMENT_START_MESSAGE_CONSTRAINTS);
+            }
+        }
+
+        Recurrence modelAppointmentRecurrence = Recurrence.NONE;
+        if (appointmentRecurrence != null) {
+            try {
+                modelAppointmentRecurrence = Recurrence.valueOf(appointmentRecurrence);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalValueException(
+                        "Appointment recurrence must be one of: WEEKLY, BIWEEKLY, MONTHLY, NONE");
+            }
+        }
+
+        AttendanceRecords modelAppointmentAttendanceRecords = AttendanceRecords.EMPTY;
+        if (appointmentAttendanceRecords != null && !appointmentAttendanceRecords.isEmpty()) {
+            for (JsonAdaptedAppointmentAttendance attendanceRecord : appointmentAttendanceRecords) {
+                modelAppointmentAttendanceRecords = modelAppointmentAttendanceRecords
+                        .addAttendance(attendanceRecord.toModelType());
+            }
+        } else if (attendanceHistory != null && !attendanceHistory.isEmpty()) {
+            for (String attendanceDateTime : attendanceHistory) {
+                try {
+                    LocalDate attendanceDate = LocalDateTime.parse(
+                            attendanceDateTime, DATETIME_FORMATTER).toLocalDate();
+                    modelAppointmentAttendanceRecords = modelAppointmentAttendanceRecords.addAttendance(
+                            new Attendance(true, attendanceDate));
+                } catch (DateTimeParseException e) {
+                    throw new IllegalValueException(ATTENDANCE_HISTORY_MESSAGE_CONSTRAINTS);
+                }
+            }
+        }
+
+        return new Appointment(modelAppointmentRecurrence,
+                modelAppointmentStart,
+                modelAppointmentNext,
+                modelAppointmentAttendanceRecords,
+                appointmentDescription == null ? "" : appointmentDescription);
     }
 }

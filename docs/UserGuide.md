@@ -164,7 +164,9 @@ Format: `add appt INDEX d/DATETIME [r/RECURRENCE] dsc/DESCRIPTION`
 * `r/` is optional. Supported values are `NONE`, `WEEKLY`, `BIWEEKLY`, and `MONTHLY`. If omitted, `NONE` is used.
 * `r/` is optional. Supported values are `NONE`, `WEEKLY`, `BIWEEKLY`, and `MONTHLY`. If omitted, `NONE` is used.
 * `dsc/` is required and stores a short appointment description.
-* Adding a new appointment replaces any existing appointment for that student.
+* Adding a new appointment keeps any existing appointments for that student.
+* A student can have multiple appointments. Commands that operate on the "current appointment" use the student's
+  current appointment internally.
 
 Examples:
 * `add appt 1 d/2026-01-29T08:00:00 dsc/Weekly algebra practice`
@@ -172,26 +174,27 @@ Examples:
 
 ### Recording appointment attendance : `add attd`
 
-Records attendance for the current appointment of an existing student contact.
+Records attendance for a selected appointment of an existing student contact.
 
-Format: `add attd INDEX [y|n] [d/DATE]`
+Format: `add attd PERSON_INDEX APPT_INDEX [y|n] [d/DATE]`
 
-* Records attendance for the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
+* Records attendance for the person at the specified `PERSON_INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
+* `APPT_INDEX` refers to the numbered appointment shown for that student in the app. The index **must be a positive integer** 1, 2, 3, ...
 * If `y` or `n` is omitted, `y` is assumed.
-* `y` records that the student attended the current appointment.
-* `n` records that the student was absent for the current appointment.
-* If `d/DATE` is omitted, the current appointment date is taken from the appointment's `next` date.
+* `y` records that the student attended the selected appointment.
+* `n` records that the student was absent for the selected appointment.
+* If `d/DATE` is omitted, the selected appointment date is taken from that appointment's `next` date.
 * `d/DATE` is only allowed together with `y`.
 * `d/DATE` must be in ISO local date format (`YYYY-MM-DD`).
 * Attendance cannot be recorded for a future date.
-* This command only works when the student currently has an appointment.
-* Non-recurring appointments can only have attendance recorded once.
+* This command only works when the student has the selected appointment.
+* Non-recurring appointments can only have attendance recorded once for that appointment.
 
 Examples:
-* `add attd 1`
-* `add attd 1 y`
-* `add attd 1 y d/2026-01-29`
-* `add attd 1 n`
+* `add attd 1 1`
+* `add attd 1 2 y`
+* `add attd 1 2 y d/2026-01-29`
+* `add attd 1 3 n`
 
 ### Locating persons by name: `find person`
 
@@ -356,7 +359,7 @@ Action | Format, Examples
 --------|------------------
 **Add** | `add student n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add student n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
 **Add Appointment** | `add appt INDEX d/ISO8601_DATETIME [r/RECURRENCE] dsc/DESCRIPTION`<br> e.g., `add appt 1 d/2026-01-29T08:00:00 dsc/Weekly algebra practice`
-**Add Attendance** | `add attd INDEX [y\|n] [d/DATE]`<br> e.g., `add attd 1`, `add attd 1 n`, `add attd 1 d/2026-01-29`
+**Add Attendance** | `add attd PERSON_INDEX APPT_INDEX [y\|n] [d/DATE]`<br> e.g., `add attd 1 1`, `add attd 1 2 n`, `add attd 1 2 d/2026-01-29`
 **Add Payment** | `add payment INDEX d/ISO8601_DATE`<br> e.g., `add payment 1 d/2026-03-05`
 **Clear** | `clear`
 **Delete Student** | `delete student INDEX`<br> e.g., `delete student 3`

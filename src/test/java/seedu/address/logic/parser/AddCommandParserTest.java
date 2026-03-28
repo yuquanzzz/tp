@@ -77,7 +77,8 @@ public class AddCommandParserTest {
     @Test
     public void parse_validAttendanceSubcommand_delegatesToAttendanceParser() throws Exception {
         AddAttdCommandParser addAttdParser = new AddAttdCommandParser();
-        String attendanceDetails = INDEX_FIRST_PERSON.getOneBased() + " y" + ATTENDANCE_DATE_DESC;
+        String attendanceDetails = INDEX_FIRST_PERSON.getOneBased() + " "
+                + INDEX_FIRST_PERSON.getOneBased() + " y" + ATTENDANCE_DATE_DESC;
         String userInput = AddAttdCommand.SUB_COMMAND_WORD + " " + attendanceDetails;
 
         assertParseSuccess(parser, userInput, addAttdParser.parse(attendanceDetails));

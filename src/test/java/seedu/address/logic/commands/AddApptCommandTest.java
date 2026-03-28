@@ -25,9 +25,11 @@ import seedu.address.model.ListDisplayMode;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.attendance.AttendanceRecords;
 import seedu.address.model.person.AppointmentInWeekPredicate;
 import seedu.address.model.person.Person;
 import seedu.address.model.recurrence.Recurrence;
+import seedu.address.model.session.Appointment;
 import seedu.address.testutil.PersonBuilder;
 
 /**
@@ -88,7 +90,8 @@ public class AddApptCommandTest {
                 Recurrence.NONE, VALID_APPOINTMENT_DESCRIPTION);
 
         Person editedPerson = new PersonBuilder(earlierAppointmentPerson)
-                .withAppointment(VALID_APPOINTMENT_START, VALID_APPOINTMENT_DESCRIPTION, Recurrence.NONE)
+                .addAppointment(new Appointment(Recurrence.NONE, newAppointmentStart, newAppointmentStart,
+                        AttendanceRecords.EMPTY, VALID_APPOINTMENT_DESCRIPTION))
                 .build();
         String expectedMessage = String.format(AddApptCommand.MESSAGE_ADD_APPT_SUCCESS,
                 Messages.format(editedPerson), newAppointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -154,7 +157,8 @@ public class AddApptCommandTest {
                 Recurrence.NONE, VALID_APPOINTMENT_DESCRIPTION);
 
         Person editedPerson = new PersonBuilder(earlierAppointmentPerson)
-                .withAppointment("2026-01-22T08:00:00", VALID_APPOINTMENT_DESCRIPTION, Recurrence.NONE)
+                .addAppointment(new Appointment(Recurrence.NONE, newAppointmentStart, newAppointmentStart,
+                        AttendanceRecords.EMPTY, VALID_APPOINTMENT_DESCRIPTION))
                 .build();
         String expectedMessage = String.format(AddApptCommand.MESSAGE_ADD_APPT_SUCCESS,
                 Messages.format(editedPerson), newAppointmentStart.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));

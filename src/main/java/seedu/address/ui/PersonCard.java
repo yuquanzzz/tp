@@ -8,9 +8,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import seedu.address.model.academic.Subject;
 import seedu.address.model.person.Person;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.session.Appointment;
 
 /**
  * An UI component that displays information of a {@code Person}.
@@ -46,7 +48,7 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private FlowPane subjects;
     @FXML
-    private Label appointment;
+    private VBox appointmentList;
 
     /**
      * Creates a {@code PersonCode} with the given {@code Person} and index to display.
@@ -57,14 +59,17 @@ public class PersonCard extends UiPart<Region> {
         id.setText(displayedIndex + ". ");
         name.setText(person.getName().fullName);
 
-        // show appointments if showAppointments is true and person has an appointment
-        if (showAppointments && person.getAppointmentStart().isPresent()) {
-            String formattedTime = person.getAppointmentStart().get()
-                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            appointment.setText("Appt: " + formattedTime);
+        if (showAppointments && !person.getAppointments().isEmpty()) {
+            for (int index = 0; index < person.getAppointments().size(); index++) {
+                Appointment appointment = person.getAppointments().get(index);
+                Label appointmentLabel = new Label(formatAppointment(index + 1, appointment));
+                appointmentLabel.getStyleClass().add("cell_small_label");
+                appointmentLabel.setWrapText(true);
+                appointmentList.getChildren().add(appointmentLabel);
+            }
         } else {
-            appointment.setVisible(false);
-            appointment.setManaged(false);
+            appointmentList.setVisible(false);
+            appointmentList.setManaged(false);
         }
 
         phone.setText(person.getPhone().value);
@@ -86,5 +91,10 @@ public class PersonCard extends UiPart<Region> {
             subjectLabel.getStyleClass().add("tag");
             subjects.getChildren().add(subjectLabel);
         }
+    }
+
+    private String formatAppointment(int appointmentIndex, Appointment appointment) {
+        String formattedTime = appointment.getNext().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return "Appt " + appointmentIndex + ": " + formattedTime + " - " + appointment.getDescription();
     }
 }

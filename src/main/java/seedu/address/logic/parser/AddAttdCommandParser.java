@@ -31,14 +31,15 @@ public class AddAttdCommandParser implements Parser<AddAttdCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddAttdCommand.MESSAGE_USAGE));
         }
         String[] preambleParts = trimmedPreamble.split("\\s+");
-        if (preambleParts.length > 2) {
+        if (preambleParts.length < 2 || preambleParts.length > 3) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddAttdCommand.MESSAGE_USAGE));
         }
 
-        Index index = ParserUtil.parseIndex(preambleParts[0], AddAttdCommand.MESSAGE_USAGE);
+        Index personIndex = ParserUtil.parseIndex(preambleParts[0], AddAttdCommand.MESSAGE_USAGE);
+        Index appointmentIndex = ParserUtil.parseIndex(preambleParts[1], AddAttdCommand.MESSAGE_USAGE);
         boolean hasAttended = true;
-        if (preambleParts.length == 2) {
-            String attendanceStatus = preambleParts[1].toLowerCase();
+        if (preambleParts.length == 3) {
+            String attendanceStatus = preambleParts[2].toLowerCase();
             if (!attendanceStatus.equals("y") && !attendanceStatus.equals("n")) {
                 throw new ParseException(MESSAGE_INVALID_ATTENDANCE_STATUS);
             }
@@ -52,6 +53,6 @@ public class AddAttdCommandParser implements Parser<AddAttdCommand> {
             recordedDateOverride = Optional.of(ParserUtil.parseIsoDate(argMultimap.getValue(PREFIX_DATE).get()));
         }
 
-        return new AddAttdCommand(index, hasAttended, recordedDateOverride);
+        return new AddAttdCommand(personIndex, appointmentIndex, hasAttended, recordedDateOverride);
     }
 }

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.util.AppClock;
 import seedu.address.logic.commands.DeletePaymentCommand;
 
 public class DeletePaymentCommandParserTest {
@@ -41,7 +42,7 @@ public class DeletePaymentCommandParserTest {
 
     @Test
     public void parse_futureDate_failure() {
-        String futureDate = LocalDate.now().plusDays(1).toString();
+        String futureDate = AppClock.today().plusDays(1).toString();
         assertParseFailure(parser, "1 " + PREFIX_DATE + futureDate, ParserUtil.MESSAGE_INVALID_DATE_AFTER_TODAY);
     }
 

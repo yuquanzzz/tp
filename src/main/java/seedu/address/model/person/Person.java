@@ -4,6 +4,7 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public class Person {
     // Data fields
     private final Set<Tag> tags = new HashSet<>();
     private final Academics academics;
-    private final Optional<Appointment> appointment;
+    private final List<Appointment> appointments;
     private final Optional<Guardian> guardian;
     private final Billing billing;
 
@@ -55,7 +56,7 @@ public class Person {
 
         this.academics = new Academics();
 
-        this.appointment = Optional.empty();
+        this.appointments = List.of();
         this.guardian = Optional.empty();
         this.billing = Billing.defaultBilling();
     }
@@ -66,11 +67,11 @@ public class Person {
     public Person(Name name, Phone phone, Email email, Address address,
                   Set<Tag> tags, Academics academics,
                   Optional<Guardian> guardian,
-                  Optional<Appointment> appointment,
+                  List<Appointment> appointments,
                   Billing billing) {
 
         requireAllNonNull(name, phone, email, address, tags, academics,
-                guardian, appointment, billing);
+                guardian, appointments, billing);
 
         this.name = name;
         this.phone = phone;
@@ -81,7 +82,7 @@ public class Person {
         this.academics = academics;
 
         this.guardian = guardian;
-        this.appointment = appointment;
+        this.appointments = copyAndSortAppointments(appointments);
         this.billing = billing;
     }
 
@@ -102,25 +103,37 @@ public class Person {
     }
 
     public Optional<Appointment> getAppointment() {
-        return appointment;
+        if (appointments.isEmpty()) {
+            return Optional.empty();
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        return appointments.stream()
+                .filter(appointment -> !appointment.getNext().isBefore(now))
+                .findFirst()
+                .or(() -> Optional.of(appointments.get(appointments.size() - 1)));
+    }
+
+    public List<Appointment> getAppointments() {
+        return Collections.unmodifiableList(appointments);
     }
 
     /**
      * Returns the appointment start, or empty if no appointment exists.
      */
     public Optional<LocalDateTime> getAppointmentStart() {
-        return appointment.map(Appointment::getStart);
+        return getAppointment().map(Appointment::getStart);
     }
 
     /**
      * Returns the next appointment occurrence, or empty if no appointment exists.
      */
     public Optional<LocalDateTime> getAppointmentNext() {
-        return appointment.map(Appointment::getNext);
+        return getAppointment().map(Appointment::getNext);
     }
 
     public Optional<String> getAppointmentDescription() {
-        return appointment.map(Appointment::getDescription);
+        return getAppointment().map(Appointment::getDescription);
     }
 
     public Billing getBilling() {
@@ -132,7 +145,7 @@ public class Person {
     }
 
     public AttendanceRecords getAttendance() {
-        return appointment.map(Appointment::getAttendance).orElse(AttendanceRecords.EMPTY);
+        return getAppointment().map(Appointment::getAttendance).orElse(AttendanceRecords.EMPTY);
     }
 
     /**
@@ -228,7 +241,7 @@ public class Person {
                 && tags.equals(otherPerson.tags)
                 && academics.equals(otherPerson.academics)
                 && guardian.equals(otherPerson.guardian)
-                && appointment.equals(otherPerson.appointment)
+                && appointments.equals(otherPerson.appointments)
                 && billing.equals(otherPerson.billing);
     }
 
@@ -236,7 +249,7 @@ public class Person {
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, address, tags, academics,
-                guardian, appointment, billing);
+                guardian, appointments, billing);
     }
 
     @Override
@@ -249,9 +262,17 @@ public class Person {
                 .add("tags", tags)
                 .add("academics", academics)
                 .add("guardian", guardian.orElse(null))
-                .add("appointment", appointment.orElse(null))
+                .add("appointments", appointments)
                 .add("billing", billing)
                 .toString();
+    }
+
+    private List<Appointment> copyAndSortAppointments(List<Appointment> appointments) {
+        List<Appointment> copiedAppointments = new ArrayList<>(appointments);
+        copiedAppointments.sort(Comparator.comparing(Appointment::getNext)
+                .thenComparing(Appointment::getStart)
+                .thenComparing(Appointment::getDescription));
+        return List.copyOf(copiedAppointments);
     }
 
 }
