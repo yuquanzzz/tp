@@ -5,6 +5,7 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.time.LocalDate;
 
+import seedu.address.commons.util.AppClock;
 import seedu.address.model.recurrence.Recurrence;
 
 /**
@@ -14,7 +15,7 @@ import seedu.address.model.recurrence.Recurrence;
 public class Billing {
 
     private static final double DEFAULT_TUITION_FEE = 0.0;
-    private static final LocalDate DEFAULT_PAYMENT_DUE_DATE = LocalDate.now().withDayOfMonth(1);
+    private static final LocalDate DEFAULT_PAYMENT_DUE_DATE = AppClock.today().withDayOfMonth(1);
 
     private final Recurrence recurrence;
     private final LocalDate paymentDueDate;

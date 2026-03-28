@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.commons.util.AppClock;
 import seedu.address.model.academic.Academics;
 import seedu.address.model.billing.Billing;
 import seedu.address.model.billing.PaymentHistory;
@@ -147,7 +148,7 @@ class JsonAdaptedPerson {
      * @throws IllegalValueException if there were any data constraints violated in the adapted person.
      */
     public Person toModelType() throws IllegalValueException {
-        return toModelType(Clock.systemDefaultZone());
+        return toModelType(AppClock.getClock());
     }
 
     /**
