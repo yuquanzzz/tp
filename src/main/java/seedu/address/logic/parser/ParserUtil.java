@@ -31,7 +31,7 @@ public class ParserUtil {
     public static final String MESSAGE_INVALID_DATE =
             "Date must be in ISO 8601 local date format, e.g. 2026-01-13";
     public static final String MESSAGE_DATE_AFTER_TODAY =
-            "Payment date cannot be later than today.";
+            "Date cannot be later than today.";
     public static final String MESSAGE_INVALID_DATE_TIME =
             "Date-time must be in ISO 8601 local format, e.g. 2026-01-13T08:00:00";
     private static final DateTimeFormatter ISO_LOCAL_DATE_FORMATTER =
