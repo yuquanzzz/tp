@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeletePersonCommand;
+import seedu.address.logic.commands.EditBillingCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditPersonCommand;
 import seedu.address.logic.commands.EditPersonCommand.EditPersonDescriptor;
@@ -82,6 +83,16 @@ public class AddressBookParserTest {
         Set<Tag> tags = Set.of(new Tag("friend"));
 
         assertEquals(new EditTagCommand(INDEX_FIRST_PERSON, tags), command);
+    }
+
+    @Test
+    public void parseCommand_editBilling() throws Exception {
+        EditBillingCommand command = (EditBillingCommand) parser.parseCommand(
+                EditCommand.COMMAND_WORD + " "
+                        + EditBillingCommand.SUB_COMMAND_WORD + " "
+                        + INDEX_FIRST_PERSON.getOneBased() + " a/25");
+
+        assertEquals(new EditBillingCommand(INDEX_FIRST_PERSON, 25.0), command);
     }
 
     @Test

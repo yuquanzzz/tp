@@ -67,6 +67,7 @@ public class Billing {
     /**
      * Returns a new {@code Billing} object with updated tuition fees
      * @return {@code Billing} object with updated tuition fees
+     * @throws IllegalArgumentException if {@code newTuitionFees} is negative
      */
     public Billing updateRate(Double newTuitionFees) {
         checkArgument(newTuitionFees >= 0, "Tuition fees must be non-negative");
