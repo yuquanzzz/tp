@@ -157,11 +157,11 @@ Examples:
 ### Adding an appointment : `add appt`
 
 Adds an appointment to an existing student contact.
-
 Format: `add appt INDEX d/DATETIME [r/RECURRENCE] dsc/DESCRIPTION`
 
 * Adds the appointment to the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
 * `d/` accepts ISO 8601 local date-time.
+* `r/` is optional. Supported values are `NONE`, `WEEKLY`, `BIWEEKLY`, and `MONTHLY`. If omitted, `NONE` is used.
 * `r/` is optional. Supported values are `NONE`, `WEEKLY`, `BIWEEKLY`, and `MONTHLY`. If omitted, `NONE` is used.
 * `dsc/` is required and stores a short appointment description.
 * Adding a new appointment replaces any existing appointment for that student.
