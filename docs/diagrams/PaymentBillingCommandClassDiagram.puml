@@ -34,7 +34,7 @@ EditPaymentCommandParser .up.|> Parser
 FindPaymentCommandParser .up.|> Parser
 
 EditPaymentCommandParser ..> EditPaymentCommand : <<create>>
-EditPaymentCommandParser ..> Billing : <<uses billing update>>
+EditPaymentCommand ..> Billing : <<uses billing update>>
 
 FindPaymentCommandParser ..> FindPaymentCommand : <<create>>
 FindPaymentCommandParser ..> PaymentDueMonthPredicate : <<create>>
