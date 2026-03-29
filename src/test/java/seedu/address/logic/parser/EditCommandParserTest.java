@@ -21,9 +21,11 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_APPOINTMENT_STA
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_LAST_ATTENDANCE;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_PAYMENT_AMOUNT;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_AMOUNT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
@@ -41,6 +43,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditApptCommand;
 import seedu.address.logic.commands.EditAttdCommand;
+import seedu.address.logic.commands.EditBillingCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditPersonCommand;
 import seedu.address.logic.commands.EditPersonCommand.EditPersonDescriptor;
@@ -61,6 +64,8 @@ public class EditCommandParserTest {
             String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditApptCommand.MESSAGE_USAGE);
     private static final String MESSAGE_INVALID_ATTD_FORMAT =
             String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditAttdCommand.MESSAGE_USAGE);
+    private static final String MESSAGE_INVALID_BILLING_FORMAT =
+            String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditBillingCommand.MESSAGE_USAGE);
 
     private EditCommandParser parser = new EditCommandParser();
 
@@ -80,6 +85,9 @@ public class EditCommandParserTest {
 
         // valid appt subcommand but no field specified
         assertParseFailure(parser, "appt 1", EditCommand.MESSAGE_NOT_EDITED);
+
+        // valid billing subcommand but no field specified
+        assertParseFailure(parser, "billing 1", EditCommand.MESSAGE_NOT_EDITED);
 
         // no input at all
         assertParseFailure(parser, "", MESSAGE_INVALID_FORMAT);
@@ -110,6 +118,12 @@ public class EditCommandParserTest {
 
         // negative index for attd
         assertParseFailure(parser, "attd -1" + LAST_ATTENDANCE_DESC, MESSAGE_INVALID_ATTD_FORMAT);
+
+        // invalid prefix being parsed as preamble for billing
+        assertParseFailure(parser, "billing 1 i/ string", MESSAGE_INVALID_BILLING_FORMAT);
+
+        // zero index for billing
+        assertParseFailure(parser, "billing 0 a/25", MESSAGE_INVALID_BILLING_FORMAT);
     }
 
     @Test
@@ -200,6 +214,12 @@ public class EditCommandParserTest {
         EditAttdCommand expectedAttdCommand = new EditAttdCommand(targetIndex,
                 LocalDateTime.parse(VALID_LAST_ATTENDANCE));
         assertParseSuccess(parser, userInput, expectedAttdCommand);
+
+        // billing amount
+        userInput = "billing " + targetIndex.getOneBased() + " " + PREFIX_AMOUNT + VALID_PAYMENT_AMOUNT;
+        EditBillingCommand expectedBillingCommand = new EditBillingCommand(targetIndex,
+                Double.parseDouble(VALID_PAYMENT_AMOUNT));
+        assertParseSuccess(parser, userInput, expectedBillingCommand);
     }
 
     @Test
@@ -217,6 +237,9 @@ public class EditCommandParserTest {
         String attdInput = "AtTd " + targetIndex.getOneBased() + LAST_ATTENDANCE_DESC;
         assertParseSuccess(parser, attdInput,
                 new EditAttdCommand(targetIndex, LocalDateTime.parse(VALID_LAST_ATTENDANCE)));
+
+        String billingInput = "BiLlInG " + targetIndex.getOneBased() + " a/25";
+        assertParseSuccess(parser, billingInput, new EditBillingCommand(targetIndex, 25.0));
     }
 
     @Test
@@ -260,5 +283,10 @@ public class EditCommandParserTest {
         userInput = "attd " + targetIndex.getOneBased() + LAST_ATTENDANCE_DESC + LAST_ATTENDANCE_DESC;
         assertParseFailure(parser, userInput,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DATE));
+
+        // duplicate billing amount
+        userInput = "billing " + targetIndex.getOneBased() + " a/20 a/30";
+        assertParseFailure(parser, userInput,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_AMOUNT));
     }
 }

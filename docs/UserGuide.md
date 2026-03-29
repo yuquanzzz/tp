@@ -110,6 +110,32 @@ Examples:
 *  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 *  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 
+### Recording payment date : `edit payment`
+
+Records a tuition payment date for an existing student contact.
+
+Format: `edit payment INDEX d/DATE`
+
+* Records payment for the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
+* `d/` accepts ISO 8601 local date (`YYYY-MM-DD`).
+* This command records payment history and advances the billing due date based on recurrence.
+
+Examples:
+* `edit payment 1 d/2026-03-05`
+
+### Editing billing amount : `edit billing`
+
+Updates tuition fee amount for an existing student contact.
+
+Format: `edit billing INDEX a/AMOUNT`
+
+* Updates billing amount for the person at the specified `INDEX`.
+* `a/` must be a non-negative number.
+* This command updates tuition fee only and does not change payment history.
+
+Examples:
+* `edit billing 1 a/250`
+
 ### Recording last attendance : `edit attd`
 
 Records the last attendance date-time for an existing student contact.
@@ -293,6 +319,8 @@ Action | Format, Examples
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
+**Edit Payment** | `edit payment INDEX d/ISO8601_DATE`<br> e.g., `edit payment 1 d/2026-03-05`
+**Edit Billing** | `edit billing INDEX a/AMOUNT`<br> e.g., `edit billing 1 a/250`
 **Edit Appointment** | `edit appt INDEX d/ISO8601_DATETIME`<br> e.g., `edit appt 1 d/2026-01-13T08:00:00`
 **Edit Attendance** | `edit attd INDEX [d/ISO8601_DATETIME]`<br> e.g., `edit attd 1 d/2026-01-29T08:00:00`, `edit attd 1`
 **Find** | `find person KEYWORD [MORE_KEYWORDS]`<br> e.g., `find person James Jake`

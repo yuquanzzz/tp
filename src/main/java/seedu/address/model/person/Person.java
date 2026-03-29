@@ -185,6 +185,16 @@ public class Person {
     }
 
     /**
+     * Returns a new {@code Billing} instance with an updated tuition fee for this person.
+     * @param tuitionFee the new tuition fee amount to apply; must be non-negative
+     * @return a new {@code Billing} object with the updated tuition fee and all other billing fields unchanged
+     * @throws IllegalArgumentException if {@code tuitionFee} is negative
+     */
+    public Billing updateTuitionRate(Double tuitionFee) {
+        return billing.updateRate(tuitionFee);
+    }
+
+    /**
      * Returns attendance history with the provided attendance date-time appended.
      */
     public Attendance addAttendance(LocalDateTime attendanceDateTime) {

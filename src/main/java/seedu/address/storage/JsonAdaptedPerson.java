@@ -43,6 +43,8 @@ class JsonAdaptedPerson {
             "Payment date must be in ISO 8601 local date format, e.g. 2026-01-13";
     private static final String PAYMENT_DUE_DATE_MESSAGE_CONSTRAINTS =
             "Payment due date must be in ISO 8601 local date format, e.g. 2026-01-13";
+    private static final String TUITION_FEE_MESSAGE_CONSTRAINTS =
+            "Tuition fee must be a finite non-negative number.";
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE
             .withResolverStyle(ResolverStyle.STRICT);
@@ -62,7 +64,7 @@ class JsonAdaptedPerson {
     private final List<String> paymentDates;
     private final String paymentDueDate;
     private final String paymentRecurrence;
-    private final Double tuitionFee;
+    private final double tuitionFee;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
     private final JsonAdaptedAcademics academics;
 
@@ -81,7 +83,7 @@ class JsonAdaptedPerson {
             @JsonProperty("paymentDates") List<String> paymentDates,
             @JsonProperty("paymentDueDate") String paymentDueDate,
             @JsonProperty("paymentRecurrence") String paymentRecurrence,
-            @JsonProperty("billingMonthlyRate") Double tuitionFee,
+            @JsonProperty("billingMonthlyRate") double tuitionFee,
             @JsonProperty("attendanceHistory") List<String> attendanceHistory) {
         this.name = name;
         this.phone = phone;
@@ -261,7 +263,7 @@ class JsonAdaptedPerson {
             }
         }
 
-        LocalDate modelPaymentDueDate = LocalDate.now();
+        LocalDate modelPaymentDueDate = LocalDate.now().withDayOfMonth(1);
         if (paymentDueDate != null) {
             try {
                 modelPaymentDueDate = LocalDate.parse(paymentDueDate, DATE_FORMATTER);
@@ -271,8 +273,8 @@ class JsonAdaptedPerson {
         }
 
         Billing modelBilling;
-        if (tuitionFee == null) {
-            modelBilling = Billing.defaultBilling();
+        if (!Double.isFinite(tuitionFee) || tuitionFee < 0) {
+            throw new IllegalValueException(TUITION_FEE_MESSAGE_CONSTRAINTS);
         } else {
             modelBilling = new Billing(
                     modelRecurrence, modelPaymentDueDate, tuitionFee, modelPayment);

@@ -3,15 +3,12 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_PAYMENT_DATE;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_PAYMENT_AMOUNT;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.Test;
 
@@ -26,72 +23,70 @@ import seedu.address.model.person.Person;
 import seedu.address.testutil.PersonBuilder;
 
 /**
- * Contains integration tests (interaction with the Model) and unit tests for AddPaymentCommand.
+ * Contains integration tests (interaction with the Model) and unit tests for EditBillingCommand.
  */
-public class AddPaymentCommandTest {
+public class EditBillingCommandTest {
 
-    private final Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
     @Test
     public void execute_validIndexUnfilteredList_success() {
         Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        LocalDate paymentDate = LocalDate.parse(VALID_PAYMENT_DATE);
-        AddPaymentCommand addCommand = new AddPaymentCommand(INDEX_FIRST_PERSON, paymentDate);
+        double tuitionFee = Double.parseDouble(VALID_PAYMENT_AMOUNT);
+        EditBillingCommand editCommand = new EditBillingCommand(INDEX_FIRST_PERSON, tuitionFee);
 
-        Billing updatedBilling = personToEdit.recordFeesPaidAndAdvanceBilling(paymentDate);
+        Billing updatedBilling = personToEdit.getBilling().updateRate(tuitionFee);
         Person editedPerson = new PersonBuilder(personToEdit)
                 .withBilling(updatedBilling)
                 .build();
 
-        String expectedMessage = String.format(AddPaymentCommand.MESSAGE_ADD_PAYMENT_SUCCESS,
-                editedPerson.getBilling().getTuitionFee(),
-                Messages.format(editedPerson),
-                paymentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        String expectedMessage = String.format(EditBillingCommand.MESSAGE_EDIT_BILLING_SUCCESS,
+                Messages.format(editedPerson), tuitionFee);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personToEdit, editedPerson);
 
         CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
-        assertCommandSuccess(addCommand, model, expectedCommandResult, expectedModel);
+        assertCommandSuccess(editCommand, model, expectedCommandResult, expectedModel);
     }
 
     @Test
     public void execute_invalidIndexUnfilteredList_failure() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
-        LocalDate paymentDate = LocalDate.parse(VALID_PAYMENT_DATE);
-        AddPaymentCommand addCommand = new AddPaymentCommand(outOfBoundIndex, paymentDate);
+        double tuitionFee = Double.parseDouble(VALID_PAYMENT_AMOUNT);
+        EditBillingCommand editCommand = new EditBillingCommand(outOfBoundIndex, tuitionFee);
 
-        assertCommandFailure(addCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        assertCommandFailure(editCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
     }
 
     @Test
     public void equals() {
-        LocalDate paymentDate = LocalDate.parse(VALID_PAYMENT_DATE);
-        AddPaymentCommand standardCommand = new AddPaymentCommand(INDEX_FIRST_PERSON, paymentDate);
+        double tuitionFee = Double.parseDouble(VALID_PAYMENT_AMOUNT);
+        EditBillingCommand standardCommand = new EditBillingCommand(INDEX_FIRST_PERSON, tuitionFee);
 
-        // same values -> returns true
-        AddPaymentCommand commandWithSameValues = new AddPaymentCommand(INDEX_FIRST_PERSON, paymentDate);
+        EditBillingCommand commandWithSameValues = new EditBillingCommand(INDEX_FIRST_PERSON, tuitionFee);
         assertTrue(standardCommand.equals(commandWithSameValues));
+
         assertTrue(standardCommand.equals(standardCommand));
+
         assertFalse(standardCommand.equals(null));
+
         assertFalse(standardCommand.equals(new ClearCommand()));
 
-        // different index -> returns false
-        assertFalse(standardCommand.equals(new AddPaymentCommand(INDEX_SECOND_PERSON, paymentDate)));
+        assertFalse(standardCommand.equals(new EditBillingCommand(INDEX_SECOND_PERSON, tuitionFee)));
 
-        LocalDate differentPaymentDate = LocalDate.parse("2026-02-01");
-        assertFalse(standardCommand.equals(new AddPaymentCommand(
-                INDEX_FIRST_PERSON, differentPaymentDate)));
+        assertFalse(standardCommand.equals(new EditBillingCommand(INDEX_FIRST_PERSON, 20.0)));
     }
 
     @Test
     public void toStringMethod() {
         Index index = Index.fromOneBased(1);
-        LocalDate paymentDate = LocalDate.parse(VALID_PAYMENT_DATE);
-        AddPaymentCommand editCommand = new AddPaymentCommand(index, paymentDate);
-        String expected = AddPaymentCommand.class.getCanonicalName()
+        double tuitionFee = Double.parseDouble(VALID_PAYMENT_AMOUNT);
+        EditBillingCommand editCommand = new EditBillingCommand(index, tuitionFee);
+        String expected = EditBillingCommand.class.getCanonicalName()
                 + "{index=" + index
-                + ", paymentDate=" + paymentDate + "}";
+                + ", tuitionFee=" + tuitionFee
+                + "}";
         assertEquals(expected, editCommand.toString());
     }
 }

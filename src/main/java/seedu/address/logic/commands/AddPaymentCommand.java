@@ -1,12 +1,10 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_AMOUNT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -27,31 +25,25 @@ public class AddPaymentCommand extends AddCommand {
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUB_COMMAND_WORD
             + ": Records the day tuition fees were paid by the student identified by the index number used "
             + "in the displayed student list.\n"
-            + "Optional amount field to update the current tuition fee rate.\n"
             + "Parameters: INDEX (must be a positive integer) "
-            + PREFIX_DATE + "DATE [" + PREFIX_AMOUNT + "AMOUNT]\n"
+            + PREFIX_DATE + "DATE\n"
             + "Example: " + COMMAND_WORD + " " + SUB_COMMAND_WORD + " 1 "
-            + PREFIX_DATE + "2026-01-13 "
-            + PREFIX_AMOUNT + "25";
+            + PREFIX_DATE + "2026-01-13";
 
     public static final String MESSAGE_ADD_PAYMENT_SUCCESS = "%1$s paid by %2$s on %3$s";
 
     private final Index index;
     private final LocalDate paymentDate;
-    private final Optional<Double> tuitionFee;
 
     /**
      * @param index of the person in the filtered person list to update
      * @param paymentDate the payment date to record
-     * @param tuitionFee optional tuition fee update amount
      */
-    public AddPaymentCommand(Index index, LocalDate paymentDate, Optional<Double> tuitionFee) {
+    public AddPaymentCommand(Index index, LocalDate paymentDate) {
         requireNonNull(index);
         requireNonNull(paymentDate);
-        requireNonNull(tuitionFee);
         this.index = index;
         this.paymentDate = paymentDate;
-        this.tuitionFee = tuitionFee;
     }
 
     @Override
@@ -59,9 +51,7 @@ public class AddPaymentCommand extends AddCommand {
         requireNonNull(model);
 
         Person personToEdit = IndexedPersonResolver.getTargetPerson(model, index);
-        Billing updatedBilling = tuitionFee.isPresent()
-                ? personToEdit.recordFeesPaidAndAdvanceBilling(paymentDate).updateRate(tuitionFee.get())
-                : personToEdit.recordFeesPaidAndAdvanceBilling(paymentDate);
+        Billing updatedBilling = personToEdit.recordFeesPaidAndAdvanceBilling(paymentDate);
 
         Person editedPerson = new PersonBuilder(personToEdit)
                 .withBilling(updatedBilling)
@@ -88,13 +78,12 @@ public class AddPaymentCommand extends AddCommand {
 
         AddPaymentCommand otherCommand = (AddPaymentCommand) other;
         return index.equals(otherCommand.index)
-                && paymentDate.equals(otherCommand.paymentDate)
-                && tuitionFee.equals(otherCommand.tuitionFee);
+            && paymentDate.equals(otherCommand.paymentDate);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(index, paymentDate, tuitionFee);
+        return java.util.Objects.hash(index, paymentDate);
     }
 
     @Override
@@ -102,7 +91,6 @@ public class AddPaymentCommand extends AddCommand {
         return new ToStringBuilder(this)
                 .add("index", index)
                 .add("paymentDate", paymentDate)
-                .add("amount", tuitionFee.isPresent() ? tuitionFee.get() : null)
                 .toString();
     }
 }
