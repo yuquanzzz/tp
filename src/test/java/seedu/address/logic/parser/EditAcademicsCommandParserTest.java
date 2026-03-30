@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditAcademicsCommand;
-import seedu.address.model.academic.Academics;
+import seedu.address.logic.commands.EditAcademicsCommand.EditAcademicsDescriptor;
 import seedu.address.model.academic.Level;
 import seedu.address.model.academic.Subject;
 
@@ -34,28 +34,22 @@ public class EditAcademicsCommandParserTest {
 
     @Test
     public void parse_missingParts_failure() {
-        // no index specified
+        // no index
         assertParseFailure(parser, SUBJECT_DESC_MATH_STRONG, MESSAGE_INVALID_SUBJECT_FORMAT);
 
-        // no input at all
+        // empty input
         assertParseFailure(parser, "", MESSAGE_INVALID_SUBJECT_FORMAT);
     }
 
     @Test
     public void parse_invalidPreamble_failure() {
-        // negative index
         assertParseFailure(parser, "-5" + SUBJECT_DESC_MATH_STRONG, MESSAGE_INVALID_SUBJECT_FORMAT);
-
-        // zero index
         assertParseFailure(parser, "0" + SUBJECT_DESC_MATH_STRONG, MESSAGE_INVALID_SUBJECT_FORMAT);
-
-        // invalid arguments
         assertParseFailure(parser, "1 some random string", MESSAGE_INVALID_SUBJECT_FORMAT);
     }
 
     @Test
     public void parse_invalidValue_failure() {
-        // invalid subject format
         assertParseFailure(parser, "1" + INVALID_SUBJECT_DESC, Subject.MESSAGE_CONSTRAINTS);
     }
 
@@ -64,10 +58,11 @@ public class EditAcademicsCommandParserTest {
         Index targetIndex = INDEX_FIRST_PERSON;
         String userInput = targetIndex.getOneBased() + SUBJECT_DESC_MATH_STRONG;
 
-        Set<Subject> subjects = Set.of(new Subject("Math", Level.STRONG));
-        Academics academics = new Academics(subjects);
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setSubjects(Set.of(new Subject("Math", Level.STRONG)));
 
-        EditAcademicsCommand expectedCommand = new EditAcademicsCommand(targetIndex, academics);
+        EditAcademicsCommand expectedCommand =
+                new EditAcademicsCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -79,13 +74,14 @@ public class EditAcademicsCommandParserTest {
                 + SUBJECT_DESC_MATH_STRONG
                 + SUBJECT_DESC_SCIENCE_BASIC;
 
-        Set<Subject> subjects = Set.of(
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setSubjects(Set.of(
                 new Subject("Math", Level.STRONG),
                 new Subject("Science", Level.BASIC)
-        );
-        Academics academics = new Academics(subjects);
+        ));
 
-        EditAcademicsCommand expectedCommand = new EditAcademicsCommand(targetIndex, academics);
+        EditAcademicsCommand expectedCommand =
+                new EditAcademicsCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -95,23 +91,42 @@ public class EditAcademicsCommandParserTest {
         Index targetIndex = INDEX_FIRST_PERSON;
         String userInput = targetIndex.getOneBased() + " s/Math";
 
-        Set<Subject> subjects = Set.of(new Subject("Math", null));
-        Academics academics = new Academics(subjects);
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setSubjects(Set.of(new Subject("Math", null)));
 
-        EditAcademicsCommand expectedCommand = new EditAcademicsCommand(targetIndex, academics);
+        EditAcademicsCommand expectedCommand =
+                new EditAcademicsCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
     @Test
-    public void parse_resetSubjects_success() {
+    public void parse_noteOnly_success() {
         Index targetIndex = INDEX_FIRST_PERSON;
-        String userInput = String.valueOf(targetIndex.getOneBased());
+        String userInput = targetIndex.getOneBased() + " dsc/Good progress";
 
-        Set<Subject> subjects = Set.of();
-        Academics academics = new Academics(subjects);
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setNote("Good progress");
 
-        EditAcademicsCommand expectedCommand = new EditAcademicsCommand(targetIndex, academics);
+        EditAcademicsCommand expectedCommand =
+                new EditAcademicsCommand(targetIndex, descriptor);
+
+        assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
+    @Test
+    public void parse_subjectAndNote_success() {
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInput = targetIndex.getOneBased()
+                + SUBJECT_DESC_MATH_STRONG
+                + " dsc/Good";
+
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setSubjects(Set.of(new Subject("Math", Level.STRONG)));
+        descriptor.setNote("Good");
+
+        EditAcademicsCommand expectedCommand =
+                new EditAcademicsCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -122,5 +137,14 @@ public class EditAcademicsCommandParserTest {
         String userInput = targetIndex.getOneBased() + SUBJECT_EMPTY;
 
         assertParseFailure(parser, userInput, Subject.MESSAGE_CONSTRAINTS);
+    }
+
+    @Test
+    public void parse_noFields_failure() {
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInput = String.valueOf(targetIndex.getOneBased());
+
+        assertParseFailure(parser, userInput,
+                "At least one field (subjects or note) must be provided.");
     }
 }
