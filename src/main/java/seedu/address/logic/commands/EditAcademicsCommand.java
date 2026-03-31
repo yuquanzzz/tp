@@ -31,7 +31,9 @@ public class EditAcademicsCommand extends EditCommand {
             + "student list.\n"
             + "Parameters: INDEX (must be a positive integer) "
             + "[" + PREFIX_SUBJECT + "SUBJECT [" + PREFIX_LEVEL + "LEVEL]]... "
-            + "[" + PREFIX_DESCRIPTION + "NOTE]\n"
+            + "[" + PREFIX_DESCRIPTION + "DESCRIPTION]\n"
+            + "Use " + PREFIX_SUBJECT + " to set subjects, or " + PREFIX_SUBJECT + " to clear all subjects.\n"
+            + "Use " + PREFIX_DESCRIPTION + " to set description, or " + PREFIX_DESCRIPTION + " to clear it.\n"
             + "Example: " + COMMAND_WORD + " " + SUB_COMMAND_WORD + " 1 "
             + PREFIX_SUBJECT + "Math " + PREFIX_LEVEL + "Strong "
             + PREFIX_DESCRIPTION + "Good progress";
@@ -64,7 +66,7 @@ public class EditAcademicsCommand extends EditCommand {
             newSubjects = descriptor.getSubjects();
         }
 
-        Optional<String> newNote = current.getNotes();
+        Optional<String> newNote = current.getDescription();
         if (descriptor.isNoteEdited()) {
             String note = descriptor.getNote();
             newNote = (note == null || note.isEmpty())

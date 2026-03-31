@@ -141,8 +141,8 @@ public class PersonDetailPanel extends UiPart<Region> {
                     });
         }
 
-        String note = person.getAcademics().getNotes().orElse("");
-        academicsNotesLabel.setText(note.isEmpty() ? "-" : note);
+        String description = person.getAcademics().getDescription().orElse("");
+        academicsNotesLabel.setText(description.isEmpty() ? "-" : description);
 
         // Display payment history
         if (person.getPaymentHistory().getPaidDates().isEmpty()) {

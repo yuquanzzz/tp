@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.commands.EditCommand.MESSAGE_NOT_EDITED;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_LEVEL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_SUBJECT;
@@ -48,8 +49,7 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
         }
 
         if (split.length == 1) {
-            throw new ParseException(
-                    "At least one field (subjects or note) must be provided.");
+            throw new ParseException(MESSAGE_NOT_EDITED);
         }
 
         String remainder = split[1];
@@ -75,10 +75,10 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
                 end = nextLevel;
             }
 
-            String note = remainder.substring(start, end).trim();
-            descriptor.setNote(note);
+            String description = remainder.substring(start, end).trim();
+            descriptor.setNote(description); // "" = clear
 
-            // remove dsc/ segment
+            // remove dsc segment
             String before = remainder.substring(0, dscIndex).trim();
             String after = (end < remainder.length())
                     ? remainder.substring(end).trim()
@@ -94,6 +94,8 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
             Subject current = null;
 
             int i = 0;
+            boolean sawEmptySubject = false;
+
             while (i < subjectLevelPart.length()) {
 
                 if (subjectLevelPart.startsWith(PREFIX_SUBJECT.getPrefix(), i)) {
@@ -102,6 +104,14 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
                     int next = findNextPrefix(subjectLevelPart, start);
 
                     String name = subjectLevelPart.substring(start, next).trim();
+
+                    // Handle clear case: s/
+                    if (name.isEmpty()) {
+                        descriptor.setSubjects(new HashSet<>());
+                        sawEmptySubject = true;
+                        i = next;
+                        continue;
+                    }
 
                     if (!Subject.isValidSubjectName(name)) {
                         throw new ParseException(Subject.MESSAGE_CONSTRAINTS);
@@ -147,21 +157,21 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
                 }
             }
 
-            // duplicate check
-            Set<String> seen = new HashSet<>();
-            for (Subject s : subjects) {
-                if (!seen.add(s.getName())) {
-                    throw new ParseException("Duplicate subjects are not allowed.");
+            // only set subjects if NOT clearing
+            if (!sawEmptySubject) {
+                Set<String> seen = new HashSet<>();
+                for (Subject s : subjects) {
+                    if (!seen.add(s.getName())) {
+                        throw new ParseException("Duplicate subjects are not allowed.");
+                    }
                 }
+                descriptor.setSubjects(new HashSet<>(subjects));
             }
-
-            descriptor.setSubjects(new HashSet<>(subjects));
         }
 
         // ================= FINAL VALIDATION =================
         if (!descriptor.isSubjectsEdited() && !descriptor.isNoteEdited()) {
-            throw new ParseException(
-                    "At least one field (subjects or note) must be provided.");
+            throw new ParseException(MESSAGE_NOT_EDITED);
         }
 
         return new EditAcademicsCommand(index, descriptor);

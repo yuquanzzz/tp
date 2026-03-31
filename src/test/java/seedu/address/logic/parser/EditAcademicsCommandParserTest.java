@@ -4,6 +4,7 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_SUBJECT_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.SUBJECT_DESC_MATH_STRONG;
 import static seedu.address.logic.commands.CommandTestUtil.SUBJECT_DESC_SCIENCE_BASIC;
+import static seedu.address.logic.commands.EditCommand.MESSAGE_NOT_EDITED;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_SUBJECT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -162,11 +163,15 @@ public class EditAcademicsCommandParserTest {
     }
 
     @Test
-    public void parse_emptySubject_failure() {
-        Index targetIndex = INDEX_FIRST_PERSON;
-        String userInput = targetIndex.getOneBased() + SUBJECT_EMPTY;
+    public void parse_clearSubjects_success() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " s/";
 
-        assertParseFailure(parser, userInput, Subject.MESSAGE_CONSTRAINTS);
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setSubjects(Set.of());
+
+        assertParseSuccess(parser, input,
+                new EditAcademicsCommand(index, descriptor));
     }
 
     @Test
@@ -174,8 +179,7 @@ public class EditAcademicsCommandParserTest {
         Index targetIndex = INDEX_FIRST_PERSON;
         String userInput = String.valueOf(targetIndex.getOneBased());
 
-        assertParseFailure(parser, userInput,
-                "At least one field (subjects or note) must be provided.");
+        assertParseFailure(parser, userInput, MESSAGE_NOT_EDITED);
     }
 
     @Test
@@ -243,6 +247,32 @@ public class EditAcademicsCommandParserTest {
         EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
         descriptor.setSubjects(Set.of(new Subject("Math", Level.STRONG)));
         descriptor.setNote("Good progress, well done!");
+
+        assertParseSuccess(parser, input,
+                new EditAcademicsCommand(index, descriptor));
+    }
+
+    @Test
+    public void parse_clearSubjectsAndNote_success() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " s/ dsc/";
+
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setSubjects(Set.of());
+        descriptor.setNote("");
+
+        assertParseSuccess(parser, input,
+                new EditAcademicsCommand(index, descriptor));
+    }
+
+    @Test
+    public void parse_noteAfterSubjects_success() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " s/Math dsc/Good";
+
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setSubjects(Set.of(new Subject("Math", null)));
+        descriptor.setNote("Good");
 
         assertParseSuccess(parser, input,
                 new EditAcademicsCommand(index, descriptor));
