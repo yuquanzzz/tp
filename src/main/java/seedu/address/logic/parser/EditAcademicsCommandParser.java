@@ -21,12 +21,6 @@ import seedu.address.model.academic.Subject;
 
 /**
  * Parses input arguments and creates a new {@code EditAcademicsCommand}.
- *
- * Logic:
- * - Parse dsc/ first (order independent)
- * - Remove dsc/ segment
- * - Parse s/ l/ strictly
- * - Only overwrite fields that are present
  */
 public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> {
 
@@ -69,7 +63,6 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
 
             int start = dscIndex + PREFIX_DESCRIPTION.getPrefix().length();
 
-            // Find next prefix (s/ or l/)
             int nextSubject = remainder.indexOf(PREFIX_SUBJECT.getPrefix(), start);
             int nextLevel = remainder.indexOf(PREFIX_LEVEL.getPrefix(), start);
 
@@ -85,7 +78,7 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
             String note = remainder.substring(start, end).trim();
             descriptor.setNote(note);
 
-            // Remove dsc segment cleanly
+            // remove dsc/ segment
             String before = remainder.substring(0, dscIndex).trim();
             String after = (end < remainder.length())
                     ? remainder.substring(end).trim()
@@ -100,13 +93,15 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
             List<Subject> subjects = new ArrayList<>();
             Subject current = null;
 
-            String[] tokens = subjectLevelPart.split("\\s+");
+            int i = 0;
+            while (i < subjectLevelPart.length()) {
 
-            for (String token : tokens) {
+                if (subjectLevelPart.startsWith(PREFIX_SUBJECT.getPrefix(), i)) {
 
-                if (token.startsWith(PREFIX_SUBJECT.getPrefix())) {
+                    int start = i + PREFIX_SUBJECT.getPrefix().length();
+                    int next = findNextPrefix(subjectLevelPart, start);
 
-                    String name = token.substring(PREFIX_SUBJECT.getPrefix().length());
+                    String name = subjectLevelPart.substring(start, next).trim();
 
                     if (!Subject.isValidSubjectName(name)) {
                         throw new ParseException(Subject.MESSAGE_CONSTRAINTS);
@@ -115,7 +110,9 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
                     current = new Subject(name, null);
                     subjects.add(current);
 
-                } else if (token.startsWith(PREFIX_LEVEL.getPrefix())) {
+                    i = next;
+
+                } else if (subjectLevelPart.startsWith(PREFIX_LEVEL.getPrefix(), i)) {
 
                     if (current == null) {
                         throw new ParseException("Level must follow a subject.");
@@ -125,7 +122,10 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
                         throw new ParseException("Each subject can only have one level.");
                     }
 
-                    String levelStr = token.substring(PREFIX_LEVEL.getPrefix().length());
+                    int start = i + PREFIX_LEVEL.getPrefix().length();
+                    int next = findNextPrefix(subjectLevelPart, start);
+
+                    String levelStr = subjectLevelPart.substring(start, next).trim();
 
                     Level level;
                     try {
@@ -134,10 +134,11 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
                         throw new ParseException(LevelUtil.MESSAGE_CONSTRAINTS);
                     }
 
-                    // Replace last subject with level
                     subjects.remove(subjects.size() - 1);
                     current = new Subject(current.getName(), level);
                     subjects.add(current);
+
+                    i = next;
 
                 } else {
                     throw new ParseException(
@@ -146,7 +147,7 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
                 }
             }
 
-            // Duplicate check
+            // duplicate check
             Set<String> seen = new HashSet<>();
             for (Subject s : subjects) {
                 if (!seen.add(s.getName())) {
@@ -164,5 +165,22 @@ public class EditAcademicsCommandParser implements Parser<EditAcademicsCommand> 
         }
 
         return new EditAcademicsCommand(index, descriptor);
+    }
+
+    private int findNextPrefix(String input, int start) {
+        int nextSubject = input.indexOf(PREFIX_SUBJECT.getPrefix(), start);
+        int nextLevel = input.indexOf(PREFIX_LEVEL.getPrefix(), start);
+
+        if (nextSubject == -1 && nextLevel == -1) {
+            return input.length();
+        }
+        if (nextSubject == -1) {
+            return nextLevel;
+        }
+        if (nextLevel == -1) {
+            return nextSubject;
+        }
+
+        return Math.min(nextSubject, nextLevel);
     }
 }
