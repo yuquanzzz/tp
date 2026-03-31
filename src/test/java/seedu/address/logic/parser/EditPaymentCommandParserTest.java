@@ -63,7 +63,7 @@ public class EditPaymentCommandParserTest {
         Index targetIndex = INDEX_FIRST_PERSON;
         String userInput = targetIndex.getOneBased() + TODAY_DATE_DESC;
         EditPaymentCommand expectedCommand = new EditPaymentCommand(targetIndex,
-                LocalDate.parse(TODAY_DATE), java.util.Optional.empty());
+                LocalDate.parse(TODAY_DATE));
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 

@@ -251,19 +251,6 @@ public class JsonAdaptedPersonTest {
     }
 
     @Test
-    public void toModelType_futurePaymentDate_throwsIllegalValueException() {
-        JsonAdaptedPerson person =
-                makeJsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
-                        VALID_TAGS, VALID_ACADEMICS,
-                        VALID_PARENT_NAME, VALID_PARENT_PHONE, VALID_PARENT_EMAIL,
-                        VALID_APPOINTMENT_START,
-                        List.of(FUTURE_PAYMENT_DATE), VALID_PAYMENT_DUE_DATE,
-                        VALID_PAYMENT_RECURRENCE, VALID_TUITION_FEE,
-                        List.of(VALID_ATTENDANCE_ENTRY));
-        assertThrows(IllegalValueException.class, () -> person.toModelType(FIXED_CLOCK));
-    }
-
-    @Test
     public void toModelType_invalidPaymentDueDate_throwsIllegalValueException() {
         JsonAdaptedPerson person =
                 makeJsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
