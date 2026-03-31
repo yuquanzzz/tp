@@ -18,6 +18,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditAcademicsCommand;
 import seedu.address.logic.commands.EditAcademicsCommand.EditAcademicsDescriptor;
 import seedu.address.model.academic.Level;
+import seedu.address.model.academic.LevelUtil;
 import seedu.address.model.academic.Subject;
 
 /**
@@ -132,6 +133,35 @@ public class EditAcademicsCommandParserTest {
     }
 
     @Test
+    public void parse_noteBeforeSubjects_success() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " dsc/Good s/Math";
+
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setNote("Good");
+        descriptor.setSubjects(Set.of(new Subject("Math", null)));
+
+        assertParseSuccess(parser, input,
+                new EditAcademicsCommand(index, descriptor));
+    }
+
+    @Test
+    public void parse_noteInMiddle_success() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " s/Math dsc/Good s/English";
+
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setNote("Good");
+        descriptor.setSubjects(Set.of(
+                new Subject("Math", null),
+                new Subject("English", null)
+        ));
+
+        assertParseSuccess(parser, input,
+                new EditAcademicsCommand(index, descriptor));
+    }
+
+    @Test
     public void parse_emptySubject_failure() {
         Index targetIndex = INDEX_FIRST_PERSON;
         String userInput = targetIndex.getOneBased() + SUBJECT_EMPTY;
@@ -146,5 +176,75 @@ public class EditAcademicsCommandParserTest {
 
         assertParseFailure(parser, userInput,
                 "At least one field (subjects or note) must be provided.");
+    }
+
+    @Test
+    public void parse_duplicateSubjects_failure() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " s/Math s/Math";
+
+        assertParseFailure(parser, input, "Duplicate subjects are not allowed.");
+    }
+
+    @Test
+    public void parse_levelWithoutSubject_failure() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " l/Strong";
+
+        assertParseFailure(parser, input, "Level must follow a subject.");
+    }
+
+    @Test
+    public void parse_multipleLevels_failure() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " s/Math l/Strong l/Basic";
+
+        assertParseFailure(parser, input, "Each subject can only have one level.");
+    }
+
+    @Test
+    public void parse_invalidLevel_failure() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " s/Math l/Invalid";
+
+        assertParseFailure(parser, input, LevelUtil.MESSAGE_CONSTRAINTS);
+    }
+
+    @Test
+    public void parse_noteTrimming_success() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " dsc/   Good progress   ";
+
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setNote("Good progress");
+
+        assertParseSuccess(parser, input,
+                new EditAcademicsCommand(index, descriptor));
+    }
+
+    @Test
+    public void parse_emptyNote_success() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased() + " dsc/";
+
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setNote("");
+
+        assertParseSuccess(parser, input,
+                new EditAcademicsCommand(index, descriptor));
+    }
+
+    @Test
+    public void parse_complexNoteAndSubjects_success() {
+        Index index = INDEX_FIRST_PERSON;
+        String input = index.getOneBased()
+                + " s/Math l/Strong dsc/Good progress, well done!";
+
+        EditAcademicsDescriptor descriptor = new EditAcademicsDescriptor();
+        descriptor.setSubjects(Set.of(new Subject("Math", Level.STRONG)));
+        descriptor.setNote("Good progress, well done!");
+
+        assertParseSuccess(parser, input,
+                new EditAcademicsCommand(index, descriptor));
     }
 }
