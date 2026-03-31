@@ -16,8 +16,8 @@ import javafx.scene.layout.VBox;
 import seedu.address.model.academic.Subject;
 import seedu.address.model.attendance.Attendance;
 import seedu.address.model.person.Person;
-import seedu.address.model.tag.Tag;
 import seedu.address.model.session.Appointment;
+import seedu.address.model.tag.Tag;
 
 /**
  * Panel that displays detailed information for the selected person.
