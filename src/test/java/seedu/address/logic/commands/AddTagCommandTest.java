@@ -145,8 +145,12 @@ public class AddTagCommandTest {
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
 
-        expectedModel.setPerson(personToEdit, editedPerson);
-        expectedModel.updateFilteredPersonList(Model.PREDICATE_SHOW_ALL_PERSONS);
+        showPersonAtIndex(expectedModel, INDEX_SECOND_PERSON);
+
+        Person expectedPersonToEdit =
+                expectedModel.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+
+        expectedModel.setPerson(expectedPersonToEdit, editedPerson);
 
         CommandResult expectedCommandResult = new CommandResult(expectedMessage, editedPerson);
         assertCommandSuccess(addCommand, model, expectedCommandResult, expectedModel);
