@@ -30,7 +30,7 @@ TutorFlow is a **desktop app for managing contacts, optimized for use via a Comm
 
    * `add student n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to the address book.
 
-   * `delete 3` : Deletes the 3rd contact shown in the current list.
+   * `delete student 3` : Deletes the 3rd student shown in the current list.
 
    * `clear` : Deletes all contacts.
 
@@ -275,19 +275,19 @@ Examples:
 * `viewappt`
 * `viewappt d/2026-02-13`
 
-### Deleting a person : `delete student`
+### Deleting a student : `delete student`
 
-Deletes the specified person from the address book.
+Deletes the specified student from the address book.
 
 Format: `delete student INDEX`
 
-* Deletes the person at the specified `INDEX`.
+* Deletes the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed person list.
 * The index **must be a positive integer** 1, 2, 3, …​
 
 Examples:
-* `list` followed by `delete student 2` deletes the 2nd person in the address book.
-* `find person Betsy` followed by `delete student 1` deletes the 1st person in the results of the `find` command.
+* `list` followed by `delete student 2` deletes the 2nd student in the address book.
+* `find person Betsy` followed by `delete student 1` deletes the 1st student in the results of the `find` command.
 
 ### Deleting a recorded payment date : `delete payment`
 
@@ -307,6 +307,22 @@ Format: `delete payment INDEX d/DATE`
 Examples:
 * `delete payment 1 d/2026-03-01`
 * `delete payment 2 d/2025-12-15`
+
+### Deleting an appointment : `delete appt`
+
+Deletes a selected appointment from an existing student contact.
+
+Format: `delete appt PERSON_INDEX APPT_INDEX`
+
+* Deletes the appointment at `APPT_INDEX` for the student at `PERSON_INDEX`.
+* `PERSON_INDEX` refers to the index number shown in the displayed student list.
+* `APPT_INDEX` refers to the numbered appointment shown for that student in the app.
+* Both indexes **must be positive integers** 1, 2, 3, ...
+* This command only works when the student has the selected appointment.
+
+Examples:
+* `delete appt 1 1`
+* `delete appt 2 3`
 
 ### Clearing all entries : `clear`
 
@@ -364,6 +380,7 @@ Action | Format, Examples
 **Clear** | `clear`
 **Delete Student** | `delete student INDEX`<br> e.g., `delete student 3`
 **Delete Payment** | `delete payment INDEX d/ISO8601_DATE`<br> e.g., `delete payment 1 d/2026-03-01`
+**Delete Appointment** | `delete appt PERSON_INDEX APPT_INDEX`<br> e.g., `delete appt 1 2`
 **Edit Student** | `edit student INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS]`<br> e.g., `edit student 2 n/James Lee e/jameslee@example.com`
 **Edit Billing** | `edit billing INDEX [a/AMOUNT] [d/ISO8601_DATE]`<br> e.g., `edit billing 1 a/250 d/2026-03-20`
 **Find** | `find person KEYWORD [MORE_KEYWORDS]`<br> e.g., `find person James Jake`

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import seedu.address.logic.commands.DeleteAcadCommand;
+import seedu.address.logic.commands.DeleteApptCommand;
 import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.DeletePaymentCommand;
 import seedu.address.logic.commands.DeletePersonCommand;
@@ -26,6 +27,7 @@ public class DeleteCommandParser implements Parser<DeleteCommand> {
         parsers.put(DeleteTagCommand.SUB_COMMAND_WORD, new DeleteTagCommandParser());
         parsers.put(DeleteAcadCommand.SUB_COMMAND_WORD, new DeleteAcadCommandParser());
         parsers.put(DeletePaymentCommand.SUB_COMMAND_WORD, new DeletePaymentCommandParser());
+        parsers.put(DeleteApptCommand.SUB_COMMAND_WORD, new DeleteApptCommandParser());
         this.dispatcher = new SubcommandDispatcherParser<>(parsers, DeleteCommand.MESSAGE_USAGE);
     }
 

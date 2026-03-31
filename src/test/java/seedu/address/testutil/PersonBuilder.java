@@ -184,6 +184,14 @@ public class PersonBuilder {
     }
 
     /**
+     * Replaces the appointments of the {@code Person} that we are building.
+     */
+    public PersonBuilder withAppointments(List<Appointment> appointments) {
+        this.appointments = List.copyOf(appointments);
+        return this;
+    }
+
+    /**
      * Adds an appointment to the {@code Person} that we are building.
      */
     public PersonBuilder addAppointment(Appointment appointment) {
