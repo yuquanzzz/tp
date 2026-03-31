@@ -27,7 +27,7 @@ public class EditBillingCommand extends EditCommand {
             + ": Updates billing configuration for the student identified by the index number used "
             + "in the displayed student list.\n"
             + "Parameters: INDEX (must be a positive integer) "
-            + "[" + PREFIX_AMOUNT + "AMOUNT] [" + PREFIX_DATE + "DATE]\n"
+            + "[" + PREFIX_AMOUNT + "AMOUNT] [" + PREFIX_DATE + "DATE] (at least one must be provided)\n"
             + "Example: " + COMMAND_WORD + " " + SUB_COMMAND_WORD + " 1 "
             + PREFIX_AMOUNT + "50\n"
             + COMMAND_WORD + " " + SUB_COMMAND_WORD + " 1 "
