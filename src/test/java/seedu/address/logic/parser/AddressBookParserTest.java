@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddPaymentCommand;
 import seedu.address.logic.commands.AddPersonCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeletePersonCommand;
+import seedu.address.logic.commands.EditBillingCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditPersonCommand;
 import seedu.address.logic.commands.EditPersonCommand.EditPersonDescriptor;
@@ -46,6 +48,15 @@ public class AddressBookParserTest {
         Person person = new PersonBuilder().build();
         AddCommand command = (AddCommand) parser.parseCommand(PersonUtil.getAddCommand(person));
         assertEquals(new AddPersonCommand(person), command);
+    }
+
+    @Test
+    public void parseCommand_addPayment() throws Exception {
+        AddPaymentCommand command = (AddPaymentCommand) parser.parseCommand(
+                AddCommand.COMMAND_WORD + " " + AddPaymentCommand.SUB_COMMAND_WORD + " "
+                        + INDEX_FIRST_PERSON.getOneBased() + " d/2026-01-13");
+        assertEquals(new AddPaymentCommand(INDEX_FIRST_PERSON, LocalDate.parse("2026-01-13")),
+                command);
     }
 
     @Test
@@ -83,6 +94,16 @@ public class AddressBookParserTest {
         Set<Tag> tags = Set.of(new Tag("friend"));
 
         assertEquals(new EditTagCommand(INDEX_FIRST_PERSON, tags), command);
+    }
+
+    @Test
+    public void parseCommand_editBilling() throws Exception {
+        EditBillingCommand command = (EditBillingCommand) parser.parseCommand(
+                EditCommand.COMMAND_WORD + " "
+                        + EditBillingCommand.SUB_COMMAND_WORD + " "
+                        + INDEX_FIRST_PERSON.getOneBased() + " a/25");
+
+        assertEquals(new EditBillingCommand(INDEX_FIRST_PERSON, 25.0), command);
     }
 
     @Test
