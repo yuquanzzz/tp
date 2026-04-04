@@ -176,11 +176,11 @@ Format: `edit tag INDEX [t/TAG]…​`
 
 * Edits the tags of the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, …​
 * All existing tags are replaced by the provided tags.
-* Providing no `t/` prefixes clears all tags from the student.
+* Providing one `t/` prefix with no value clears all tags from the student.
 
 Examples:
 * `edit tag 1 t/JC t/J1` sets the tags of student 1 to `JC` and `J1`.
-* `edit tag 2` clears all tags from student 2.
+* `edit tag 2 t/` clears all tags from student 2.
 
 ### Deleting tags from a student : `delete tag`
 
