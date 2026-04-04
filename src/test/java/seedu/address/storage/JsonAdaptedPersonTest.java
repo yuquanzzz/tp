@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.academic.Academics;
 import seedu.address.model.academic.Subject;
-import seedu.address.model.attendance.AttendanceRecords;
+import seedu.address.model.attendance.AttendanceHistory;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
@@ -75,9 +75,29 @@ public class JsonAdaptedPersonTest {
             String parentName, String parentPhone, String parentEmail, String appointmentStart,
             List<String> paymentDates, String paymentDueDate, String paymentRecurrence,
             Double tuitionFee, List<String> attendanceHistory) {
+        JsonAdaptedAppointment appointment = makeJsonAdaptedAppointment(appointmentStart, attendanceHistory);
         return new JsonAdaptedPerson(name, phone, email, address, tags, academics, parentName, parentPhone,
-                parentEmail, null, appointmentStart, null, null, null, null, paymentDates, paymentDueDate,
+                parentEmail, appointment, null, null, null, null, null, paymentDates, paymentDueDate,
                 paymentRecurrence, tuitionFee, attendanceHistory);
+    }
+
+    private static JsonAdaptedAppointment makeJsonAdaptedAppointment(String appointmentStart,
+                                                                      List<String> attendanceHistory) {
+        if (appointmentStart == null) {
+            return null;
+        }
+        List<JsonAdaptedAppointmentAttendance> attendanceRecords = attendanceHistory == null
+                ? List.of()
+                : attendanceHistory.stream()
+                .map(dateTime -> new JsonAdaptedAppointmentAttendance(true, dateTime))
+                .toList();
+        JsonAdaptedScheduledSession session = new JsonAdaptedScheduledSession(
+                appointmentStart,
+                appointmentStart,
+                "NONE",
+                "",
+                attendanceRecords);
+        return new JsonAdaptedAppointment(List.of(session));
     }
 
     @Test
@@ -450,7 +470,7 @@ public class JsonAdaptedPersonTest {
                 .addAppointment(new Appointment(Recurrence.WEEKLY,
                         LocalDateTime.parse("2026-02-03T09:00:00"),
                         LocalDateTime.parse("2026-02-03T09:00:00"),
-                        AttendanceRecords.EMPTY,
+                        AttendanceHistory.EMPTY,
                         "Physics"))
                 .build();
 

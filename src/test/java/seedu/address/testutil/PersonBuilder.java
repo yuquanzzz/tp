@@ -2,14 +2,12 @@ package seedu.address.testutil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import seedu.address.model.academic.Academics;
 import seedu.address.model.attendance.Attendance;
-import seedu.address.model.attendance.AttendanceRecords;
+import seedu.address.model.attendance.AttendanceHistory;
 import seedu.address.model.billing.Billing;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
@@ -19,6 +17,7 @@ import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.recurrence.Recurrence;
 import seedu.address.model.session.Appointment;
+import seedu.address.model.session.ScheduledSession;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -42,7 +41,7 @@ public class PersonBuilder {
     private Name parentName;
     private Phone parentPhone;
     private Email parentEmail;
-    private List<Appointment> appointments;
+    private Appointment appointment;
     private Billing billing;
 
     /**
@@ -58,7 +57,7 @@ public class PersonBuilder {
         parentName = null;
         parentPhone = null;
         parentEmail = null;
-        appointments = List.of();
+        appointment = Appointment.defaultAppointment();
         billing = Billing.defaultBilling();
     }
 
@@ -76,7 +75,7 @@ public class PersonBuilder {
         parentName = guardianToCopy != null ? guardianToCopy.getName() : null;
         parentPhone = guardianToCopy != null ? guardianToCopy.getPhone().orElse(null) : null;
         parentEmail = guardianToCopy != null ? guardianToCopy.getEmail().orElse(null) : null;
-        appointments = personToCopy.getAppointments();
+        appointment = personToCopy.getAppointment();
         billing = personToCopy.getBilling();
     }
 
@@ -157,11 +156,12 @@ public class PersonBuilder {
      */
     public PersonBuilder withAppointmentStart(String... appointmentStartTimes) {
         if (appointmentStartTimes.length == 0) {
-            this.appointments = List.of();
+            this.appointment = Appointment.defaultAppointment();
             return this;
         }
         LocalDateTime start = LocalDateTime.parse(appointmentStartTimes[0]);
-        this.appointments = List.of(new Appointment(Recurrence.NONE, start, start, AttendanceRecords.EMPTY, ""));
+        this.appointment = Appointment.defaultAppointment()
+                .addSession(new ScheduledSession(Recurrence.NONE, start, start, AttendanceHistory.EMPTY, ""));
         return this;
     }
 
@@ -171,7 +171,8 @@ public class PersonBuilder {
     public PersonBuilder withAppointment(String appointmentStartTime, String description,
                                          Recurrence recurrence) {
         LocalDateTime start = LocalDateTime.parse(appointmentStartTime);
-        this.appointments = List.of(new Appointment(recurrence, start, start, AttendanceRecords.EMPTY, description));
+        this.appointment = Appointment.defaultAppointment()
+            .addSession(new ScheduledSession(recurrence, start, start, AttendanceHistory.EMPTY, description));
         return this;
     }
 
@@ -179,15 +180,15 @@ public class PersonBuilder {
      * Sets the appointment of the {@code Person} that we are building.
      */
     public PersonBuilder withAppointment(Appointment appointment) {
-        this.appointments = appointment == null ? List.of() : List.of(appointment);
+        this.appointment = appointment == null ? Appointment.defaultAppointment() : appointment;
         return this;
     }
 
     /**
      * Replaces the appointments of the {@code Person} that we are building.
      */
-    public PersonBuilder withAppointments(List<Appointment> appointments) {
-        this.appointments = List.copyOf(appointments);
+    public PersonBuilder withAppointments(java.util.List<ScheduledSession> sessions) {
+        this.appointment = sessions == null ? Appointment.defaultAppointment() : new Appointment(sessions);
         return this;
     }
 
@@ -198,9 +199,11 @@ public class PersonBuilder {
         if (appointment == null) {
             return this;
         }
-        ArrayList<Appointment> updatedAppointments = new ArrayList<>(appointments);
-        updatedAppointments.add(appointment);
-        this.appointments = List.copyOf(updatedAppointments);
+        Appointment updated = this.appointment;
+        for (ScheduledSession session : appointment.getSessions()) {
+            updated = updated.addSession(session);
+        }
+        this.appointment = updated;
         return this;
     }
 
@@ -208,15 +211,15 @@ public class PersonBuilder {
      * Adds an attendance date-time to the {@code Person} that we are building.
      */
     public PersonBuilder addAttendance(String attendanceDateTime) {
-        if (appointments.isEmpty()) {
+        if (appointment.getSessions().isEmpty()) {
             throw new IllegalStateException("Appointment must exist before adding appointment attendance.");
         }
-        Appointment currentAppointment = appointments.get(appointments.size() - 1);
-        AttendanceRecords updatedAttendance = currentAppointment.getAttendance()
+        java.util.List<ScheduledSession> sessions = new java.util.ArrayList<>(appointment.getSessions());
+        ScheduledSession currentSession = sessions.get(sessions.size() - 1);
+        AttendanceHistory updatedAttendance = currentSession.getAttendanceHistory()
                 .addAttendance(new Attendance(true, LocalDateTime.parse(attendanceDateTime)));
-        ArrayList<Appointment> updatedAppointments = new ArrayList<>(appointments);
-        updatedAppointments.set(updatedAppointments.size() - 1, currentAppointment.withAttendance(updatedAttendance));
-        this.appointments = List.copyOf(updatedAppointments);
+        sessions.set(sessions.size() - 1, currentSession.withAttendance(updatedAttendance));
+        this.appointment = new Appointment(sessions);
         return this;
     }
 
@@ -236,7 +239,7 @@ public class PersonBuilder {
         return new seedu.address.model.person.PersonBuilder(name, phone, email, address, tags)
                 .withAcademics(academics)
                 .withGuardian(guardian)
-                .withAppointments(appointments)
+            .withAppointment(appointment)
                 .withBilling(billing)
                 .build();
     }

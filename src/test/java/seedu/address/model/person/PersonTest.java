@@ -243,7 +243,7 @@ public class PersonTest {
                 + ", tags=" + ALICE.getTags()
                 + ", academics=" + ALICE.getAcademics()
                 + ", guardian=" + ALICE.getGuardian().orElse(null)
-                + ", appointments=" + ALICE.getAppointments()
+                + ", appointment=" + ALICE.getAppointment()
                 + ", billing=" + ALICE.getBilling()
                 + "}";
 

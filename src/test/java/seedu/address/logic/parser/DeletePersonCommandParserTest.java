@@ -26,7 +26,7 @@ public class DeletePersonCommandParserTest {
 
     @Test
     public void parse_validApptArgs_returnsDeleteApptCommand() {
-        assertParseSuccess(parser, "appt 1 2", new DeleteApptCommand(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON));
+        assertParseSuccess(parser, "appt 1 s/2", new DeleteApptCommand(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class DeletePersonCommandParserTest {
     public void parse_invalidApptArgs_throwsParseException() {
         assertParseFailure(parser, "appt 1",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteApptCommand.MESSAGE_USAGE));
-        assertParseFailure(parser, "appt 1 a",
+        assertParseFailure(parser, "appt 1 s/a",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteApptCommand.MESSAGE_USAGE));
     }
 
