@@ -264,7 +264,7 @@ public class AddAttdCommandTest {
         AddAttdCommand addCommand = new AddAttdCommand(personIndex, appointmentIndex, true,
                 Optional.of(LocalDateTime.parse("2026-01-29T08:30:00")));
         String expected = AddAttdCommand.class.getCanonicalName()
-                + "{personIndex=" + personIndex + ", appointmentIndex=" + appointmentIndex
+                + "{personIndex=" + personIndex + ", sessionIndex=" + appointmentIndex
                 + ", hasAttended=true, recordedAt=" + VALID_ATTENDANCE_DATE_TIME + "}";
         assertEquals(expected, addCommand.toString());
     }

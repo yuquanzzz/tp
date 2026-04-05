@@ -29,7 +29,7 @@ public class AddAttdCommand extends AddCommand {
     public static final String MESSAGE_USAGE = COMMAND_WORD + " " + SUB_COMMAND_WORD
             + ": Records attendance for the selected appointment of the student identified by the index number used "
             + "in the displayed student list.\n"
-            + "Parameters: INDEX (must be a positive integer) s/SESSION_INDEX [y|n] [d/DATE_OR_DATE_TIME] "
+            + "Parameters: INDEX (must be a positive integer) s/SESSION_INDEX [y|n] [d/DATE_OR_DATE_TIME]\n"
             + "Example: " + COMMAND_WORD + " " + SUB_COMMAND_WORD + " 1 s/2 y d/2026-01-29T08:00:00";
 
     public static final String MESSAGE_ADD_ATTD_SUCCESS = "Recorded attendance for %1$s: %2$s on %3$s";
@@ -135,7 +135,7 @@ public class AddAttdCommand extends AddCommand {
                 .orElse(null);
         return new ToStringBuilder(this)
                 .add("personIndex", personIndex)
-            .add("appointmentIndex", sessionIndex)
+                .add("sessionIndex", sessionIndex)
                 .add("hasAttended", hasAttended)
                 .add("recordedAt", formattedRecordedAt)
                 .toString();

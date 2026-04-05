@@ -71,7 +71,7 @@ public class DeleteAttdCommandTest {
     }
 
     @Test
-        public void execute_deleteNonLatestDate_doesNotRollbackRecurrence() throws Exception {
+    public void execute_deleteNonLatestDate_doesNotRollbackRecurrence() throws Exception {
         Person personToEdit = createPersonWithRecurringSession();
         model.addPerson(personToEdit);
 
