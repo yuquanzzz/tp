@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import seedu.address.commons.util.ToStringBuilder;
+
 /**
  * Represents a student's academic profile.
  *
@@ -73,5 +75,13 @@ public class Academics {
     @Override
     public int hashCode() {
         return Objects.hash(subjects, description);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .add("subjects", getSortedSubjects())
+                .add("description", description.orElse(null))
+                .toString();
     }
 }
